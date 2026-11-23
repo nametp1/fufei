@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>订阅记录 - Mysany 管理后台</title>
+<style>
+:root {
+  --primary: #DC2626;--primary-hover: #B91C1C;--sidebar-bg: #0F172A;
+  --sidebar-hover: #1E293B;--sidebar-active: rgba(220,38,38,0.15);
+  --success: #10B981;--warning: #F59E0B;--error: #EF4444;--info: #3B82F6;
+  --text-primary: #1E293B;--text-secondary: #64748B;--text-muted: #94A3B8;
+  --text-white: #E2E8F0;--border: #E2E8F0;--border-light: #F1F5F9;
+  --bg-page: #F8FAFC;--bg-card: #FFFFFF;
+  --shadow-card: 0 1px 3px rgba(0,0,0,.05);--shadow-modal: 0 8px 24px rgba(0,0,0,.12);
+  --radius-sm: 4px;--radius-md: 8px;--radius-lg: 12px;
+  --transition-fast: 150ms cubic-bezier(.23,1,.32,1);
+  --transition-modal: 250ms cubic-bezier(.65,0,.35,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;color:var(--text-primary);background:var(--bg-page);display:flex;min-height:100vh}
+/* Sidebar */
+.sidebar{width:220px;background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;transition:width .25s ease-out;overflow:hidden;z-index:100}
+.sidebar.collapsed{width:64px}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sidebar-logo svg{flex-shrink:0}
+.sidebar-logo span{color:var(--text-white);font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden}
+.sidebar.collapsed .sidebar-logo span{display:none}
+.sidebar-menu{flex:1;padding:8px 0;overflow-y:auto}
+.menu-group{margin-bottom:2px}
+.menu-group-title{display:flex;align-items:center;gap:10px;padding:10px 18px;color:var(--text-muted);font-size:12px;cursor:pointer;user-select:none;transition:background var(--transition-fast)}
+.menu-group-title:hover{background:var(--sidebar-hover)}
+.menu-group-title .arrow{margin-left:auto;transition:transform .25s ease-out;width:16px;height:16px}
+.menu-group.open .menu-group-title .arrow{transform:rotate(90deg)}
+.menu-sub{display:none;padding:2px 0}
+.menu-group.open .menu-sub{display:block}
+.menu-item{display:flex;align-items:center;gap:10px;padding:8px 18px 8px 48px;color:var(--text-muted);font-size:13px;text-decoration:none;transition:all var(--transition-fast);white-space:nowrap}
+.menu-item:hover{color:var(--text-white);background:var(--sidebar-hover)}
+.menu-item.active{color:var(--primary);background:var(--sidebar-active);font-weight:500}
+.sidebar.collapsed .menu-group-title span,.sidebar.collapsed .menu-sub{display:none}
+.sidebar-toggle{display:flex;align-items:center;justify-content:center;padding:12px;border-top:1px solid rgba(255,255,255,.06);cursor:pointer;color:var(--text-muted);transition:color var(--transition-fast)}
+.sidebar-toggle:hover{color:var(--text-white)}
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow-x:hidden;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--bg-card);border-bottom:1px solid var(--border);flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-title{font-size:16px;font-weight:600}
+.topbar-breadcrumb{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.page-content{padding:20px 24px;flex:1;overflow-y:auto}
+/* Dashboard Cards */
+.dashboard-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+@media (max-width:1100px){.dashboard-grid{gap:8px}}
+@media (max-width:860px){.dashboard-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--bg-card);border-radius:var(--radius-md);box-shadow:var(--shadow-card);padding:16px}
+.stat-label{font-size:12px;color:var(--text-secondary);margin-bottom:6px}
+.stat-value{font-size:24px;font-weight:700;color:var(--text-primary);line-height:1.2}
+.stat-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+/* Card */
+.card{background:var(--bg-card);border-radius:var(--radius-md);box-shadow:var(--shadow-card);margin-bottom:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border-light)}
+.card-title{font-size:14px;font-weight:600}
+.card-body{padding:16px 20px}
+/* Filter */
+.filter-bar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px}
+.filter-item{display:flex;flex-direction:column;gap:4px}
+.filter-label{font-size:12px;color:var(--text-secondary)}
+.filter-input,.filter-select{padding:6px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);background:var(--bg-card);outline:none;transition:border-color var(--transition-fast);min-width:130px;height:32px}
+.filter-input:focus,.filter-select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(220,38,38,.1)}
+.filter-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:28px}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;font-size:13px;font-weight:500;border-radius:var(--radius-sm);cursor:pointer;border:1px solid transparent;transition:all var(--transition-fast);white-space:nowrap;height:32px}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-hover)}
+.btn-outline{background:var(--bg-card);border-color:var(--border);color:var(--text-primary)}.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-danger{background:var(--error);color:#fff}.btn-danger:hover{background:#DC2626}
+.btn-ghost{background:transparent;color:var(--text-secondary)}.btn-ghost:hover{background:var(--border-light)}
+.btn-sm{padding:4px 10px;height:28px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+/* Table */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border-light);white-space:nowrap;font-size:13px}
+th{font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--bg-page)}
+td{color:var(--text-primary)}
+tr:hover td{background:#FAFBFC}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.td-actions{display:flex;gap:6px}
+/* Fixed column */
+.first-col{position:sticky;left:0;z-index:3;background:var(--bg-card)}
+thead .first-col{background:var(--bg-page)}
+tr:hover .first-col{background:#FAFBFC}
+.last-col{position:sticky;right:0;z-index:3;background:var(--bg-card);border-left:1px solid var(--border-light)}
+thead .last-col{background:var(--bg-page)}
+tr:hover .last-col{background:#FAFBFC}
+/* Tags */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:12px;font-weight:500}
+.tag-success{background:#D1FAE5;color:#065F46}
+.tag-warning{background:#FEF3C7;color:#92400E}
+.tag-error{background:#FEE2E2;color:#991B1B}
+.tag-info{background:#FEE2E2;color:#991B1B}
+.tag-default{background:#F1F5F9;color:#475569}
+.tag-trial{background:#F3E5F5;color:#6A1B9A}
+.tag-orange{background:#FFF7ED;color:#9A3412}
+/* Trial countdown */
+.countdown{font-weight:600}
+.countdown.urgent{color:#991B1B}
+.countdown.soon{color:#92400E}
+.countdown.ok{color:#065F46}
+.countdown.st-ok{color:#065F46}      /* 生效中 */
+.countdown.st-warn{color:#92400E}    /* 未生效 */
+.countdown.st-gray{color:#475569}    /* 已过期 */
+.countdown.st-red{color:#991B1B}     /* 已取消 */
+/* Timeline */
+.sub-timeline{position:relative;padding-left:20px;margin-top:6px}
+.sub-timeline::before{content:"";position:absolute;left:5px;top:0;bottom:0;width:1px;background:var(--border)}
+.sub-tl-item{position:relative;padding-bottom:12px}
+.sub-tl-item:last-child{padding-bottom:0}
+.sub-tl-dot{position:absolute;left:-18px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--primary)}
+.sub-tl-dot.trial{background:var(--info)}
+.sub-tl-dot.renew{background:var(--success)}
+.sub-tl-dot.cancel{background:var(--error)}
+.sub-tl-dot.change{background:var(--warning)}
+.sub-tl-time{font-size:11px;color:var(--text-muted)}
+.sub-tl-text{font-size:12px;color:var(--text-primary)}
+/* Section */
+.section-title{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:"";width:3px;height:16px;background:var(--primary);border-radius:2px}
+/* Drawer */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;right:0;width:640px;height:100vh;background:var(--bg-card);box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:1001;transform:translateX(100%);transition:transform var(--transition-modal)}
+.drawer-overlay.open .drawer{transform:translateX(0)}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--border-light)}
+.drawer-title{font-size:16px;font-weight:600}
+.drawer-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;color:var(--text-muted);border-radius:var(--radius-sm)}
+.drawer-close:hover{background:var(--border-light)}
+.drawer-body{padding:24px;overflow-y:auto;height:calc(100vh - 60px)}
+.drawer-section{margin-bottom:24px}
+.drawer-section:last-child{margin-bottom:0}
+.drawer-section-title{font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.drawer-section-title::before{content:"";width:3px;height:14px;background:var(--primary);border-radius:2px}
+.drawer-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px}
+.drawer-info-item{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-bottom:1px solid var(--border-light)}
+.drawer-info-item:last-child{border-bottom:none}
+.drawer-info-item .label{font-size:11px;color:var(--text-muted)}
+.drawer-info-item .value{font-size:13px;color:var(--text-primary);font-weight:500}
+.drawer-info-item .value.accent{color:var(--primary)}
+/* Toast */
+.toast-container{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#1E293B;color:#fff;padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;box-shadow:var(--shadow-modal);animation:toastIn var(--transition-fast);text-align:center}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+*:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+/* Subscription history sub-table */
+.sub-record{display:flex;align-items:center;gap:8px;padding:4px 0}
+.sub-record-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sub-record-text{font-size:12px;color:var(--text-secondary)}
+/* Pagination（全后台统一组件：信息居左、按钮固定右下角） */
+.pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;border-top:1px solid var(--border-light);flex-wrap:wrap}
+.pagination-info{font-size:12px;color:var(--text-muted)}
+.pagination-btns{display:flex;align-items:center;gap:4px;margin-left:auto}
+.page-btn{min-width:32px;height:32px;padding:0 6px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-primary);font-size:13px;cursor:pointer;transition:all var(--transition-fast)}
+.page-btn:hover:not(:disabled):not(.active){border-color:var(--primary);color:var(--primary)}
+.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+  .rec-order-link{color:var(--primary);text-decoration:none;font-weight:500}
+  .rec-order-link:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#DC2626"/><text x="16" y="21" text-anchor="middle" fill="white" font-size="14" font-weight="700">M</text></svg>
+    <span>Mysany 管理后台</span>
+  </div>
+  <nav class="sidebar-menu">
+    <div class="menu-group open">
+      <div class="menu-group-title" onclick="toggleMenu(this)">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        <span>订阅管理</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m9 18 6-6-6-6"/></svg>
+      </div>
+      <div class="menu-sub">
+        <a class="menu-item" href="订单管理.html">订单管理</a>
+        <a class="menu-item active" href="订阅记录.html">订阅记录</a>
+        <a class="menu-item" href="订阅配置.html">订阅配置</a>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-toggle" onclick="toggleSidebar()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">订阅记录</div>
+      <div class="topbar-breadcrumb">订阅管理 <span style="color:var(--text-secondary)">/</span> 订阅记录</div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <!-- Summary Stats -->
+        <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-label">生效中总数</div>
+        <div class="stat-value">1,847</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">未生效</div>
+        <div class="stat-value" style="color:var(--warning)">42</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">已取消</div>
+        <div class="stat-value" style="color:var(--error)">89</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">已过期</div>
+        <div class="stat-value" style="color:var(--text-secondary)">216</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">本月到期</div>
+        <div class="stat-value" style="color:var(--warning)">312</div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="card">
+      <div class="card-body">
+        <div class="filter-bar">
+          <div class="filter-item">
+            <label class="filter-label">用户ID / 昵称</label>
+            <input type="text" class="filter-input" placeholder="搜索用户ID或昵称" style="min-width:160px">
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">国家</label>
+            <select class="filter-select" style="min-width:110px">
+              <option value="">全部国家</option>
+              <option>印度尼西亚</option>
+              <option>加纳</option>
+              <option>沙特阿拉伯</option>
+              <option>越南</option>
+              <option>肯尼亚</option>
+              <option>泰国</option>
+              <option>菲律宾</option>
+              <option>阿尔及利亚</option>
+              <option>缅甸</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">订阅版本</label>
+            <select class="filter-select">
+              <option value="">全部版本</option>
+              <option>专业版</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">订阅状态</label>
+            <select class="filter-select">
+              <option value="">全部状态</option>
+              <option>未生效</option>
+              <option>生效中</option>
+              <option>已过期</option>
+              <option>已取消</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label class="filter-label">订阅到期时间</label>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input type="date" class="filter-input" style="min-width:128px;width:128px" aria-label="订阅到期时间-起">
+              <span style="color:var(--text-muted);font-size:12px">至</span>
+              <input type="date" class="filter-input" style="min-width:128px;width:128px" aria-label="订阅到期时间-止">
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="showToast('已按筛选条件查询订阅记录')">查询</button>
+          <button class="btn btn-outline" onclick="showToast('已重置筛选条件')">重置</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Table -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">订阅记录</div>
+      </div>
+      <div class="card-body" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="first-col">订阅编号</th>
+                <th>用户ID</th>
+                <th>用户昵称</th>
+                <th>国家</th>
+                <th>当前订阅版本</th>
+                <th>当前状态</th>
+                <th>剩余天数</th>
+                                <th>订阅到期</th>
+                <th class="last-col">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="first-col">SUB-20261122-014</td>
+                <td><span style="font-weight:600;color:var(--primary)">10011</span></td>
+                <td>林嘉豪</td>
+                <td>中国</td>
+                <td>专业版</td>
+                <td><span class="tag tag-success">生效中</span></td>
+                <td><span class="countdown st-ok" data-end="2026-12-22">—</span></td>
+                <td>2026-12-22</td>
+                <td class="last-col">
+                  <div class="td-actions">
+                    <button class="btn btn-ghost btn-xs" onclick="openDetail('10011')">查看详情</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="first-col">SUB-20260804-001</td>
+                <td><span style="font-weight:600;color:var(--primary)">10001</span></td>
+                <td>陈伟明</td>
+                <td>印度尼西亚</td>
+                <td>专业版</td>
+                <td><span class="tag tag-success">生效中</span></td>
+                <td><span class="countdown st-ok" data-end="2027-01-14">—</span></td>
+                <td>2027-01-14</td>
+                <td class="last-col">
+                  <div class="td-actions">
+                    <button class="btn btn-ghost btn-xs" onclick="openDetail('10001')">查看详情</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="first-col">SUB-20260804-002</td>
+                <td><span style="font-weight:600;color:var(--primary)">10002</span></td>
+                <td>夸梅·阿萨莫阿</td>
+                <td>加纳</td>
+                <td>专业版</td>
+                <td><span class="tag tag-warning">未生效</span></td>
+                <td><span style="color:var(--text-muted)">—</span></td>
+                <td><span style="color:var(--text-muted)">—</span></td>
+                <td class="last-col">
+                  <div class="td-actions">
+                    <button class="btn btn-ghost btn-xs" onclick="openDetail('10002')">查看详情</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="first-col">SUB-20261105-003</td>
+                <td><span style="font-weight:600;color:var(--primary)">10003</span></td>
+                <td>艾哈迈德·拉希德</td>
+                <td>沙特阿拉伯</td>
+                <td>专业版 <span class="tag tag-trial">试用</span></td>
+                <td><span class="tag tag-success">生效中</span></td>
+                <td><span class="countdown st-ok" data-end="2026-12-04">—</span></td>
+                <td>2026-12-04</td>
+                <td class="last-col">
+                  <div class="td-actions">
+                    <button class="btn btn-ghost btn-xs" onclick="openDetail('10003')">查看详情</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="first-col">SUB-20260802-005</td>
+                <td><span style="font-weight:600;color:var(--primary)">10005</span></td>
+                <td>詹姆斯·瓦尼库</td>
+                <td>肯尼亚</td>
+                <td>专业版</td>
+                <td><span class="tag tag-error">已取消</span></td>
+                <td><span class="countdown st-red" data-end="2026-08-01">—</span></td>
+                <td>2026-08-01</td>
+                <td class="last-col">
+                  <div class="td-actions">
+                    <button class="btn btn-ghost btn-xs" onclick="openDetail('10005')">查看详情</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="first-col">SUB-20260801-007</td>
+                <td><span style="font-weight:600;color:var(--primary)">10007</span></td>
+                <td>艾哈迈德·维贾亚</td>
+                <td>印度尼西亚</td>
+                <td>专业版</td>
+                <td><span class="tag tag-default">已过期</span></td>
+                <td><span class="countdown st-gray" data-end="2026-08-01">—</span></td>
+                <td>2026-08-01</td>
+                <td class="last-col">
+                  <div class="td-actions">
+                    <button class="btn btn-ghost btn-xs" onclick="openDetail('10007')">查看详情</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="pagination">
+        <span class="pagination-info">共 1,847 条记录</span>
+        <div class="pagination-btns">
+          <button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">…</button>
+          <button class="page-btn">185</button>
+          <button class="page-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Detail Drawer -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="if(event.target===this)closeDrawer()">
+  <div class="drawer" id="detail-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title">订阅详情</div>
+      <button class="drawer-close" onclick="closeDrawer()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body" id="drawer-body">
+      <!-- Dynamic content injected here -->
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// Sample user data
+const userData = {
+  '10011': {
+    id: '10011', name: '林嘉豪', country: '中国',
+    version: '专业版', status: '生效中', statusClass: 'tag-success',
+    trialLeft: '29天', start: '2026-11-22', end: '2026-12-22', free: true,
+    cycle: '1 个月', renewals: 0, total: '0 元开通',
+    history: []
+  },
+  '10001': {
+    id: '10001', name: '陈伟明', country: '印度尼西亚',
+    version: '专业版', status: '已生效', statusClass: 'tag-success',
+    trialLeft: '55天', start: '2026-01-15', end: '2027-01-14',
+    cycle: '3 个月', renewals: 2, total: '205,356,000 IDR',
+    history: [
+      { date: '2026-01-15', type: 'trial', label: '开始免费试用（30 天）', dot: 'trial' },
+      { date: '2026-01-18', type: 'change', label: '付费开通，专业版·按年', dot: 'renew' },
+      { date: '2027-01-14', type: 'renew', label: '付费开通（按年）', dot: 'renew' },
+      { date: '2028-01-14', type: 'renew', label: '付费开通（按年）', dot: 'renew' }
+    ]
+  },
+  '10002': {
+    id: '10002', name: '夸梅·阿萨莫阿', country: '加纳',
+    version: '专业版', status: '未生效', statusClass: 'tag-warning',
+    trialLeft: '—', start: '2026-04-01', end: '—',
+    cycle: '3 个月', renewals: 0, total: '未生效',
+    history: []
+  },
+  '10003': {
+    id: '10003', name: '艾哈迈德·拉希德', country: '沙特阿拉伯',
+    version: '专业版', status: '已生效', statusClass: 'tag-success',
+    trialLeft: '14天', start: '2026-11-05', end: '2026-12-04',
+    cycle: '30 天试用（免费）', renewals: 0, total: '试用期免费',
+    history: [
+      { date: '2026-11-05', type: 'trial', label: '开始免费试用（30 天）', dot: 'trial' },
+      { date: '2026-11-20', type: 'trial', label: '试用中，无需付费，不产生支付记录', dot: 'trial' }
+    ]
+  },
+  '10008': {
+    id: '10008', name: '卡洛斯·雷耶斯', country: '菲律宾',
+    version: '专业版', status: '已生效', statusClass: 'tag-success',
+    trialLeft: '21天', start: '2026-11-12', end: '2026-12-11',
+    cycle: '30 天试用（免费）', renewals: 0, total: '试用期免费',
+    history: [
+      { date: '2026-11-12', type: 'trial', label: '开始免费试用（30 天）', dot: 'trial' },
+      { date: '2026-11-20', type: 'trial', label: '试用中，无需付费，不产生支付记录', dot: 'trial' }
+    ]
+  },
+  '10010': {
+    id: '10010', name: '钦貌', country: '缅甸',
+    version: '专业版', status: '已生效', statusClass: 'tag-success',
+    trialLeft: '27天', start: '2026-11-18', end: '2026-12-17',
+    cycle: '30 天试用（免费）', renewals: 0, total: '试用期免费',
+    history: [
+      { date: '2026-11-18', type: 'trial', label: '开始免费试用（30 天）', dot: 'trial' },
+      { date: '2026-11-20', type: 'trial', label: '试用中，无需付费，不产生支付记录', dot: 'trial' }
+    ]
+  },
+  '10004': {
+    id: '10004', name: '阮文德', country: '越南',
+    version: '专业版', status: '已生效', statusClass: 'tag-success',
+    trialLeft: '19天', start: '2025-08-10', end: '2026-12-09',
+    cycle: '8个月', renewals: 1, total: '6,578,750 VND',
+    history: [
+      { date: '2025-08-10', type: 'trial', label: '开始免费试用（30 天）', dot: 'trial' },
+      { date: '2025-08-13', type: 'renew', label: '付费开通，专业版·3 个月', dot: 'renew' },
+      { date: '2026-04-13', type: 'renew', label: '付费开通（8个月）', dot: 'renew' },
+      { date: '2026-08-10', type: 'cancel', label: '订阅到期，待续费确认', dot: 'cancel' }
+    ]
+  },
+  '10005': {
+    id: '10005', name: '詹姆斯·瓦尼库', country: '肯尼亚',
+    version: '专业版', status: '已取消', statusClass: 'tag-error',
+    trialLeft: '0天', start: '2026-02-01', end: '2026-08-01',
+    cycle: '8个月', renewals: 0, total: '458,333 KES',
+    history: [
+      { date: '2026-02-01', type: 'trial', label: '开始免费试用（30 天）', dot: 'trial' },
+      { date: '2026-02-04', type: 'renew', label: '付费开通，专业版·3 个月', dot: 'renew' },
+      { date: '2026-08-01', type: 'cancel', label: '到期未续费，订阅终止', dot: 'cancel' }
+    ]
+  },
+  '10009': {
+    id: '10009', name: '亚辛·贝纳利', country: '阿尔及利亚',
+    version: '专业版', status: '已生效', statusClass: 'tag-success',
+    trialLeft: '251天', start: '2026-07-30', end: '2027-07-29',
+    cycle: '3 个月', renewals: 4, total: '2,872,800 DZD',
+    history: [
+      { date: '2024-07-27', type: 'trial', label: '开始免费试用（30 天）', dot: 'trial' },
+      { date: '2024-07-30', type: 'renew', label: '付费开通，专业版·按年', dot: 'renew' },
+      { date: '2025-07-30', type: 'renew', label: '付费开通（按年）', dot: 'renew' },
+      { date: '2026-07-30', type: 'renew', label: '付费开通（按年）', dot: 'renew' }
+    ]
+  }
+};
+
+
+// ==================== 每期订阅记录（示例数据） ====================
+var SUB_RECORDS = {
+  '10011': [
+    { type: '免费开通', subId: 'SUB-20261122-014', version: '专业版', cycle: '1 个月', duration: '1 个月', months: 1, range: '2026-11-22 ~ 2026-12-22', status: '生效中' }
+  ],
+  '10001': [
+    { type: '免费试用', subId: 'SUB-20260804-001', version: '专业版', cycle: '30 天', duration: '30 天', months: 0, range: '2025-12-16 ~ 2026-01-14', status: '生效中' },
+    { type: '付费开通', subId: 'SUB-20260804-001', version: '专业版', order: 'ORD-20260804-001', cycle: '3 个月', duration: '3 个月', months: 12, range: '2026-01-15 ~ 2027-01-14', status: '生效中' }
+  ],
+  '10002': [
+    { type: '免费试用', subId: 'SUB-20260804-002', version: '专业版', cycle: '30 天', duration: '30 天', months: 0, range: '2026-03-02 ~ 2026-03-31', status: '生效中' },
+    { type: '付费开通', subId: 'SUB-20260804-002', version: '专业版', order: 'ORD-20260804-002', cycle: '3 个月', duration: '3 个月', months: 8, range: '2026-04-01 ~ 2026-12-01', status: '未生效' }
+  ],
+  '10003': [
+    { type: '免费试用', subId: 'SUB-20261105-003', version: '专业版', cycle: '30 天', duration: '30 天', months: 0, range: '2026-11-05 ~ 2026-12-04', status: '生效中' }
+  ],
+  '10004': [
+    { type: '免费试用', version: '专业版', cycle: '30 天', duration: '30 天', months: 0, range: '2025-07-11 ~ 2025-08-09', status: '生效中' },
+    { type: '付费开通', version: '专业版', order: 'ORD-20260803-004', cycle: '3 个月', duration: '3 个月', months: 8, range: '2025-08-10 ~ 2026-04-09', status: '生效中' }
+  ],
+  '10005': [
+    { type: '免费试用', subId: 'SUB-20260802-005', version: '专业版', cycle: '30 天', duration: '30 天', months: 0, range: '2026-01-02 ~ 2026-01-31', status: '生效中' },
+    { type: '付费开通', subId: 'SUB-20260802-005', version: '专业版', order: 'ORD-20260802-005', cycle: '3 个月', duration: '3 个月', months: 8, range: '2026-02-01 ~ 2026-10-01', status: '已取消' }
+  ],
+  '10008': [
+    { type: '免费试用', version: '专业版', cycle: '30 天', duration: '30 天', months: 0, range: '2026-11-12 ~ 2026-12-11', status: '生效中' }
+  ],
+  '10009': [
+    { type: '免费试用', version: '专业版', cycle: '30 天', duration: '30 天', months: 0, range: '2024-06-30 ~ 2024-07-29', status: '生效中' },
+    { type: '付费开通', version: '专业版', order: 'ORD-20260730-009', cycle: '3 个月', duration: '3 个月', months: 12, range: '2024-07-30 ~ 2025-07-29', status: '生效中' }
+  ],
+  '10010': [
+    { type: '免费试用', version: '专业版', cycle: '30 天', duration: '30 天', months: 0, range: '2026-11-18 ~ 2026-12-17', status: '生效中' }
+  ]
+};
+
+function openDetail(userId) {
+  const data = userData[userId];
+  if (!data) {
+    // Fallback for users not in sample data
+    document.getElementById('drawer-body').innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div>暂无订阅详情数据</div></div>';
+  } else {
+    var leftDays = (function () {
+      if (!data.end || data.end === '—') return '—';
+      var d = new Date(data.end + 'T00:00:00');
+      var t = new Date(); t.setHours(0, 0, 0, 0);
+      var n = Math.round((d - t) / 86400000);
+      return (n > 0 ? n : 0) + '天';
+    })();
+    document.getElementById('drawer-body').innerHTML = `
+      <div class="drawer-section">
+        <div class="drawer-section-title">基本信息</div>
+        <div class="drawer-info-grid">
+          <div class="drawer-info-item"><div class="label">用户ID</div><div class="value accent">${data.id}</div></div>
+          <div class="drawer-info-item"><div class="label">用户昵称</div><div class="value">${data.name}</div></div>
+          <div class="drawer-info-item"><div class="label">国家</div><div class="value">${data.country}</div></div>
+          <div class="drawer-info-item"><div class="label">订阅版本</div><div class="value">${data.version}</div></div>
+          <div class="drawer-info-item"><div class="label">当前状态</div><div class="value"><span class="tag ${data.statusClass}">${data.status}</span></div></div>
+          <div class="drawer-info-item"><div class="label">剩余天数</div><div class="value">${leftDays}</div></div>
+        </div>
+      </div>
+      <div class="drawer-section">
+        <div class="drawer-section-title">订阅周期</div>
+        <div class="drawer-info-grid">
+          <div class="drawer-info-item"><div class="label">订阅到期</div><div class="value">${data.end}</div></div>
+          ${data.free ? '' : `
+          <div class="drawer-info-item"><div class="label">续费方式</div><div class="value">PayPal 自动续费</div></div>
+          <div class="drawer-info-item"><div class="label">PayPal 订阅 ID</div><div class="value">I-BW452GLLEP1G</div></div>`}
+        </div>
+      </div>
+      <div class="drawer-section">
+        <div class="drawer-section-title">订阅记录</div>
+        ${(function () {
+          var recs = (SUB_RECORDS[data.id] || []).slice().sort(function (a, b) {
+            var da = (a.range || '').split('~')[0].trim();
+            var db = (b.range || '').split('~')[0].trim();
+            return da < db ? 1 : (da > db ? -1 : 0);
+          });
+          if (!recs.length) return '<div style="font-size:12.5px;color:var(--text-muted)">暂无订阅记录</div>';
+          var rows = recs.map(function (r) {
+            var cls = r.status.indexOf('未生效') > -1 ? 'tag-warning'
+                    : r.status.indexOf('生效') > -1 ? 'tag-success'
+                    : r.status.indexOf('试用') > -1 ? 'tag-trial'
+                    : r.status.indexOf('取消') > -1 ? 'tag-default' : 'tag-default';
+            return '<tr>'
+              + '<td class="first-col" style="white-space:nowrap">'
+                  + (r.subId || '—')
+                  + (r.order
+                      ? '<div style="margin-top:2px"><a class="rec-order-link" style="font-size:11px" href="订单管理.html?order=' + encodeURIComponent(r.order) + '" title="查看订单 ' + r.order + '">' + r.order + '</a></div>'
+                      : '')
+              + '</td>'
+              + '<td style="white-space:nowrap">' + r.type + '</td>'
+              + '<td style="white-space:nowrap">' + (r.version || data.version || '—') + '</td>'
+              + '<td>' + r.cycle + (r.duration && r.duration !== r.cycle ? ' · ' + r.duration : '') + '</td>'
+              + '<td style="white-space:normal;line-height:1.45;font-size:11.5px">' + String(r.range).replace('~', '<br>~ ') + '</td>'
+              + '<td class="last-col"><span class="tag ' + cls + '" style="font-size:11px">' + r.status + '</span></td>'
+              + '</tr>';
+          }).join('');
+          return '<div class="table-wrap" style="border:1px solid var(--border-light);border-radius:8px">'
+            + '<table class="rec-tbl" style="min-width:100%"><thead><tr>'
+            + '<th class="first-col">订阅编号 / 订单号</th><th>类型</th><th>版本</th><th>计费周期</th><th>起止时间</th><th class="last-col">状态</th>'
+            + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+        })()}
+      </div>
+    `;
+  }
+  document.getElementById('drawer-overlay').classList.add('open');
+}
+
+/* ===== 剩余天数：按订阅到期日与今天计算（自然日） ===== */
+(function countdownRender() {
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+  document.querySelectorAll('.countdown[data-end]').forEach(function (el) {
+    var end = new Date(el.dataset.end + 'T00:00:00');
+    var days = Math.round((end - today) / 86400000);
+    el.textContent = (days > 0 ? days : 0) + '天';
+  });
+})();
+
+function closeDrawer() {
+  document.getElementById('drawer-overlay').classList.remove('open');
+}
+
+function showToast(msg) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+function toggleMenu(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>订单管理 - Mysany 管理后台</title>
+<style>
+:root {
+  --primary: #DC2626;--primary-hover: #B91C1C;--sidebar-bg: #0F172A;
+  --sidebar-hover: #1E293B;--sidebar-active: rgba(220,38,38,0.15);
+  --success: #10B981;--warning: #F59E0B;--error: #EF4444;--info: #3B82F6;
+  --text-primary: #1E293B;--text-secondary: #64748B;--text-muted: #94A3B8;
+  --text-white: #E2E8F0;--border: #E2E8F0;--border-light: #F1F5F9;
+  --bg-page: #F8FAFC;--bg-card: #FFFFFF;
+  --shadow-card: 0 1px 3px rgba(0,0,0,.05);--shadow-modal: 0 8px 24px rgba(0,0,0,.12);
+  --radius-sm: 4px;--radius-md: 8px;--radius-lg: 12px;
+  --transition-fast: 150ms cubic-bezier(.23,1,.32,1);
+  --transition-modal: 250ms cubic-bezier(.65,0,.35,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;color:var(--text-primary);background:var(--bg-page);display:flex;min-height:100vh}
+/* Sidebar */
+.sidebar{width:220px;background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;transition:width .25s ease-out;overflow:hidden;z-index:100}
+.sidebar.collapsed{width:64px}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sidebar-logo svg{flex-shrink:0}
+.sidebar-logo span{color:var(--text-white);font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden}
+.sidebar.collapsed .sidebar-logo span{display:none}
+.sidebar-menu{flex:1;padding:8px 0;overflow-y:auto}
+.menu-group{margin-bottom:2px}
+.menu-group-title{display:flex;align-items:center;gap:10px;padding:10px 18px;color:var(--text-muted);font-size:12px;cursor:pointer;user-select:none;transition:background var(--transition-fast)}
+.menu-group-title:hover{background:var(--sidebar-hover)}
+.menu-group-title .arrow{margin-left:auto;transition:transform .25s ease-out;width:16px;height:16px}
+.menu-group.open .menu-group-title .arrow{transform:rotate(90deg)}
+.menu-sub{display:none;padding:2px 0}
+.menu-group.open .menu-sub{display:block}
+.menu-item{display:flex;align-items:center;gap:10px;padding:8px 18px 8px 48px;color:var(--text-muted);font-size:13px;text-decoration:none;transition:all var(--transition-fast);white-space:nowrap}
+.menu-item:hover{color:var(--text-white);background:var(--sidebar-hover)}
+.menu-item.active{color:var(--primary);background:var(--sidebar-active);font-weight:500}
+.sidebar.collapsed .menu-group-title span,.sidebar.collapsed .menu-sub{display:none}
+.sidebar-toggle{display:flex;align-items:center;justify-content:center;padding:12px;border-top:1px solid rgba(255,255,255,.06);cursor:pointer;color:var(--text-muted);transition:color var(--transition-fast)}
+.sidebar-toggle:hover{color:var(--text-white)}
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow-x:hidden;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--bg-card);border-bottom:1px solid var(--border);flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-title{font-size:16px;font-weight:600}
+.topbar-breadcrumb{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.page-content{padding:20px 24px;flex:1;overflow-y:auto}
+/* Dashboard Cards */
+.dashboard-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.stat-card{background:var(--bg-card);border-radius:var(--radius-md);box-shadow:var(--shadow-card);padding:16px;display:flex;flex-direction:column;gap:4px}
+.stat-label{font-size:12px;color:var(--text-secondary)}
+.stat-value{font-size:24px;font-weight:700;color:var(--text-primary);line-height:1.2}
+.stat-sub{font-size:12px;color:var(--text-muted)}
+.stat-sub .up{color:var(--success)}.stat-sub .down{color:var(--error)}
+/* Card */
+.card{background:var(--bg-card);border-radius:var(--radius-md);box-shadow:var(--shadow-card);margin-bottom:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border-light)}
+.card-title{font-size:14px;font-weight:600}
+.card-body{padding:16px 20px}
+/* Filter */
+.filter-bar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px}
+.filter-item{display:flex;flex-direction:column;gap:4px}
+.filter-label{font-size:12px;color:var(--text-secondary)}
+.filter-input,.filter-select{padding:6px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);background:var(--bg-card);outline:none;transition:border-color var(--transition-fast);min-width:130px;height:32px}
+.filter-input:focus,.filter-select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(220,38,38,.1)}
+.filter-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:28px}
+.filter-input.date-picker{min-width:128px;width:128px}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;font-size:13px;font-weight:500;border-radius:var(--radius-sm);cursor:pointer;border:1px solid transparent;transition:all var(--transition-fast);white-space:nowrap;height:32px}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-hover)}
+.btn-outline{background:var(--bg-card);border-color:var(--border);color:var(--text-primary)}.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-danger{background:var(--error);color:#fff}.btn-danger:hover{background:#DC2626}
+.btn-ghost{background:transparent;color:var(--text-secondary)}.btn-ghost:hover{background:var(--border-light)}
+.btn-sm{padding:4px 10px;height:28px;font-size:12px}
+.btn-xs{padding:2px 8px;height:24px;font-size:12px;font-weight:400}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+/* Table */
+.table-wrap{overflow-x:auto;max-width:100%}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border-light);white-space:nowrap;font-size:13px}
+th{font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--bg-page);position:sticky;z-index:2}
+td{color:var(--text-primary)}
+tr:hover td{background:#FAFBFC}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.td-actions{display:flex;gap:6px}
+/* Fixed column: first = 订单编号, sticky left */
+.first-col{position:sticky;left:0;z-index:3;background:var(--bg-card)}
+thead .first-col{background:var(--bg-page)}
+tr:hover .first-col{background:#FAFBFC}
+/* Fixed column: last = 操作, sticky right */
+.last-col{position:sticky;right:0;z-index:3;background:var(--bg-card);border-left:1px solid var(--border-light)}
+thead .last-col{background:var(--bg-page)}
+tr:hover .last-col{background:#FAFBFC}
+/* Currency badge */
+.currency-tag{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:500;padding:2px 6px;border-radius:4px}
+.currency-tag.THB{background:#FCE4EC;color:#880E4F}
+/* Order tabs */
+.order-tab{display:flex;align-items:center;gap:6px;padding:10px 18px;font-size:14px;font-weight:500;color:var(--text-secondary);cursor:pointer;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all var(--transition-fast);white-space:nowrap}
+.order-tab:hover{color:var(--primary)}
+.order-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 5px;border-radius:9px;font-size:11px;font-weight:600;background:var(--border-light);color:var(--text-secondary)}
+.tab-count.warn{background:#FEF3C7;color:#92400E}
+.tab-count.success{background:#D1FAE5;color:#065F46}
+.tab-count.error{background:#FEE2E2;color:#991B1B}
+.tab-count.muted{background:var(--border-light);color:var(--text-muted)}
+.order-panel{display:none}
+.order-panel.active{display:block}
+/* Billing cycle tags */
+.tag.tag-warning{background:#FEF3C7;color:#92400E}
+/* Tags */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:12px;font-weight:500}
+.tag-success{background:#D1FAE5;color:#065F46}
+.tag-warning{background:#FEF3C7;color:#92400E}
+.tag-error{background:#FEE2E2;color:#991B1B}
+.tag-info{background:#FEE2E2;color:#991B1B}
+.tag-default{background:#F1F5F9;color:#475569}
+.tag-orange{background:#FFF7ED;color:#9A3412}
+/* Pagination（全后台统一组件：信息居左、按钮固定右下角） */
+.pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;border-top:1px solid var(--border-light);flex-wrap:wrap}
+.pagination-info{font-size:12px;color:var(--text-muted)}
+.pagination-btns{display:flex;align-items:center;gap:4px;margin-left:auto}
+.page-btn{min-width:32px;height:32px;padding:0 6px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-primary);font-size:13px;cursor:pointer;transition:all var(--transition-fast)}
+.page-btn:hover:not(:disabled):not(.active){border-color:var(--primary);color:var(--primary)}
+.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-modal);width:540px;max-height:80vh;overflow-y:auto;animation:modalIn var(--transition-modal)}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border-light);position:sticky;top:0;background:var(--bg-card);z-index:1}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;color:var(--text-muted);border-radius:var(--radius-sm);transition:all var(--transition-fast)}
+.modal-close:hover{background:var(--border-light)}
+.modal-body{padding:20px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--border-light);position:sticky;bottom:0;background:var(--bg-card);z-index:1}
+/* Form */
+.form-group{margin-bottom:14px}.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:4px}
+.form-label .required{color:var(--error);margin-left:2px}
+.form-input,.form-select,.form-textarea{width:100%;padding:7px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);outline:none;transition:border var(--transition-fast);font-family:inherit}
+.form-input:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(220,38,38,.1)}
+.form-input.error{border-color:var(--error)}
+.form-error{font-size:11px;color:var(--error);margin-top:4px}
+.form-input:disabled,.form-select:disabled{background:var(--border-light);color:var(--text-muted);cursor:not-allowed}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px}
+.form-textarea{resize:vertical;min-height:60px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* Alert */
+.alert-warning{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:#92400E;margin-top:12px}
+.alert-error{background:#FEF2F2;border:1px solid #FECACA;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:#991B1B;margin-top:12px}
+/* Drawer (right side) */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;right:0;width:680px;height:100vh;background:var(--bg-card);box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:1001;transform:translateX(100%);transition:transform var(--transition-modal)}
+.drawer-overlay.open .drawer{transform:translateX(0)}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--border-light)}
+.drawer-header-left{display:flex;align-items:center;gap:12px}
+.drawer-title{font-size:16px;font-weight:600}
+.drawer-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;color:var(--text-muted);border-radius:var(--radius-sm);transition:all var(--transition-fast)}
+.drawer-close:hover{background:var(--border-light)}
+.drawer-body{padding:24px;overflow-y:auto;height:calc(100vh - 60px)}
+.drawer-section{margin-bottom:24px}
+.drawer-section:last-child{margin-bottom:0}
+.drawer-section-title{font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.drawer-section-title::before{content:"";width:3px;height:14px;background:var(--primary);border-radius:2px}
+.drawer-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px}
+.drawer-info-item{display:flex;flex-direction:column;gap:2px;padding:8px 0;border-bottom:1px solid var(--border-light)}
+.drawer-info-item .label{font-size:11px;color:var(--text-muted)}
+.drawer-info-item .value{font-size:13px;color:var(--text-primary);font-weight:500}
+/* Timeline */
+.timeline{position:relative;padding-left:20px}
+.timeline::before{content:"";position:absolute;left:5px;top:0;bottom:0;width:1px;background:var(--border)}
+.timeline-item{position:relative;padding-bottom:16px}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-dot{position:absolute;left:-18px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--primary)}
+.timeline-item .tl-time{font-size:11px;color:var(--text-muted)}
+.timeline-item .tl-text{font-size:13px;color:var(--text-primary)}
+/* Toast */
+.toast-container{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#1E293B;color:#fff;padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;box-shadow:var(--shadow-modal);animation:toastIn var(--transition-fast);text-align:center}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+*:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+/* Info Block (detail card) */
+.info-card{background:var(--bg-page);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:12px}
+.info-card-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--border-light)}
+.info-card-row:last-child{border-bottom:none}
+.info-card-row .info-label{color:var(--text-muted)}
+.info-card-row .info-value{font-weight:500}
+/* Empty state */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-muted)}
+.empty-state .empty-icon{margin-bottom:12px}
+  tr.row-focus td { background: #FFF6F6 !important; box-shadow: inset 0 0 0 1px rgba(196,30,41,.22) }
+  tr.row-focus td:first-child { box-shadow: inset 3px 0 0 var(--primary), inset 0 0 0 1px rgba(196,30,41,.22) }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#DC2626"/><text x="16" y="21" text-anchor="middle" fill="white" font-size="14" font-weight="700">M</text></svg>
+    <span>Mysany 管理后台</span>
+  </div>
+  <nav class="sidebar-menu">
+    <div class="menu-group open">
+      <div class="menu-group-title" onclick="toggleMenu(this)">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        <span>订阅管理</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m9 18 6-6-6-6"/></svg>
+      </div>
+      <div class="menu-sub">
+        <a class="menu-item active" href="订单管理.html">订单管理</a>
+        <a class="menu-item" href="订阅记录.html">订阅记录</a>
+        <a class="menu-item" href="订阅配置.html">订阅配置</a>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-toggle" onclick="toggleSidebar()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">订单管理</div>
+      <div class="topbar-breadcrumb">订阅管理 <span style="color:var(--text-secondary)">/</span> 订单管理</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:12px;color:var(--text-muted)">管理员</span>
+      <div style="width:32px;height:32px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:600">M</div>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- Dashboard Stats -->
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-label">总订单数</div>
+        <div class="stat-value">2,847</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">待支付</div>
+        <div class="stat-value" style="color:var(--warning)">86</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">已开通</div>
+        <div class="stat-value" style="color:var(--success)">2,589</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">已退款</div>
+        <div class="stat-value" style="color:var(--error)">136</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">已取消/暂停</div>
+        <div class="stat-value" style="color:var(--text-muted)">36</div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="card">
+      <div class="card-body">
+        <div class="filter-bar">
+          <div class="filter-item">
+            <div class="filter-label">订单编号</div>
+            <input class="filter-input" placeholder="输入订单编号" style="width:160px">
+          </div>
+          <div class="filter-item">
+            <div class="filter-label">订阅版本</div>
+            <select class="filter-select">
+              <option value="">全部版本</option>
+              <option>专业版</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <div class="filter-label">支付方式</div>
+            <select class="filter-select">
+              <option value="">全部方式</option>
+              <option>PayPal</option>
+              <option>免费开通</option>
+            </select>
+          </div>
+
+          <div class="filter-item">
+            <div class="filter-label">下单时间</div>
+            <input class="filter-input date-picker" type="date" value="2026-07-01">
+          </div>
+          <div class="filter-item">
+            <div class="filter-label">&nbsp;</div>
+            <span style="color:var(--text-muted);font-size:13px;padding:0 4px">至</span>
+          </div>
+          <div class="filter-item">
+            <div class="filter-label">&nbsp;</div>
+            <input class="filter-input date-picker" type="date" value="2026-08-04">
+          </div>
+
+          <div class="filter-item">
+            <div class="filter-label">支付时间</div>
+            <input class="filter-input date-picker" type="date" placeholder="开始日期">
+          </div>
+          <div class="filter-item">
+            <div class="filter-label">&nbsp;</div>
+            <span style="color:var(--text-muted);font-size:13px;padding:0 4px">至</span>
+          </div>
+          <div class="filter-item">
+            <div class="filter-label">&nbsp;</div>
+            <input class="filter-input date-picker" type="date" placeholder="结束日期">
+          </div>
+
+          <div class="filter-item">
+            <div class="filter-label">&nbsp;</div>
+            <button class="btn btn-primary">查询订单</button>
+          </div>
+          <div class="filter-item">
+            <div class="filter-label">&nbsp;</div>
+            <button class="btn btn-outline">重置筛选</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Tabs -->
+    <div style="display:flex;gap:0;margin-bottom:12px;border-bottom:2px solid var(--border-light)">
+      <button class="order-tab active" onclick="switchOrderTab('all',this)">全部订单 <span class="tab-count">5</span></button>
+      <button class="order-tab" onclick="switchOrderTab('pending',this)">待支付 <span class="tab-count warn">1</span></button>
+      <button class="order-tab" onclick="switchOrderTab('paid',this)">已支付 <span class="tab-count success">3</span></button>
+      <button class="order-tab" onclick="switchOrderTab('refund',this)">已退款 <span class="tab-count error">1</span></button>
+    </div>
+
+    <!-- Data Table — All -->
+    <div class="card order-panel active" id="panel-all">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="first-col">订单编号</th>
+              <th>用户信息</th>
+              <th>国家</th>
+              <th>订阅版本</th>
+              <th>计费周期</th>
+              <th>支付方式</th>
+              <th class="num">订单金额</th>
+              <th>折扣</th>
+              <th class="num">实付金额</th>
+              <th>下单时间</th>
+              <th>支付时间</th>
+              <th>订单状态</th>
+              <th class="last-col">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20261122-014</td><td><span style="font-weight:500">10011</span><span style="display:block;font-size:12px;color:var(--text-muted)">林嘉豪</span></td><td>中国</td><td>专业版</td><td><span class="tag tag-default">1 个月</span></td><td><span style="color:var(--text-muted)">免费开通</span></td><td class="num">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-11-22 10:00</td><td>2026-11-22 10:00</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20261122-014')">详情</button></div></td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260804-002</td><td><span style="font-weight:500">10002</span><span style="display:block;font-size:12px;color:var(--text-muted)">夸梅·阿萨莫阿</span></td><td>加纳</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-08-04 09:15</td><td>—</td><td><span class="tag tag-warning">待支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260804-002')">详情</button></div></td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260804-001</td><td><span style="font-weight:500">10001</span><span style="display:block;font-size:12px;color:var(--text-muted)">陈伟明</span></td><td>印度尼西亚</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td><span class="tag tag-info" style="font-size:11px">90%</span></td><td class="num" style="color:var(--success);font-weight:600">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-08-04 10:23</td><td>2026-08-04 10:24</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260804-001')">详情</button></div></td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260730-009</td><td><span style="font-weight:500">10009</span><span style="display:block;font-size:12px;color:var(--text-muted)">亚辛·贝纳利</span></td><td>阿尔及利亚</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td><span class="tag tag-info" style="font-size:11px">90%</span></td><td class="num" style="color:var(--success);font-weight:600">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-07-30 08:12</td><td>2026-07-30 08:13</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260730-009')">详情</button><button class="btn btn-danger btn-xs" onclick="openModal('modal-refund')">退款</button></div>
+</td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20261118-013</td><td><span style="font-weight:500">10003</span><span style="display:block;font-size:12px;color:var(--text-muted)">艾哈迈德·拉希德</span></td><td>沙特阿拉伯</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td><span class="tag tag-info" style="font-size:11px">90%</span></td><td class="num" style="font-weight:600">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-11-18 14:18</td><td>2026-11-18 14:19</td><td><span class="tag tag-error">已退款</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20261118-013')">详情</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="pagination"><span class="pagination-info">共 5 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
+    </div>
+
+    <!-- 待支付 Tab -->
+    <div class="card order-panel" id="panel-pending" style="display:none">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th class="first-col">订单编号</th><th>用户信息</th><th>国家</th><th>订阅版本</th><th>计费周期</th><th>支付方式</th><th class="num">订单金额</th><th>折扣</th><th class="num">实付金额</th><th>下单时间</th><th>支付时间</th><th>订单状态</th><th class="last-col">操作</th></tr></thead>
+          <tbody>
+          
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260804-002</td><td><span style="font-weight:500">10002</span><span style="display:block;font-size:12px;color:var(--text-muted)">夸梅·阿萨莫阿</span></td><td>加纳</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-08-04 09:15</td><td>—</td><td><span class="tag tag-warning">待支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260804-002')">详情</button></div></td></tr></tbody>
+        </table>
+      </div>
+      
+      <div class="pagination"><span class="pagination-info">共 1 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
+    </div>
+
+    <!-- 已支付 Tab -->
+    <div class="card order-panel" id="panel-paid" style="display:none">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th class="first-col">订单编号</th><th>用户信息</th><th>国家</th><th>订阅版本</th><th>计费周期</th><th>支付方式</th><th class="num">订单金额</th><th>折扣</th><th class="num">实付金额</th><th>下单时间</th><th>支付时间</th><th>订单状态</th><th class="last-col">操作</th></tr></thead>
+          <tbody>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20261122-014</td><td><span style="font-weight:500">10011</span><span style="display:block;font-size:12px;color:var(--text-muted)">林嘉豪</span></td><td>中国</td><td>专业版</td><td><span class="tag tag-default">1 个月</span></td><td><span style="color:var(--text-muted)">免费开通</span></td><td class="num">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-11-22 10:00</td><td>2026-11-22 10:00</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20261122-014')">详情</button></div></td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260804-001</td><td><span style="font-weight:500">10001</span><span style="display:block;font-size:12px;color:var(--text-muted)">陈伟明</span></td><td>印度尼西亚</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td><span class="tag tag-info" style="font-size:11px">90%</span></td><td class="num" style="color:var(--success);font-weight:600">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-08-04 10:23</td><td>2026-08-04 10:24</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260804-001')">详情</button></div></td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260730-009</td><td><span style="font-weight:500">10009</span><span style="display:block;font-size:12px;color:var(--text-muted)">亚辛·贝纳利</span></td><td>阿尔及利亚</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td><span class="tag tag-info" style="font-size:11px">90%</span></td><td class="num" style="color:var(--success);font-weight:600">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-07-30 08:12</td><td>2026-07-30 08:13</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260730-009')">详情</button><button class="btn btn-danger btn-xs" onclick="openModal('modal-refund')">退款</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="pagination"><span class="pagination-info">共 3 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
+    </div>
+
+    <!-- 已退款 Tab — 含退款手续费列 -->
+    <div class="card order-panel" id="panel-refund" style="display:none">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th class="first-col">订单编号</th><th>用户信息</th><th>国家</th><th>订阅版本</th><th>计费周期</th><th>支付方式</th><th class="num">实付金额</th><th>退款金额</th><th>退款手续费</th><th>退款时间</th><th>订单状态</th><th class="last-col">操作</th></tr></thead>
+          <tbody>
+            
+          <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20261118-013</td><td><span style="font-weight:500">10003</span><span style="display:block;font-size:12px;color:var(--text-muted)">艾哈迈德·拉希德</span></td><td>沙特阿拉伯</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td class="num" style="color:var(--error)">2,376.00 THB</td><td class="num" style="color:var(--text-muted)">72.00 THB</td><td>2026-11-18 16:40</td><td><span class="tag tag-error">已退款</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20261118-013')">详情</button></div></td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination"><span class="pagination-info">共 1 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
+    </div>
+
+
+  </div><!-- /page-content -->
+</div><!-- /main -->
+
+<!-- ======== Drawer: 订单详情 ======== -->
+<div class="drawer-overlay" id="drawer-detail" onclick="if(event.target===this)closeDrawer()">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div class="drawer-header-left">
+        <div class="drawer-title">订单详情</div>
+        <span id="od-status" class="tag"></span>
+      </div>
+      <button class="drawer-close" onclick="closeDrawer()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body" id="od-body"></div>
+  </div>
+</div>
+
+
+
+<!-- ======== Modal: 退款审核 ======== -->
+<div class="modal-overlay" id="modal-refund" onclick="if(event.target===this)closeModal('modal-refund')">
+  <div class="modal" style="width:600px">
+    <div class="modal-header">
+      <div class="modal-title">退款审核</div>
+      <button class="modal-close" onclick="closeModal('modal-refund')">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- 订单信息 -->
+      <div class="info-card" style="margin-bottom:12px">
+        <div class="drawer-section-title" style="margin-bottom:8px">订单信息</div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">订单编号</label>
+            <input class="form-input" value="ORD-20260730-009" disabled style="background:var(--border-light)">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">国家</label>
+            <input class="form-input" value="阿尔及利亚" disabled style="background:var(--border-light)">
+          </div>
+        </div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">用户</label>
+            <input class="form-input" value="10009 · 亚辛·贝纳利" disabled style="background:var(--border-light)">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">订阅版本</label>
+            <input class="form-input" value="专业版 | 3 个月" disabled style="background:var(--border-light)">
+          </div>
+        </div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">原始金额</label>
+            <input class="form-input" value="฿2,640.00" disabled style="background:var(--border-light)">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">折扣</label>
+            <input class="form-input" value="随机折扣 90%（-THB 99.00）" disabled style="background:var(--border-light)">
+          </div>
+        </div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">实付金额</label>
+            <input class="form-input" value="฿2,376.00" disabled style="background:var(--border-light)">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">支付方式</label>
+            <input class="form-input" value="PayPal · 交易号 8AB12345CD678901E" disabled style="background:var(--border-light)">
+          </div>
+        </div>
+      </div>
+      <!-- 退款信息 -->
+      <div class="info-card" style="margin-bottom:12px">
+        <div class="drawer-section-title" style="margin-bottom:8px">退款信息</div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">退款类型</label>
+            <select class="form-input" id="refund-type" onchange="toggleRefundType(this)">
+              <option value="full">全额退款</option>
+              <option value="partial">部分退款</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">退款原因</label>
+            <input class="form-input" value="客户主动申请退款" disabled style="background:var(--border-light)">
+          </div>
+        </div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">退款金额</label>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input class="form-input" id="refund-amount" value="2376" type="number" min="1" max="2376" step="0.01" style="flex:1;min-width:120px" readonly oninput="checkRefundMax(this)">
+              <span style="color:var(--text-secondary);white-space:nowrap;font-size:13px">THB</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:3px">最高可退：฿2,376.00（实付金额）· PayPal 手续费不予退还</div>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">退款说明</label>
+            <input class="form-input" value="客户因业务调整，主动申请退款" disabled style="background:var(--border-light)">
+          </div>
+        </div>
+      </div>
+      <!-- 退款影响 -->
+      <div class="alert-error" style="margin-bottom:12px">
+        <div style="font-weight:600;margin-bottom:6px">⚠️ 退款操作不可逆</div>
+        <div>确认退款后，该订阅账户将失去全部订阅权益。</div>
+        <div style="margin-top:8px">退款金额 ฿2,376.00 将以 <strong>PayPal 原路退回</strong>，预计 3-5 个工作日到账；PayPal 手续费不予退还</div>
+      </div>
+      <!-- 审核备注 -->
+      <div class="form-group">
+        <label class="form-label">审核备注</label>
+        <textarea class="form-textarea" placeholder="可填写审核意见或驳回原因（选填）" style="height:60px"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-refund')">取消</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" style="color:var(--error);border-color:var(--error)" onclick="closeModal('modal-refund');showToast('已驳回退款申请')">驳回</button>
+        <button class="btn btn-danger" onclick="processRefund()">通过并退款</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+function toggleMenu(el){el.closest('.menu-group').classList.toggle('open')}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed')}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(ov=>{ov.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')})})
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'))}})
+
+
+/* ==================== 订单数据（多支付方式） ==================== */
+var ORDERS = {
+  'ORD-20260804-001': { user: '10001 · 陈伟明', country: '印度尼西亚', email: 'budi@ptsm.co.id',
+    plan: '专业版 | 3 个月', method: 'PayPal', amount: '฿2,640.00', discount: '随机折扣 90%（-THB 264.00）',
+    paid: '฿2,376.00', orderTime: '2026-08-04 10:23', payTime: '2026-08-04 10:24', status: '已支付', tag: 'tag-success',
+    paypalOrder: '5O190127TN364715T', paypalCapture: '3C679366HH908993F', payer: 'budi@ptsm.co.id',
+    settle: 'THB 结算（PayPal 账户币种）',
+    sub: { type: '付费开通', version: '专业版', cycle: '3 个月', range: '2026-08-04 ~ 2026-11-03', status: '生效中' },
+    tl: [{ t: '2026-08-04 10:23', s: '创建订单' }, { t: '2026-08-04 10:24', s: '支付成功' }] },
+  'ORD-20260804-002': { user: '10002 · 夸梅·阿萨莫阿', country: '加纳', email: 'kwame@goldstar.gh',
+    plan: '专业版 | 3 个月', method: 'PayPal', amount: '฿2,640.00', discount: '—',
+    paid: '฿2,640.00', orderTime: '2026-08-04 09:15', payTime: '—', status: '待支付', tag: 'tag-warning',
+    bankAccount: 'Standard Chartered · 0102 3344 5566', bankRef: '水单待上传', bankName: 'Accra Main Branch',
+    sub: { type: '付费开通', version: '专业版', cycle: '3 个月', range: '2026-12-01 ~ 2027-02-28', status: '未生效' },
+    tl: [{ t: '2026-08-04 09:15', s: '创建订单' }] },
+  'ORD-20260803-004': { user: '10004 · 阮文德', country: '越南', email: 'duc@dongduong.vn',
+    plan: '专业版 | 3 个月', method: 'PayPal', amount: '฿2,640.00', discount: '随机折扣 95%（-THB 132.00）',
+    paid: '฿2,508.00', orderTime: '2026-08-03 14:20', payTime: '2026-08-03 14:21', status: '已支付', tag: 'tag-success',
+    bankAccount: 'Vietcombank · 0071 0002 3344', bankRef: 'FT-20260803-77120', bankName: 'Hanoi Branch' },
+  'ORD-20260730-009': { user: '10009 · 亚辛·贝纳利', country: '阿尔及利亚', email: 'yacine@saharabtp.dz',
+    plan: '专业版 | 3 个月', method: 'PayPal', amount: '฿2,640.00', discount: '随机折扣 90%（-THB 264.00）',
+    paid: '฿2,376.00', orderTime: '2026-07-30 08:12', payTime: '2026-07-30 08:13', status: '已支付', tag: 'tag-success',
+    paypalOrder: '8CD33445EF7788990', paypalCapture: '4GH55667IJ223344L', payer: 'yacine@saharabtp.dz',
+    settle: 'THB 结算（PayPal 账户币种）',
+    sub: { type: '付费开通', version: '专业版', cycle: '3 个月', range: '2026-07-30 ~ 2026-10-29', status: '已过期' },
+    tl: [{ t: '2026-07-30 08:12', s: '创建订单' }, { t: '2026-07-30 08:13', s: '支付成功' }] },
+  'ORD-20261118-013': { user: '10003 · 艾哈迈德·拉希德', country: '沙特阿拉伯', email: 'ahmed@rashid.sa',
+    plan: '专业版 | 3 个月', method: 'PayPal', amount: '฿2,640.00', discount: '随机折扣 90%（-THB 264.00）',
+    paid: '฿2,376.00', orderTime: '2026-11-18 14:18', payTime: '2026-11-18 14:19', status: '已退款', tag: 'tag-error',
+    paypalOrder: '9LM55123QR7788990', paypalCapture: '6TY33445UI112233O', payer: 'ahmed@rashid.sa',
+    settle: '退款 ฿2,376.00 · 手续费 ฿72.00 不退',
+    sub: { type: '付费开通', version: '专业版', cycle: '3 个月', range: '2026-11-18 ~ 2027-02-17', status: '已失效' },
+    tl: [{ t: '2026-11-18 14:18', s: '创建订单' }, { t: '2026-11-18 14:19', s: '支付成功' }, { t: '2026-11-18 16:40', s: '退款完成' }] },
+  'ORD-20261122-014': { user: '10011 · 林嘉豪', country: '中国', email: 'lin@example.cn',
+    plan: '专业版 | 1 个月', method: '免费开通', amount: '฿0.00', discount: '—',
+    paid: '฿0.00', orderTime: '2026-11-22 10:00', payTime: '2026-11-22 10:00', status: '已支付', tag: 'tag-success',
+    sub: { type: '免费开通', version: '专业版', cycle: '1 个月', range: '2026-11-22 ~ 2026-12-22', status: '生效中' },
+    tl: [{ t: '2026-11-22 10:00', s: '创建订单' }, { t: '2026-11-22 10:00', s: '支付成功' }] }
+};
+
+function odRow(label, value) {
+  return '<div class="drawer-info-item"><span class="label">' + label + '</span><span class="value">' + value + '</span></div>';
+}
+
+function openDetail(orderId) {
+  document.getElementById('drawer-detail').classList.add('open');
+  var d = ORDERS[orderId];
+  var st = document.getElementById('od-status');
+  if (!d) {
+    st.textContent = '';
+    document.getElementById('od-body').innerHTML = '<div class="empty-state" style="padding:60px 0;text-align:center;color:var(--text-muted)">暂无该订单详情</div>';
+    return;
+  }
+  st.textContent = d.status;
+  st.className = 'tag ' + d.tag;
+
+  var isFree = d.method === '免费开通';
+  var u = (d.user || '').split('·');
+  var uid = (u[0] || '').trim();
+  var uname = (u[1] || '').trim();
+
+  var planParts = String(d.plan || '').split('|');
+  var planVer = (planParts[0] || '').trim();
+  var planDur = (planParts[1] || '').trim() || '—';
+
+  var basicInfo =
+    odRow('订单编号', orderId) + odRow('国家', d.country) +
+    odRow('用户ID', uid) + odRow('用户昵称', uname) +
+    odRow('版本', planVer) + odRow('开通时长', planDur) +
+    odRow('支付方式', d.method) +
+    odRow('下单时间', d.orderTime);
+
+  var body =
+    '<div class="drawer-section"><div class="drawer-section-title">基本信息</div><div class="drawer-info-grid">' +
+      basicInfo +
+    '</div></div>' +
+    '<div class="drawer-section"><div class="drawer-section-title">付款信息</div><div class="info-card">' +
+      '<div class="info-card-row"><span class="info-label">原始金额</span><span class="info-value" style="font-weight:600">' + d.amount + '</span></div>' +
+      '<div class="info-card-row"><span class="info-label">折扣</span><span class="info-value" style="color:var(--success)">' + d.discount + '</span></div>' +
+      '<div class="info-card-row"><span class="info-label">实付金额</span><span class="info-value" style="font-weight:700;color:var(--primary)">' + d.paid + '</span></div>' +
+      '<div class="info-card-row"><span class="info-label">支付渠道</span><span class="info-value">' + (isFree ? '无' : (d.method || '—')) + '</span></div>' +
+      '<div class="info-card-row"><span class="info-label">支付流水号</span><span class="info-value">' + (isFree ? '无' : (d.paypalCapture || '—')) + '</span></div>' +
+      '<div class="info-card-row"><span class="info-label">第三方交易单号</span><span class="info-value">' + (d.paypalOrder || '—') + '</span></div>' +
+      '<div class="info-card-row"><span class="info-label">付款人账号</span><span class="info-value">' + (d.payer || '—') + '</span></div>' +
+      '<div class="info-card-row"><span class="info-label">结算币种</span><span class="info-value">' + (d.settle || '—') + '</span></div>' +
+    '</div></div>' +
+    (d.sub
+      ? ('<div class="drawer-section"><div class="drawer-section-title">订阅记录</div>' +
+         '<div class="table-wrap" style="border:1px solid var(--border-light);border-radius:8px">' +
+         '<table style="min-width:100%"><thead><tr>' +
+         '<th class="first-col">订阅编号</th><th>类型</th><th>版本</th><th>计费周期</th><th>起止时间</th><th class="last-col">状态</th>' +
+         '</tr></thead><tbody><tr>' +
+         '<td class="first-col" style="white-space:nowrap">' + String(orderId).replace('ORD-', 'SUB-') + '</td>' +
+         '<td>' + d.sub.type + '</td>' +
+         '<td>' + d.sub.version + '</td>' +
+         '<td>' + d.sub.cycle + '</td>' +
+         '<td style="white-space:normal;font-size:11.5px">' + String(d.sub.range).replace('~', '<br>~ ') + '</td>' +
+         '<td class="last-col"><span class="tag ' +
+           (d.sub.status.indexOf('生效') > -1 ? 'tag-success'
+             : d.sub.status.indexOf('未生效') > -1 ? 'tag-warning'
+             : d.sub.status.indexOf('取消') > -1 ? 'tag-error' : 'tag-default') +
+           '" style="font-size:11px">' + d.sub.status + '</span></td>' +
+         '</tr></tbody></table></div></div>')
+      : '') +
+    (d.tl && d.tl.length
+      ? ('<div class="drawer-section"><div class="drawer-section-title">支付详情</div><div class="timeline">' +
+         d.tl.slice().reverse().map(function (x, idx) {
+           return '<div class="timeline-item">' +
+             '<div class="timeline-dot" style="background:' + (idx === 0 ? 'var(--primary)' : 'var(--border)') + '"></div>' +
+             '<div class="tl-time">' + x.t + '</div>' +
+             '<div class="tl-text">' + x.s + '</div></div>';
+         }).join('') + '</div></div>')
+      : '') +
+    '<div style="display:flex;gap:8px;padding-top:8px;border-top:1px solid var(--border-light)">' +
+      (d.status === '已支付' && !isFree
+        ? '<button class="btn btn-danger" onclick="closeDrawer();openModal(\'modal-refund\')">发起退款</button>'
+        : '') +
+      '<button class="btn btn-outline" onclick="closeDrawer()">关闭详情</button>' +
+    '</div>';
+
+  document.getElementById('od-body').innerHTML = body;
+}
+
+
+function switchOrderTab(tab, btn){
+  document.querySelectorAll('.order-tab').forEach(function(t){t.classList.remove('active')});
+  btn.classList.add('active');
+  document.querySelectorAll('.order-panel').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+function closeDrawer(){
+  document.getElementById('drawer-detail').classList.remove('open');
+}
+
+function showToast(msg){
+  var c=document.getElementById('toastContainer');
+  var t=document.createElement('div');t.className='toast';t.textContent=msg;
+  c.appendChild(t);
+  setTimeout(function(){t.remove()},2000);
+}
+
+function checkRefundMax(el){
+  var max = parseFloat(el.max);
+  var val = parseFloat(el.value);
+  if(!isNaN(val) && val > max){
+    el.value = max;
+  }
+  if(!isNaN(val) && val < 0){
+    el.value = 0;
+  }
+}
+
+function processRefund(){
+  closeModal('modal-refund');
+  var rid = 'RF-' + Date.now().toString().slice(-8);
+  showToast('已通过，PayPal 退款单 ' + rid + ' 处理中');
+}
+
+/* ===== 由订阅记录跳转过来时，定位并高亮对应订单 ===== */
+(function () {
+  var m = location.search.match(/[?&]order=([^&]+)/);
+  if (!m) return;
+  var oid = decodeURIComponent(m[1]);
+  var allBtn = document.querySelector('.order-tab');
+  if (allBtn) switchOrderTab('all', allBtn);
+  var rows = document.querySelectorAll('#panel-all tbody tr');
+  for (var i = 0; i < rows.length; i++) {
+    if (rows[i].textContent.indexOf(oid) > -1) {
+      rows[i].classList.add('row-focus');
+      rows[i].scrollIntoView({ block: 'center' });
+      showToast('已定位订单 ' + oid);
+      return;
+    }
+  }
+  showToast('未找到订单 ' + oid);
+})();
+</script>
+</body>
+</html>

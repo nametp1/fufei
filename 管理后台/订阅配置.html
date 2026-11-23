@@ -1,0 +1,2325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>订阅配置 - Mysany 管理后台</title>
+<style>
+:root {
+  --primary: #DC2626;--primary-hover: #B91C1C;--sidebar-bg: #0F172A;
+  --sidebar-hover: #1E293B;--sidebar-active: rgba(220,38,38,0.15);
+  --success: #10B981;--warning: #F59E0B;--error: #EF4444;--info: #3B82F6;
+  --text-primary: #1E293B;--text-secondary: #64748B;--text-muted: #94A3B8;
+  --text-white: #E2E8F0;--border: #E2E8F0;--border-light: #F1F5F9;
+  --bg-page: #F8FAFC;--bg-card: #FFFFFF;
+  --shadow-card: 0 1px 3px rgba(0,0,0,.05);--shadow-modal: 0 8px 24px rgba(0,0,0,.12);
+  --radius-sm: 4px;--radius-md: 8px;--radius-lg: 12px;
+  --transition-fast: 150ms cubic-bezier(.23,1,.32,1);
+  --transition-modal: 250ms cubic-bezier(.65,0,.35,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:13px;color:var(--text-primary);background:var(--bg-page);display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:220px;background:var(--sidebar-bg);display:flex;flex-direction:column;flex-shrink:0;transition:width .25s ease-out;overflow:hidden;z-index:100}
+.sidebar.collapsed{width:64px}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sidebar-logo svg{flex-shrink:0}
+.sidebar-logo span{color:var(--text-white);font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden}
+.sidebar.collapsed .sidebar-logo span{display:none}
+.sidebar-menu{flex:1;padding:8px 0;overflow-y:auto}
+.menu-group{margin-bottom:2px}
+.menu-group-title{display:flex;align-items:center;gap:10px;padding:10px 18px;color:var(--text-muted);font-size:12px;cursor:pointer;user-select:none;transition:background var(--transition-fast)}
+.menu-group-title:hover{background:var(--sidebar-hover)}
+.menu-group-title .arrow{margin-left:auto;transition:transform .25s ease-out;width:16px;height:16px}
+.menu-group.open .menu-group-title .arrow{transform:rotate(90deg)}
+.menu-sub{display:none;padding:2px 0}
+.menu-group.open .menu-sub{display:block}
+.menu-item{display:flex;align-items:center;gap:10px;padding:8px 18px 8px 48px;color:var(--text-muted);font-size:13px;text-decoration:none;transition:all var(--transition-fast);white-space:nowrap}
+.menu-item:hover{color:var(--text-white);background:var(--sidebar-hover)}
+.menu-item.active{color:var(--primary);background:var(--sidebar-active);font-weight:500}
+.sidebar.collapsed .menu-group-title span,.sidebar.collapsed .menu-sub{display:none}
+.sidebar-toggle{display:flex;align-items:center;justify-content:center;padding:12px;border-top:1px solid rgba(255,255,255,.06);cursor:pointer;color:var(--text-muted);transition:color var(--transition-fast)}
+.sidebar-toggle:hover{color:var(--text-white)}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow-x:hidden;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--bg-card);border-bottom:1px solid var(--border);flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-title{font-size:16px;font-weight:600}
+.topbar-breadcrumb{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.page-content{padding:20px 24px;flex:1;overflow-y:auto}
+
+/* Card */
+.card{background:var(--bg-card);border-radius:var(--radius-md);box-shadow:var(--shadow-card);margin-bottom:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border-light)}
+.card-title{font-size:14px;font-weight:600}
+.card-body{padding:16px 20px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;font-size:13px;font-weight:500;border-radius:var(--radius-sm);cursor:pointer;border:1px solid transparent;transition:all var(--transition-fast);white-space:nowrap;height:32px}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-hover)}
+.btn-outline{background:var(--bg-card);border-color:var(--border);color:var(--text-primary)}.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-danger{background:var(--error);color:#fff}.btn-danger:hover{background:#DC2626}
+.btn-sm{padding:4px 10px;height:28px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+
+/* Table */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border-light);white-space:nowrap;font-size:13px}
+th{font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--bg-page)}
+td{color:var(--text-primary)}
+tr:hover td{background:#FAFBFC}
+tr.row-total td{font-weight:700;background:#FEF2F2;border-top:2px solid var(--primary)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.td-actions{display:flex;gap:8px}
+
+/* Tags */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:12px;font-weight:500}
+.tag-info{background:#FEE2E2;color:#991B1B}
+.tag-success{background:#D1FAE5;color:#065F46}
+.tag-default{background:#F1F5F9;color:#475569}
+
+/* Section Tabs */
+.section-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--border-light)}
+.section-tab{padding:10px 20px;font-size:14px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all var(--transition-fast);background:none;border-left:none;border-right:none;border-top:none}
+.section-tab:hover{color:var(--primary)}
+.section-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.section-panel{display:none}
+.section-panel.active{display:block}
+
+/* Switch */
+.switch{position:relative;display:inline-block;width:38px;height:22px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#CBD5E1;border-radius:22px;transition:background var(--transition-fast)}
+.switch-slider::before{content:"";position:absolute;width:18px;height:18px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:transform var(--transition-fast)}
+.switch input:checked+.switch-slider{background:var(--primary)}
+.switch input:checked+.switch-slider::before{transform:translateX(16px)}
+
+/* Multi-select Dropdown */
+.ms-dropdown{position:relative;display:inline-block}
+.ms-trigger{display:inline-flex;align-items:center;gap:6px;padding:6px 28px 6px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-primary);cursor:pointer;min-width:130px;height:32px;white-space:nowrap;position:relative;transition:border-color var(--transition-fast)}
+.ms-trigger:hover{border-color:var(--primary)}
+.ms-trigger.error{border-color:var(--error)}
+.ms-arrow{position:absolute;right:8px;top:50%;transform:translateY(-50%);pointer-events:none;transition:transform .2s ease}
+.ms-dropdown.open .ms-arrow{transform:translateY(-50%) rotate(180deg)}
+.ms-dropdown.open .ms-trigger{border-color:var(--primary)}
+.ms-panel{display:none;position:fixed;z-index:9999;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-modal);min-width:190px;padding:6px 0;max-height:320px;overflow-y:auto}
+.ms-dropdown.open .ms-panel{display:block}
+.ms-option{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:13px;color:var(--text-primary);cursor:pointer;transition:background var(--transition-fast)}
+.ms-option:hover{background:var(--border-light)}
+.ms-option input[type="checkbox"]{width:14px;height:14px;accent-color:var(--primary);margin:0;cursor:pointer}
+.ms-group + .ms-group{border-top:1px solid var(--border-light)}
+.ms-group-title{position:sticky;top:0;z-index:1;background:#F7F8FA;padding:5px 12px;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.5px}
+.ms-error-msg{font-size:11px;color:var(--error);margin-top:4px;display:none}
+
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-modal);width:580px;max-height:85vh;overflow-y:auto;animation:modalIn var(--transition-modal)}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border-light)}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;color:var(--text-muted);border-radius:var(--radius-sm);transition:all var(--transition-fast)}
+.modal-close:hover{background:var(--border-light)}
+.modal-body{padding:20px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--border-light)}
+
+/* Form */
+.form-group{margin-bottom:14px}.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:4px}
+.form-label .required{color:var(--error);margin-left:2px}
+.form-input,.form-select,.form-textarea{width:100%;padding:7px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);outline:none;transition:border var(--transition-fast);font-family:inherit}
+.form-input:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(220,38,38,.1)}
+.form-input.error,.form-select.error{border-color:var(--error)}
+.form-error{font-size:11px;color:var(--error);margin-top:4px;display:none}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-textarea{resize:vertical;min-height:60px}
+.form-hint{font-size:11px;color:var(--text-muted);margin-top:4px}
+
+/* Price Section Box */
+.price-box{background:var(--bg-page);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;margin-bottom:14px}
+.price-box-title{font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+
+/* Toast */
+.toast-container{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#1E293B;color:#fff;padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;box-shadow:var(--shadow-modal);animation:toastIn var(--transition-fast);text-align:center}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Plan Pricing */
+.plan-price-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border-light)}
+.plan-price-row:last-child{border-bottom:none}
+.plan-price-label{font-size:12px;color:var(--text-secondary)}
+.plan-divider{height:1px;background:var(--border-light);margin:16px 0}
+.discount-section-title{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.discount-section-title::before{content:"";width:3px;height:14px;background:var(--primary);border-radius:2px}
+.discount-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.discount-block{
+  background:var(--bg-card);border-radius:var(--radius-md);
+  box-shadow:var(--shadow-card);border-left:3px solid var(--info);
+  overflow:hidden;
+}
+.discount-block.yearly{border-left-color:#8B5CF6}
+.discount-block-header{
+  padding:10px 14px;background:var(--bg-page);
+  border-bottom:1px solid var(--border-light);
+  font-size:13px;font-weight:600;color:var(--text-primary);
+  display:flex;align-items:center;gap:6px;
+}
+.discount-block-body{padding:12px 14px}
+.discount-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--border-light)}
+.discount-row:last-child{border-bottom:none}
+.discount-row-label{font-size:12px;color:var(--text-secondary)}
+.discount-row-val{font-size:13px;font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums}
+.key-copy{padding:2px 8px;height:24px;font-size:11px;flex-shrink:0}
+.country-tags{display:flex;gap:4px;flex-wrap:wrap}
+/* Component Modal */
+#component-modal .modal{width:640px}
+.comp-addon-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px dashed var(--border-light)}
+.comp-addon-row:last-child{border-bottom:none}
+.comp-addon-label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap}
+.comp-addon-label .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.comp-addon-label.adv .dot{background:#3B82F6}
+.comp-addon-label.pro .dot{background:#8B5CF6}
+.comp-addon-control{display:flex;align-items:center;gap:12px}
+.comp-addon-control .form-select{width:170px;flex-shrink:0}
+.comp-addon-control .price-input-wrap input{width:120px;flex:none}
+.comp-sub-label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap;margin-right:auto}
+.comp-sub-label .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Plan Modal */
+.plan-modal-section{margin-bottom:20px}
+.plan-modal-section:last-child{margin-bottom:0}
+.plan-modal-section-title{
+  font-size:13px;font-weight:600;color:var(--text-primary);
+  margin-bottom:10px;padding-bottom:8px;
+  border-bottom:1px solid var(--border-light);
+  display:flex;align-items:center;gap:8px;
+}
+.plan-modal-section-title .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.plan-modal-section-title.adv .dot{background:#3B82F6}
+.plan-modal-section-title.pro .dot{background:#8B5CF6}
+.plan-modal-card{
+  border:1px solid var(--border-light);
+  border-radius:var(--radius-md);
+  background:var(--bg-page);
+  padding:2px 16px;
+}
+.plan-price-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:12px 0;border-bottom:1px dashed var(--border-light);
+}
+.plan-price-row:last-child{border-bottom:none}
+.plan-price-label{font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap}
+.plan-price-sub{font-size:11px;color:var(--text-muted);margin-left:8px;font-weight:400}
+.plan-price-control{display:flex;align-items:center;gap:12px}
+.plan-price-control .switch{transform:scale(.85)}
+.plan-price-control .price-input-wrap{width:auto}
+.plan-price-control .price-input-wrap input{width:120px;flex:none}
+/* 套餐底价合并网格 */
+.plan-modal-tip{
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;color:var(--text-secondary);
+  background:#FEF2F2;border:1px solid #FECACA;
+  border-radius:var(--radius-sm);padding:8px 12px;margin-top:4px;
+}
+.plan-modal-tip svg{flex-shrink:0}
+.price-input-wrap{display:flex;align-items:center;gap:4px}
+/* 套餐名称多语言输入（16 语言双列） */
+#name-i18n-list{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+.i18n-row{display:flex;align-items:center;gap:6px}
+.i18n-tag{flex-shrink:0;width:104px;font-size:11.5px;color:var(--text-secondary);background:var(--border-light);border-radius:4px;padding:7px 6px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* 组件列表：分组平铺（分类仅作汇总，不可勾选；组件单行勾选） */
+.ct-list{max-height:300px;overflow-y:auto}
+.ct-list::-webkit-scrollbar{width:6px}
+.ct-list::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
+.ct-list::-webkit-scrollbar-thumb:hover{background:#94A3B8}
+.ct-group{border-bottom:1px solid var(--border-light)}
+.ct-group:last-child{border-bottom:none}
+.ct-group-head{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--bg-page);cursor:pointer;user-select:none;transition:background var(--transition-fast)}
+.ct-group-head:hover{background:#F1F5F9}
+.ct-caret{width:12px;height:12px;flex-shrink:0;color:var(--text-muted);transition:transform .2s ease}
+.ct-caret.open{transform:rotate(90deg)}
+.ct-group-name{font-size:12.5px;font-weight:600;color:var(--text-primary)}
+.ct-group-count{font-size:11px;color:var(--text-secondary);background:var(--bg-card);border:1px solid var(--border);border-radius:100px;padding:1px 8px}
+.ct-group-sel{margin-left:auto;font-size:11px;font-weight:600;color:var(--primary)}
+.ct-group-body{padding:2px 0}
+.ct-item{display:flex;align-items:center;gap:9px;padding:9px 14px 9px 30px;cursor:pointer;transition:background var(--transition-fast)}
+.ct-item:hover{background:var(--border-light)}
+.ct-item input[type="checkbox"]{width:15px;height:15px;accent-color:var(--primary);margin:0;cursor:pointer;flex-shrink:0}
+.ct-item-name{font-size:13px;color:var(--text-secondary)}
+.ct-item.checked{background:#FEF2F2}
+.ct-item.checked .ct-item-name{color:var(--primary);font-weight:500}
+/* 功能分组 */
+.dict-group-row td{background:var(--bg-page)}
+.dict-gname{font-size:13px;font-weight:600;color:var(--text-primary)}
+.dict-gkey{font-size:11px;color:var(--text-muted);margin-left:8px}
+.dict-gc{float:right;font-size:11px;color:var(--text-muted)}
+.dict-key{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--bg-page);border:1px solid var(--border);border-radius:4px;padding:2px 6px;color:var(--text-secondary)}
+.dict-caps-cell{white-space:normal}
+.dict-caps-cell i{font-style:normal;font-size:11px;color:var(--text-muted);background:var(--bg-page);border:1px solid var(--border);border-radius:3px;padding:0 4px;margin-left:4px;white-space:nowrap}
+.dict-cap-row{display:flex;gap:8px;align-items:center;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:8px 10px;margin-bottom:8px;background:var(--bg-card)}
+.dict-cap-row .dc-name{flex:1.2;min-width:0}
+.dict-cap-row .dc-perm{flex:1;min-width:0;font-family:ui-monospace,Menlo,monospace}
+.dict-cap-row .dc-type{width:104px;flex-shrink:0}
+.dict-order{display:inline-block;min-width:18px;padding:0 4px;text-align:center;font-size:11px;color:var(--text-muted);background:var(--bg-page);border:1px solid var(--border);border-radius:4px;margin-right:6px}
+.cat-mgr-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.cat-mgr-row .cm-order{width:90px;flex-shrink:0}
+.cat-mgr-row .cm-name{flex:1;min-width:0}
+.cat-mgr-row .btn{flex-shrink:0}
+.form-input:disabled{background:var(--bg-page);color:var(--text-muted);cursor:not-allowed}
+.dc-pf input[type="checkbox"]{width:14px;height:14px;accent-color:var(--primary);margin:0;cursor:pointer}
+/* 权限类型 / 平台标签 */
+.pt{display:inline-block;font-size:10.5px;line-height:1;padding:2.5px 6px;border-radius:100px;background:var(--bg-page);border:1px solid var(--border);color:var(--text-secondary);margin-left:4px;vertical-align:1px;white-space:nowrap}
+.pt-menu{background:#FEE2E2;border-color:#FECACA;color:#991B1B}
+.pt-button{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
+.pt-data{background:#D1FAE5;border-color:#A7F3D0;color:#065F46}
+.pt-free{background:#D1FAE5;border-color:#A7F3D0;color:#065F46}
+.pt-paid{background:#FEE2E2;border-color:#FECACA;color:#991B1B}
+.price-input-wrap input{flex:1}
+.price-input-wrap .currency{font-size:12px;color:var(--text-muted);white-space:nowrap}
+.not-include-toggle{display:flex;align-items:center;gap:8px;margin-top:4px}
+.not-include-toggle span{font-size:12px;color:var(--text-secondary)}
+
+/* ===== 新增/编辑套餐弹窗优化 ===== */
+#component-modal .modal{width:760px}
+#component-modal .modal-body{padding:20px 24px}
+#component-modal .modal-footer{position:sticky;bottom:0;background:var(--bg-card);box-shadow:0 -1px 0 var(--border-light);z-index:2}
+.plan-modal-section{scroll-margin-top:12px;border-radius:var(--radius-md)}
+.plan-modal-section.invalid{animation:secShake .35s ease}
+@keyframes secShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+
+/* 多语言名称：可滚动区域，突出必填主语言 */
+.i18n-scroll{max-height:220px;overflow-y:auto;padding:2px 6px 2px 0;margin:0 -2px}
+.i18n-scroll::-webkit-scrollbar{width:6px}
+.i18n-scroll::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
+.i18n-scroll::-webkit-scrollbar-thumb:hover{background:#94A3B8}
+.i18n-row.primary .i18n-tag{background:rgba(220,38,38,.1);color:var(--primary);font-weight:600}
+.i18n-row.primary .form-input{border-color:#FECACA}
+
+/* 价格双列网格 */
+.plan-price-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}
+.plan-price-grid .comp-addon-row{flex-direction:column;align-items:stretch;gap:6px;padding:0;border:none}
+.plan-price-grid .comp-addon-label{margin-bottom:0}
+.plan-price-grid .price-input-wrap input{width:100%!important}
+
+/* 组件列表：计数徽标 + 工具条 */
+.ct-count{margin-left:auto;font-size:11px;font-weight:600;color:var(--primary);background:rgba(220,38,38,.1);padding:2px 10px;border-radius:100px;white-space:nowrap}
+.ct-toolbar{display:flex;align-items:center;gap:14px;padding:10px 14px;border-bottom:1px dashed var(--border-light);background:var(--bg-page)}
+.ct-toolbar .ct-tip{font-size:12px;color:var(--text-muted)}
+.ct-link{font-size:12px;color:var(--primary);cursor:pointer;user-select:none;font-weight:500}
+.ct-link:hover{text-decoration:underline}
+
+/* 引导式步骤徽标 */
+.plan-modal-section-title .step{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+
+</style>
+<style>
+/* 报表权限筛选栏 */
+#panel-reportperm .filter-bar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px}
+#panel-reportperm .filter-item{display:flex;flex-direction:column;gap:4px}
+#panel-reportperm .filter-label{font-size:12px;color:var(--text-secondary)}
+#panel-reportperm .filter-input,#panel-reportperm .filter-select{padding:6px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);min-width:120px;height:32px}
+#panel-reportperm .filter-input:focus,#panel-reportperm .filter-select:focus{border-color:var(--primary);outline:none}
+</style>
+<style>
+#sec-perms .perm-tabs{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border-light);background:var(--bg-page)}
+#sec-perms .perm-tab{padding:5px 14px;font-size:12.5px;border:1px solid var(--border);background:#fff;border-radius:100px;cursor:pointer;color:var(--text-secondary)}
+#sec-perms .perm-tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
+#sec-perms .perm-search{margin-left:auto;width:180px;height:28px;padding:0 10px;font-size:12.5px;border:1px solid var(--border);border-radius:6px;background:#fff}
+#sec-perms .perm-pane{max-height:300px;overflow-y:auto;padding:8px 12px 12px}
+#sec-perms .perm-group{font-size:11.5px;font-weight:600;color:var(--text-muted);margin:10px 0 4px}
+#sec-perms .perm-row{display:flex;align-items:center;gap:8px;padding:6px 2px;border-bottom:1px dashed var(--border-light);font-size:13px}
+#sec-perms .perm-row:last-child{border-bottom:none}
+#sec-perms .perm-id{margin-left:auto;font-size:11px;color:var(--text-muted)}
+#sec-perms .perm-scope{font-size:11px;padding:1px 6px;border-radius:3px;background:#F1F5F9;color:#475569}
+#sec-perms .perm-scope.on{background:#FDE2E2;color:#991B1B}
+#sec-perms .perm-toolbar{display:flex;gap:12px;padding:6px 12px 0;font-size:12px}
+#sec-perms .perm-link{color:var(--primary);cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#DC2626"/><text x="16" y="21" text-anchor="middle" fill="white" font-size="14" font-weight="700">M</text></svg>
+    <span>Mysany 管理后台</span>
+  </div>
+  <nav class="sidebar-menu">
+    <div class="menu-group open">
+      <div class="menu-group-title" onclick="toggleMenu(this)">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        <span>订阅管理</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="m9 18 6-6-6-6"/></svg>
+      </div>
+      <div class="menu-sub">
+        <a class="menu-item" href="订单管理.html">订单管理</a>
+        <a class="menu-item" href="订阅记录.html">订阅记录</a>
+        <a class="menu-item active" href="订阅配置.html">订阅配置</a>
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-toggle" onclick="toggleSidebar()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">订阅配置</div>
+      <div class="topbar-breadcrumb">订阅管理 <span style="color:var(--text-secondary)">/</span> 订阅配置</div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <!-- Section Tabs -->
+    <div class="section-tabs">
+      <button class="section-tab active" onclick="switchSectionTab('component',this)">套餐管理</button>
+      <button class="section-tab" onclick="switchSectionTab('discount',this)">全局折扣配置</button>
+      <button class="section-tab" onclick="switchSectionTab('compdict',this)">功能分组</button>
+      <button class="section-tab" onclick="switchSectionTab('reportperm',this)">报表权限</button>
+    </div>
+
+    <!-- Tab 1: 套餐管理（列表式） -->
+    <div class="section-panel active" id="panel-component">
+
+      <!-- 筛选条 -->
+      <div class="card">
+        <div class="card-body" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 20px">
+          <span style="font-size:13px;color:var(--text-secondary)">套餐名称</span>
+          <input type="text" class="form-input" id="pkg-search" placeholder="请输入套餐名称" style="width:220px" oninput="renderPkgs()">
+          <button class="btn btn-primary" style="height:32px" onclick="renderPkgs();showToast('查询完成')">查询</button>
+          <button class="btn btn-outline" style="height:32px" onclick="document.getElementById('pkg-search').value='';renderPkgs()">重置</button>
+          <button class="btn btn-primary" style="height:32px;margin-left:auto" onclick="openAddPkg()">+ 新增</button>
+        </div>
+      </div>
+
+      <!-- 套餐列表 -->
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>套餐名称</th><th>状态</th><th class="num">月付金额</th><th class="num">年付金额</th><th>已分配权限</th><th>创建时间</th><th style="width:180px">操作</th></tr>
+            </thead>
+            <tbody id="pkg-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /panel-component -->
+
+    <!-- Tab 2: 全局折扣配置 -->
+    <div class="section-panel" id="panel-discount">
+      <!-- Card: 国家级折扣配置（全局折扣入口在卡片头部） -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">国家级折扣配置</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-sm btn-outline" onclick="openGlobalDiscount()">全局折扣配置</button>
+            <button class="btn btn-sm btn-primary" onclick="addCountryDiscount()">+ 新增国家配置</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>国家/地区</th>
+                  <th>折扣下限</th>
+                  <th>折扣上限</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="country-discount-list">
+                <tr data-countries="新加坡,阿联酋,德国,英国">
+                  <td><div class="country-tags"><span class="tag tag-default">新加坡</span><span class="tag tag-default">阿联酋</span><span class="tag tag-default">德国</span><span class="tag tag-default">英国</span></div></td>
+                  <td class="num">9.0折</td>
+                  <td class="num">9.8折</td>
+                  <td><label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label></td>
+                  <td><button class="btn btn-sm btn-outline" onclick="editCountryDiscount(this)">编辑</button><button class="btn btn-sm btn-outline" onclick="delCountryDiscount(this)">删除</button></td>
+                </tr>
+                <tr data-countries="马来西亚,印度尼西亚">
+                  <td><div class="country-tags"><span class="tag tag-default">马来西亚</span><span class="tag tag-default">印度尼西亚</span></div></td>
+                  <td class="num">8.0折</td>
+                  <td class="num">9.5折</td>
+                  <td><label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label></td>
+                  <td><button class="btn btn-sm btn-outline" onclick="editCountryDiscount(this)">编辑</button><button class="btn btn-sm btn-outline" onclick="delCountryDiscount(this)">删除</button></td>
+                </tr>
+                <tr data-countries="菲律宾,越南,泰国,南非">
+                  <td><div class="country-tags"><span class="tag tag-default">菲律宾</span><span class="tag tag-default">越南</span><span class="tag tag-default">泰国</span><span class="tag tag-default">南非</span></div></td>
+                  <td class="num">7.5折</td>
+                  <td class="num">9.0折</td>
+                  <td><label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label></td>
+                  <td><button class="btn btn-sm btn-outline" onclick="editCountryDiscount(this)">编辑</button><button class="btn btn-sm btn-outline" onclick="delCountryDiscount(this)">删除</button></td>
+                </tr>
+                <tr data-countries="沙特">
+                  <td><div class="country-tags"><span class="tag tag-default">沙特</span></div></td>
+                  <td class="num">8.8折</td>
+                  <td class="num">9.6折</td>
+                  <td><label class="switch"><input type="checkbox"><span class="switch-slider"></span></label></td>
+                  <td><button class="btn btn-sm btn-outline" onclick="editCountryDiscount(this)">编辑</button><button class="btn btn-sm btn-outline" onclick="delCountryDiscount(this)">删除</button></td>
+                </tr>
+                <tr data-countries="巴西,墨西哥">
+                  <td><div class="country-tags"><span class="tag tag-default">巴西</span><span class="tag tag-default">墨西哥</span></div></td>
+                  <td class="num">7.0折</td>
+                  <td class="num">9.0折</td>
+                  <td><label class="switch"><input type="checkbox" checked><span class="switch-slider"></span></label></td>
+                  <td><button class="btn btn-sm btn-outline" onclick="editCountryDiscount(this)">编辑</button><button class="btn btn-sm btn-outline" onclick="delCountryDiscount(this)">删除</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /panel-discount -->
+
+    <!-- Tab 3: 功能分组 -->
+    <div class="section-panel" id="panel-compdict">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">功能分组</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-sm btn-outline" onclick="openCategoryMgr()">+ 分类管理</button>
+            <button class="btn btn-sm btn-primary" onclick="openAddDictComp()">+ 新增组件</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>分类</th><th>组件名称</th><th>权限点</th><th style="width:160px">操作</th></tr>
+              </thead>
+              <tbody id="dict-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /panel-compdict -->
+
+    <!-- Tab 4: 报表权限 -->
+    <div class="section-panel" id="panel-reportperm">
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header">
+          <span class="card-title">报表权限（按报表 + 口径控制可见版本）</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-sm btn-outline" onclick="resetReportPerm()">恢复默认</button>
+            <button class="btn btn-sm btn-primary" onclick="openReportEdit()">+ 新增报表</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="filter-bar" style="margin-bottom:12px">
+            <div class="filter-item">
+              <div class="filter-label">报表名称</div>
+              <input class="filter-input" id="rp-kw" placeholder="输入报表名称 / key" style="width:200px" oninput="renderReportPerm()">
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">分类</div>
+              <select class="filter-select" id="rp-cat" onchange="renderReportPerm()">
+                <option value="">全部分类</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">所需版本</div>
+              <select class="filter-select" id="rp-rank" onchange="renderReportPerm()">
+                <option value="">全部版本</option>
+                <option value="0">免费版</option>
+                <option value="1">进阶版</option>
+                <option value="2">专业版</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <div class="filter-label">状态</div>
+              <select class="filter-select" id="rp-status" onchange="renderReportPerm()">
+                <option value="">全部状态</option>
+                <option value="on">上架</option>
+                <option value="off">下架</option>
+              </select>
+            </div>
+            <div class="filter-item" style="margin-left:auto">
+              <div class="filter-label">&nbsp;</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:12px;color:var(--text-muted)" id="rp-selected">已选 0 项</span>
+                <select class="filter-select" id="rp-bulk-scope" style="width:110px">
+                  <option value="both">单机+机群</option>
+                  <option value="single">仅单机</option>
+                  <option value="fleet">仅机群</option>
+                </select>
+                <select class="filter-select" id="rp-bulk-rank" style="width:110px">
+                  <option value="0">免费版</option>
+                  <option value="1">进阶版</option>
+                  <option value="2">专业版</option>
+                </select>
+                <button class="btn btn-sm btn-primary" onclick="applyBulkRank()">批量应用</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:36px"><input type="checkbox" id="rp-check-all" onchange="toggleAllReport(this)"></th>
+                  <th>报表名称</th>
+                  <th>分类</th>
+                  <th style="width:140px">单机所需版本</th>
+                  <th style="width:140px">机群所需版本</th>
+                  <th style="width:90px">语言</th>
+                  <th style="width:90px">状态</th>
+                  <th style="width:150px">最近更新</th>
+                  <th style="width:120px">操作</th>
+                </tr>
+              </thead>
+              <tbody id="rp-tbody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--text-muted);line-height:1.6">
+            权限判定：用户当前生效版本等级 ≥ 报表对应口径的所需版本才可查看；未生效、已过期、已取消按免费版计算。
+            16 种语言仅影响展示文案，不参与权限；调整门槛后已开通用户保留原有权益。
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">套餐覆盖（可选，用于例外放行 / 排除）</span>
+          <button class="btn btn-sm btn-primary" onclick="openGrantAdd()">+ 新增覆盖</button>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>套餐</th><th>报表</th><th>口径</th><th>类型</th><th style="width:100px">操作</th></tr>
+              </thead>
+              <tbody id="grant-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /panel-reportperm -->
+  </div>
+</div>
+
+<!-- 国家折扣配置弹窗 -->
+<div class="modal-overlay" id="country-discount-modal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <span class="modal-title" id="cd-modal-title">新增国家折扣配置</span>
+      <button class="modal-close" onclick="closeModal('country-discount-modal')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">选择国家 <span style="color:var(--error)">*</span></label>
+        <div class="ms-dropdown" id="ms-cd-country">
+          <button class="ms-trigger error" onclick="toggleMultiSelect(this);event.stopPropagation()" type="button" style="height:32px;min-width:180px"><span class="ms-label">请选择国家</span><svg class="ms-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="ms-panel">
+            <div class="ms-group">
+              <div class="ms-group-title">亚洲</div>
+              <label class="ms-option"><input type="checkbox" data-val="新加坡" onchange="clearCdMsError(this)"> 新加坡</label>
+              <label class="ms-option"><input type="checkbox" data-val="印度尼西亚" onchange="clearCdMsError(this)"> 印度尼西亚</label>
+              <label class="ms-option"><input type="checkbox" data-val="越南" onchange="clearCdMsError(this)"> 越南</label>
+              <label class="ms-option"><input type="checkbox" data-val="马来西亚" onchange="clearCdMsError(this)"> 马来西亚</label>
+              <label class="ms-option"><input type="checkbox" data-val="中国" onchange="clearCdMsError(this)"> 中国</label>
+              <label class="ms-option"><input type="checkbox" data-val="台湾" onchange="clearCdMsError(this)"> 台湾</label>
+              <label class="ms-option"><input type="checkbox" data-val="香港" onchange="clearCdMsError(this)"> 香港</label>
+              <label class="ms-option"><input type="checkbox" data-val="阿联酋" onchange="clearCdMsError(this)"> 阿联酋</label>
+              <label class="ms-option"><input type="checkbox" data-val="沙特" onchange="clearCdMsError(this)"> 沙特</label>
+            </div>
+            <div class="ms-group">
+              <div class="ms-group-title">欧洲</div>
+              <label class="ms-option"><input type="checkbox" data-val="德国" onchange="clearCdMsError(this)"> 德国</label>
+              <label class="ms-option"><input type="checkbox" data-val="英国" onchange="clearCdMsError(this)"> 英国</label>
+              <label class="ms-option"><input type="checkbox" data-val="法国" onchange="clearCdMsError(this)"> 法国</label>
+            </div>
+            <div class="ms-group">
+              <div class="ms-group-title">北美洲</div>
+              <label class="ms-option"><input type="checkbox" data-val="墨西哥" onchange="clearCdMsError(this)"> 墨西哥</label>
+            </div>
+            <div class="ms-group">
+              <div class="ms-group-title">南美洲</div>
+              <label class="ms-option"><input type="checkbox" data-val="巴西" onchange="clearCdMsError(this)"> 巴西</label>
+            </div>
+            <div class="ms-group">
+              <div class="ms-group-title">非洲</div>
+              <label class="ms-option"><input type="checkbox" data-val="南非" onchange="clearCdMsError(this)"> 南非</label>
+              <label class="ms-option"><input type="checkbox" data-val="尼日利亚" onchange="clearCdMsError(this)"> 尼日利亚</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-error cd-ms-error" style="display:none">请选择一个国家</div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">折扣下限 <span style="color:var(--error)">*</span></label>
+          <div style="display:flex;align-items:center;gap:4px">
+            <input type="number" class="form-input error" id="cd-dc-low" value="" min="1" max="10" step="0.1" style="width:80px" oninput="clearCdRangeError(this)">
+            <span style="font-size:12px;color:var(--text-muted)">折</span>
+          </div>
+          <div class="form-error">请填写折扣下限（0-10 折，0 表示免费）</div>
+        </div>
+        <span style="font-size:16px;color:var(--text-muted);padding-bottom:8px">~</span>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">折扣上限 <span style="color:var(--error)">*</span></label>
+          <div style="display:flex;align-items:center;gap:4px">
+            <input type="number" class="form-input error" id="cd-dc-high" value="" min="1" max="10" step="0.1" style="width:80px" oninput="clearCdRangeError(this)">
+            <span style="font-size:12px;color:var(--text-muted)">折</span>
+          </div>
+          <div class="form-error">请填写折扣上限（0-10 折，0 表示免费）</div>
+        </div>
+      </div>
+      <div class="form-error" id="cd-range-error" style="margin-top:8px;display:none"></div>
+      <div class="form-group" style="margin-top:14px;margin-bottom:0">
+        <label class="form-label">状态</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <label class="switch"><input type="checkbox" id="cd-status" checked><span class="switch-slider"></span></label>
+          <span style="font-size:12px;color:var(--text-muted)">启用后该国家按此折扣区间随机折扣</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('country-discount-modal')">取消</button>
+      <button class="btn btn-primary" onclick="saveCountryDiscount()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 全局折扣配置弹窗 -->
+<div class="modal-overlay" id="global-discount-modal">
+  <div class="modal" style="width:520px" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div>
+        <span class="modal-title">全局折扣范围</span>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">作为默认值，未单独配置的国家将使用此折扣范围</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('global-discount-modal')" aria-label="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="plan-modal-card" style="padding:4px 16px">
+        <div class="plan-price-row">
+          <div class="plan-price-label">随机折扣总开关 <span class="plan-price-sub">关闭后全部国家按原价销售</span></div>
+          <label class="switch"><input type="checkbox" checked id="discount-toggle" onchange="toggleGlobalDiscount(this)"><span class="switch-slider"></span></label>
+        </div>
+      </div>
+
+      <div id="global-discount-fields" style="margin-top:14px">
+        <div class="plan-modal-card" style="padding:4px 16px">
+          <div class="comp-addon-row">
+            <div class="comp-addon-label"><span class="dot" style="background:var(--primary)"></span>折扣范围 <span style="font-weight:400;color:var(--text-muted);font-size:11px">区间内随机</span></div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div class="price-input-wrap">
+                <input type="number" class="form-input" id="global-dc-low" value="8.0" min="0" max="10" step="0.1" style="width:80px" oninput="clearDiscountError(this)">
+                <span class="currency">折</span>
+              </div>
+              <span style="font-size:16px;color:var(--text-muted)">~</span>
+              <div class="price-input-wrap">
+                <input type="number" class="form-input" id="global-dc-high" value="8.9" min="0" max="10" step="0.1" style="width:80px" oninput="clearDiscountError(this)">
+                <span class="currency">折</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:8px">
+          <div class="form-error" style="display:none" id="dc-low-err">请填写折扣下限（0-10 折，0 表示免费）</div>
+          <div class="form-error" style="display:none" id="dc-high-err">请填写折扣上限（0-10 折，0 表示免费）</div>
+          <div class="form-error" id="dc-range-error" style="display:none"></div>
+        </div>
+        <div class="plan-modal-tip" style="margin-top:10px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          校验规则：下限 ≤ 上限，0~10 折，保留 1 位小数；0 折表示无需付费即可使用。
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="resetGlobalDiscount()">恢复默认</button>
+      <button class="btn btn-outline" onclick="closeModal('global-discount-modal')">取消</button>
+      <button class="btn btn-primary" onclick="saveGlobalDiscount()">保存全局配置</button>
+    </div>
+  </div>
+</div>
+
+<!-- 套餐底价编辑弹窗 -->
+<!-- 新增/编辑套餐弹窗 -->
+<div class="modal-overlay" id="component-modal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title-text">新增套餐</span>
+      <button class="modal-close" onclick="closeModal('component-modal')" aria-label="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="component-form" onsubmit="handleFormSubmit(event)">
+      <div class="modal-body">
+
+        <div class="plan-modal-section">
+          <div class="plan-modal-section-title"><span class="step" style="background:var(--primary)">1</span>基本信息</div>
+          <div class="plan-modal-card">
+            <div class="comp-addon-row" style="align-items:flex-start">
+              <div class="comp-addon-label" style="padding-top:7px">套餐名称 <span class="required" style="color:var(--error)">*</span></div>
+              <div class="comp-addon-control" style="flex:1">
+                <div class="i18n-scroll"><div id="name-i18n-list"></div></div>
+              </div>
+            </div>
+            <div class="form-error" id="err-name" style="display:none">请至少填写一种语言的套餐名称</div>
+            <div class="comp-addon-row">
+              <div class="comp-addon-label">状态 <span class="required" style="color:var(--error)">*</span></div>
+              <div class="comp-addon-control" style="display:flex;align-items:center;gap:8px">
+                <label class="switch"><input type="checkbox" id="inp-status" checked><span class="switch-slider"></span></label>
+                <span style="font-size:12px;color:var(--text-muted)">启用后用户端可见</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="plan-modal-section">
+          <div class="plan-modal-section-title"><span class="step" style="background:var(--primary)">2</span>价格与有效期 <span style="font-weight:400;color:var(--text-muted);font-size:11px">分为月付价格与年付价格，价格统一锚定 USD；先按国家折扣换算，再按所在国币种与汇率展示</span></div>
+          <div class="plan-modal-card">
+            <div class="plan-price-grid">
+              <div>
+                <div class="comp-addon-row">
+                  <div class="comp-addon-label"><span class="dot" style="background:#3B82F6"></span>月付价格 <span class="required" style="color:var(--error)">*</span></div>
+                  <div class="price-input-wrap">
+                    <input type="number" class="form-input" id="inp-monthly" value="0" min="0" step="0.01">
+                    <span class="currency">$ /月</span>
+                  </div>
+                </div>
+                <div class="form-error" id="err-monthly" style="display:none">请填写 ≥ 0 的月付价格</div>
+              </div>
+              <div>
+                <div class="comp-addon-row">
+                  <div class="comp-addon-label"><span class="dot" style="background:#8B5CF6"></span>年付价格 <span class="required" style="color:var(--error)">*</span></div>
+                  <div class="price-input-wrap">
+                    <input type="number" class="form-input" id="inp-annual" value="0" min="0" step="0.01">
+                    <span class="currency">$ /年</span>
+                  </div>
+                </div>
+                <div class="form-error" id="err-annual" style="display:none">请填写 ≥ 0 的年付价格</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="plan-modal-section">
+          <div class="plan-modal-section-title"><span class="step" style="background:var(--warning)">3</span>试用期限</div>
+          <div class="plan-modal-card">
+            <div class="comp-addon-row">
+              <div class="comp-addon-label"><span class="dot" style="background:var(--warning)"></span>每月试用天数 <span class="required" style="color:var(--error)">*</span></div>
+              <div class="comp-addon-control">
+                <div class="price-input-wrap">
+                  <input type="number" class="form-input" id="inp-trial" value="3" min="0" max="31" step="1" style="width:90px">
+                  <span class="currency">天/月</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-error" id="err-trial" style="display:none">请输入 0-31 之间的有效天数</div>
+        </div>
+
+        <div class="plan-modal-section" id="sec-perms">
+          <div class="plan-modal-section-title">
+            <span class="step" style="background:var(--primary)">4</span>分配权限
+            <span class="ct-count" id="perm-count">已选 0 项</span>
+          </div>
+          <div class="plan-modal-card" style="padding:0;overflow:hidden">
+            <div class="perm-tabs">
+              <button type="button" class="perm-tab active" onclick="switchPermTab('feature',this)">功能分组</button>
+              <button type="button" class="perm-tab" onclick="switchPermTab('report',this)">报表</button>
+              <input class="perm-search" id="perm-search" placeholder="搜索名称 / ID" oninput="renderPermPicker()">
+            </div>
+            <div class="perm-pane" id="perm-pane-feature"></div>
+            <div class="perm-pane" id="perm-pane-report" style="display:none"></div>
+          </div>
+          <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px;line-height:1.6">
+            报表按「单机 / 机群」分别授权；此处仅决定套餐包含范围，用户实际能否查看仍以「报表权限」中的所需版本为准。
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('component-modal')">取消</button>
+        <button type="submit" class="btn btn-primary">确定</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 分类管理弹窗 -->
+<div class="modal-overlay" id="category-modal">
+  <div class="modal" style="width:520px" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <span class="modal-title">分类管理</span>
+      <button class="modal-close" onclick="closeModal('category-modal')" aria-label="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="cat-mgr-list"></div>
+      <button type="button" class="btn btn-sm btn-outline" style="margin-top:8px" onclick="addCatMgrRow()">+ 添加分类</button>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" onclick="closeModal('category-modal')">取消</button>
+      <button type="button" class="btn btn-primary" onclick="saveCategoryMgr()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 功能分组弹窗 -->
+<div class="modal-overlay" id="comp-dict-modal">
+  <div class="modal" style="width:700px" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <span class="modal-title" id="dict-modal-title">新增组件</span>
+      <button class="modal-close" onclick="closeModal('comp-dict-modal')" aria-label="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">所属分类 <span style="color:var(--error)">*</span></label>
+        <select class="form-select" id="dict-cat"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">组件名称 <span style="color:var(--error)">*</span></label>
+          <input type="text" class="form-input" id="dict-name" placeholder="如：电子围栏">
+        </div>
+        <div class="form-group">
+          <label class="form-label">组件 Key <span style="color:var(--error)">*</span></label>
+          <input type="text" class="form-input" id="dict-key" placeholder="如：geo_fence">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">权限点</label>
+        <div id="dict-caps-list"></div>
+        <button type="button" class="btn btn-sm btn-outline" style="margin-top:8px" onclick="addDictCapRow()">+ 添加权限点</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" onclick="closeModal('comp-dict-modal')">取消</button>
+      <button type="button" class="btn btn-primary" onclick="saveDictComp()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 删除确认弹窗 -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal" style="width:420px" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <span class="modal-title">确认删除套餐</span>
+      <button class="modal-close" onclick="closeModal('delete-modal')" aria-label="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div>
+          <p style="font-size:14px;font-weight:600;margin-bottom:4px">确定要删除该套餐吗？</p>
+          <p style="font-size:13px;color:var(--text-secondary)">删除后，该套餐将不再对用户端开放，已售订阅不受影响。</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('delete-modal')">取消</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleMenu(el){el.closest('.menu-group').classList.toggle('open')}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed')}
+
+// 打开弹窗（仅切换显隐，组件弹窗内容填充由专用函数负责）
+function openModal(id){
+  var modal = document.getElementById(id);
+  if (modal) modal.classList.add('open');
+}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+function showToast(msg) {
+  var container = document.getElementById('toast-container');
+  var toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+function resetErrors() {
+  document.querySelectorAll('.form-input, .form-select').forEach(el => el.classList.remove('error'));
+  document.querySelectorAll('.form-error').forEach(el => el.style.display = 'none');
+}
+
+/* ==================== 套餐管理 ==================== */
+/* 组件字典（唯一数据源）：分类仅作汇总；组件 → 能力项（perm = C 端权限点）映射 */
+const COMP_TREE = [
+  { key: 'grp_monitor', name: '基础监控', order: 1, children: [
+    { key: 'fleet_monitor', name: '机群监控（基础）', children: [
+      { key: 'fleet_realtime', name: '设备实时监控', type: 'menu',   perms: { pc: 'monitor.realtime', app: 'app.monitor.realtime' } },
+      { key: 'fleet_alert',    name: '告警通知',     type: 'button', perms: { pc: 'monitor.alert', app: 'app.monitor.alert' } }
+    ]}
+  ]},
+  { key: 'grp_security', name: '安全防护', order: 2, children: [
+    { key: 'geo_fence', name: '电子围栏', children: [
+      { key: 'geo_create', name: '围栏创建（≤10 个）', type: 'button', perms: { pc: 'geo.create' } },
+      { key: 'geo_alert',  name: '围栏告警',           type: 'button', perms: { pc: 'geo.alert', app: 'app.geo.alert' } }
+    ]}
+  ]},
+  { key: 'grp_service', name: '诊断与服务', order: 3, children: [
+    { key: 'remote_diag', name: '远程诊断', children: [
+      { key: 'diag_fault',  name: '故障诊断', type: 'menu',   perms: { pc: 'diag.fault', app: 'app.diag.fault' } },
+      { key: 'diag_report', name: '诊断报告', type: 'button', perms: { pc: 'diag.report' } }
+    ]},
+    { key: 'work_order', name: '工单调度', children: [
+      { key: 'wo_submit',   name: '工单提交', type: 'button', perms: { pc: 'wo.submit', app: 'app.wo.submit' } },
+      { key: 'wo_dispatch', name: '工单派工', type: 'button', perms: { pc: 'wo.dispatch' } }
+    ]}
+  ]},
+  { key: 'grp_platform', name: '平台增值', order: 4, children: [
+    { key: 'flow_engine', name: '任务流程编排引擎', children: [
+      { key: 'flow_design', name: '流程编排', type: 'menu',   perms: { pc: 'flow.design' } },
+      { key: 'flow_run',    name: '流程执行', type: 'button', perms: { pc: 'flow.run', app: 'app.flow.run' } }
+    ]},
+    { key: 'report_prod', name: '生产力报告', children: [
+      { key: 'report_gen',    name: '报告生成', type: 'button', perms: { pc: 'report.gen' } },
+      { key: 'report_export', name: '报告导出', type: 'button', perms: { pc: 'report.export' } },
+      { key: 'report_data_basic',    name: '基础报告数据', type: 'button', perms: { pc: 'report.data.basic' } },
+      { key: 'report_data_advanced', name: '高级报告数据', type: 'button', perms: { pc: 'report.data.advanced' } }
+    ]},
+    { key: 'api_integrate', name: 'API 集成', children: [
+      { key: 'api_open', name: '开放接口', type: 'button', perms: { pc: 'api.open' } },
+      { key: 'api_push', name: '数据推送', type: 'button', perms: { pc: 'api.push' } }
+    ]},
+    { key: 'grp_convoy', name: '车队管理', order: 5, children: [
+      { key: 'driver_mgr',    name: '驾驶员管理', type: 'menu',   perms: { pc: 'driver.manage', app: 'app.driver.manage' } },
+      { key: 'fuel_analysis', name: '油耗分析',   type: 'button', perms: { pc: 'fuel.analysis', app: 'app.fuel.analysis' } },
+      { key: 'cost_stats',    name: '成本统计',   type: 'button', perms: { pc: 'cost.stats' } }
+    ]}
+  ]}
+];
+
+/* 映射解析：套餐只存组件 key，能力项/权限点由字典展开 */
+function compCaps(key) {
+  const node = findCompNode(key);
+  return node ? (node.children || []) : [];
+}
+let compChecked = new Set();
+/* 分类（一级）仅作汇总展示，不可勾选；记录各分组展开状态（默认展开） */
+let compOpenGroups = {};
+
+function compDescendants(node) {
+  const out = [node.key];
+  (node.children || []).forEach(function(c) { out.push.apply(out, compDescendants(c)); });
+  return out;
+}
+function findCompNode(key) {
+  let found = null;
+  (function walk(list) {
+    list.forEach(function(n) {
+      if (found) return;
+      if (n.key === key) { found = n; return; }
+      if (n.children) walk(n.children);
+    });
+  })(COMP_TREE);
+  return found;
+}
+
+/* 勾选/取消一个组件（连同其下级能力项一起记录，界面只显示组件一行） */
+function toggleCompItem(key) {
+  const node = findCompNode(key);
+  if (!node) return;
+  if (compChecked.has(key)) {
+    compDescendants(node).forEach(function(k) { compChecked.delete(k); });
+  } else {
+    compDescendants(node).forEach(function(k) { compChecked.add(k); });
+  }
+  const e = document.getElementById('err-comps'); if (e) e.style.display = 'none';
+  renderCompTree();
+}
+
+function toggleCompGroup(key) {
+  compOpenGroups[key] = compOpenGroups[key] === false;
+  renderCompTree();
+}
+
+function renderCompTree() {
+  const box = document.getElementById('ct-list');
+  if (!box) return;
+  sortCompTree();
+  box.innerHTML = COMP_TREE.map(function(g) {
+    const kids = g.children || [];
+    const open = compOpenGroups[g.key] !== false;
+    const selCount = kids.filter(function(c) { return compChecked.has(c.key); }).length;
+    const head = '<div class="ct-group-head" onclick="toggleCompGroup(\'' + g.key + '\')">'
+      + '<svg class="ct-caret' + (open ? ' open' : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>'
+      + '<span class="ct-group-name">' + g.name + '</span>'
+      + '<span class="ct-group-count">' + kids.length + ' 项</span>'
+      + (selCount ? '<span class="ct-group-sel">已选 ' + selCount + '</span>' : '')
+      + '</div>';
+    const body = open ? '<div class="ct-group-body">' + kids.map(function(c) {
+      const checked = compChecked.has(c.key);
+      return '<label class="ct-item' + (checked ? ' checked' : '') + '">'
+        + '<input type="checkbox" ' + (checked ? 'checked' : '') + ' onchange="toggleCompItem(\'' + c.key + '\')">'
+        + '<span class="ct-item-name">' + c.name + '</span>'
+        + '</label>';
+    }).join('') + '</div>' : '';
+    return '<div class="ct-group">' + head + body + '</div>';
+  }).join('');
+  updateCompCount();
+}
+
+function updateCompCount() {
+  let n = 0;
+  COMP_TREE.forEach(function(g) { (g.children || []).forEach(function(c) { if (compChecked.has(c.key)) n++; }); });
+  const el = document.getElementById('ct-count');
+  if (el) el.textContent = '已选 ' + n + ' 项';
+}
+
+function selectAllComps() {
+  compChecked = new Set();
+  COMP_TREE.forEach(function(g) {
+    (g.children || []).forEach(function(c) { compDescendants(c).forEach(function(k) { compChecked.add(k); }); });
+  });
+  const e = document.getElementById('err-comps'); if (e) e.style.display = 'none';
+  renderCompTree();
+}
+
+function clearAllComps() {
+  compChecked = new Set();
+  const e = document.getElementById('err-comps'); if (e) e.style.display = 'none';
+  renderCompTree();
+}
+
+const PACKAGES = [
+  { time: '2026-09-01 10:00:00', name: { zh: '免费版' }, extra: {}, status: 'on', monthly: 0, annual: 0, comps: ['fleet_monitor'], groups: ['fleet_monitor'], trial: 3,
+    reports: ['RPT-S-rpt_workmode','RPT-F-rpt_workmode','RPT-S-rpt_move','RPT-F-rpt_move'] },
+  { time: '2026-09-01 10:05:00', name: { zh: '进阶版' }, extra: {}, status: 'on', monthly: 299, annual: 2990, comps: ['fleet_monitor', 'geo_fence', 'remote_diag', 'work_order'],
+    groups: ['fleet_monitor', 'geo_fence', 'remote_diag', 'work_order'], trial: 3,
+    reports: ['RPT-S-rpt_workmode','RPT-F-rpt_workmode','RPT-S-rpt_move','RPT-F-rpt_move','RPT-S-rpt_energy','RPT-F-rpt_energy','RPT-S-rpt_overtime','RPT-F-rpt_overtime'] },
+  { time: '2026-09-01 10:10:00', name: { zh: '专业版' }, extra: {}, status: 'on', monthly: 599, annual: 5990, comps: ['fleet_monitor', 'geo_fence', 'remote_diag', 'work_order', 'flow_engine', 'report_prod', 'api_integrate'],
+    groups: ['fleet_monitor', 'geo_fence', 'remote_diag', 'work_order', 'flow_engine', 'report_prod', 'api_integrate'], trial: 3,
+    reports: ['RPT-S-rpt_workmode','RPT-F-rpt_workmode','RPT-S-rpt_move','RPT-F-rpt_move','RPT-S-rpt_energy','RPT-F-rpt_energy','RPT-S-rpt_overtime','RPT-F-rpt_overtime','RPT-S-rpt_abnormal','RPT-F-rpt_abnormal','RPT-S-rpt_battery','RPT-F-rpt_battery','RPT-S-asset360','RPT-S-cost_single','RPT-F-cost_fleet','RPT-S-gen_health','RPT-S-proj_energy','RPT-F-fleet_utilization'] }
+];
+
+let pkgEditIdx = -1, pkgDelIdx = -1;
+/* 套餐名称多语言：16 种语言（按业务覆盖国家），弹窗默认全部展开 */
+const NAME_LANGS = [
+  { code: 'zh',  label: '简体中文' },
+  { code: 'tw',  label: '繁體中文' },
+  { code: 'id',  label: 'Bahasa Indonesia' },
+  { code: 'vi',  label: 'Tiếng Việt' },
+  { code: 'ms',  label: 'Bahasa Melayu' },
+  { code: 'th',  label: 'ไทย' },
+  { code: 'ar',  label: 'العربية' },
+  { code: 'de',  label: 'Deutsch' },
+  { code: 'fr',  label: 'Français' },
+  { code: 'pt',  label: 'Português' },
+  { code: 'es',  label: 'Español' },
+  { code: 'af',  label: 'Afrikaans' },
+  { code: 'fil', label: 'Filipino' },
+  { code: 'sw',  label: 'Kiswahili' },
+  { code: 'my',  label: 'မြန်မာ' }
+];
+let nameI18n = {};
+
+function renderNameI18n() {
+  document.getElementById('name-i18n-list').innerHTML = NAME_LANGS.map(function(l) {
+    const v = nameI18n[l.code] || '';
+    const primary = (l.code === 'zh' || l.code === 'tw') ? ' primary' : '';
+    return '<div class="i18n-row' + primary + '"><span class="i18n-tag" title="' + l.label + '">' + l.label + '</span>'
+      + '<input type="text" class="form-input" placeholder="' + l.label + ' 名称" value="' + v.replace(/"/g, '&quot;') + '" oninput="nameI18n[\'' + l.code + '\']=this.value"></div>';
+  }).join('');
+}
+function collectNameI18n() {
+  const out = {};
+  NAME_LANGS.forEach(function(l) {
+    if (nameI18n[l.code] && nameI18n[l.code].trim()) out[l.code] = nameI18n[l.code].trim();
+  });
+  return out;
+}
+
+function pkgNameAll(p) {
+  let all = '';
+  Object.keys(p.name || {}).forEach(function(k) { all += ' ' + (p.name[k] || ''); });
+  return all.toLowerCase();
+}
+
+function renderPkgs() {
+  const kw = (document.getElementById('pkg-search').value || '').trim().toLowerCase();
+  const rows = PACKAGES.map(function(p, i) { return { p: p, i: i }; })
+    .filter(function(x) { return !kw || pkgNameAll(x.p).indexOf(kw) > -1; });
+  document.getElementById('pkg-tbody').innerHTML = rows.map(function(x) {
+    const p = x.p;
+    const st = p.status === 'on' ? '<span class="tag tag-success">启用</span>' : '<span class="tag tag-default">停用</span>';
+    return '<tr>'
+      + '<td><strong>' + (p.name.zh || p.name.en) + '</strong></td>'
+      + '<td>' + st + '</td>'
+      + '<td class="num"><span style="color:var(--primary);font-weight:600">$' + p.monthly.toLocaleString('en-US') + '</span> <span style="color:var(--text-muted);font-size:11px">/月</span></td>'
+      + '<td class="num"><span style="font-weight:600">$' + p.annual.toLocaleString('en-US') + '</span> <span style="color:var(--text-muted);font-size:11px">/年</span></td>'
+      + '<td style="font-size:12px;color:var(--text-secondary)">功能 ' + ((p.groups || p.comps || []).length) + ' · 报表 ' + ((p.reports || []).length) + '</td>'
+      + '<td style="color:var(--text-secondary)">' + p.time + '</td>'
+      + '<td><div class="td-actions"><button class="btn btn-sm btn-outline" onclick="openEditPkg(' + x.i + ')">编辑</button><button class="btn btn-sm btn-outline" style="color:var(--error)" onclick="askDelPkg(' + x.i + ')">删除</button></div></td>'
+      + '</tr>';
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px 0">未找到匹配的套餐</td></tr>';
+}
+
+function setCompChecks(comps) {
+  compChecked = new Set(comps || []);
+  renderCompTree();
+}
+function getCompChecks() {
+  /* 套餐只存组件级 Key，能力项/权限点由字典映射展开 */
+  var out = [];
+  COMP_TREE.forEach(function(g) {
+    (g.children || []).forEach(function(c) { if (compChecked.has(c.key)) out.push(c.key); });
+  });
+  return out;
+}
+
+function openAddPkg() {
+  resetErrors();
+  pkgEditIdx = -1;
+  document.getElementById('modal-title-text').textContent = '新增套餐';
+  document.getElementById('component-form').reset();
+  nameI18n = {};
+  renderNameI18n();
+  setCompChecks([]);
+  PLAN_COMPS = new Set();
+  PLAN_REPORTS = new Set();
+  try { renderPermPicker(); } catch (e) {}
+  document.getElementById('inp-trial').value = '3';
+  openModal('component-modal');
+}
+
+function openEditPkg(i) {
+  const p = PACKAGES[i];
+  resetErrors();
+  pkgEditIdx = i;
+  document.getElementById('modal-title-text').textContent = '编辑套餐';
+  nameI18n = {};
+  Object.keys(p.name || {}).forEach(function(k) { nameI18n[k] = p.name[k]; });
+  renderNameI18n();
+  document.getElementById('inp-status').checked = p.status === 'on';
+  document.getElementById('inp-monthly').value = p.monthly;
+  document.getElementById('inp-annual').value = p.annual;
+  setCompChecks(p.comps);
+  PLAN_COMPS = new Set(p.groups || p.comps || []);
+  PLAN_REPORTS = new Set(p.reports || []);
+  try { renderPermPicker(); } catch (e) {}
+  document.getElementById('inp-trial').value = p.trial;
+  openModal('component-modal');
+}
+
+function handleFormSubmit(e) {
+  e.preventDefault();
+  resetErrors();
+  let isValid = true;
+  const monthly = document.getElementById('inp-monthly');
+  const annual = document.getElementById('inp-annual');
+  const trial = document.getElementById('inp-trial');
+
+  /* 多语言名称：16 种语言至少填一种 */
+  const nameFilled = collectNameI18n();
+  if (Object.keys(nameFilled).length === 0) {
+    document.getElementById('err-name').style.display = 'block';
+    isValid = false;
+  }
+  const mv = parseFloat(monthly.value);
+  if (monthly.value === '' || isNaN(mv) || mv < 0) { monthly.classList.add('error'); document.getElementById('err-monthly').style.display = 'block'; isValid = false; }
+  const av = parseFloat(annual.value);
+  if (annual.value === '' || isNaN(av) || av < 0) { annual.classList.add('error'); document.getElementById('err-annual').style.display = 'block'; isValid = false; }
+  const tv = parseInt(trial.value, 10);
+  if (trial.value === '' || isNaN(tv) || tv < 0 || tv > 31) { trial.classList.add('error'); document.getElementById('err-trial').style.display = 'block'; isValid = false; }
+
+  if (!isValid) { focusFirstError(); return; }
+
+  if (isValid) {
+    const rec = {
+      time: pkgEditIdx > -1 ? PACKAGES[pkgEditIdx].time : new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-'),
+      name: nameFilled,
+      status: document.getElementById('inp-status').checked ? 'on' : 'off',
+      monthly: mv, annual: av,
+      comps: Array.from(PLAN_COMPS), trial: tv,
+      groups: Array.from(PLAN_COMPS), reports: Array.from(PLAN_REPORTS)
+    };
+    if (pkgEditIdx > -1) PACKAGES[pkgEditIdx] = rec; else PACKAGES.push(rec);
+    closeModal('component-modal');
+    renderPkgs();
+    showToast('套餐已保存');
+  }
+}
+
+function focusFirstError() {
+  const modal = document.getElementById('component-modal');
+  const errs = modal.querySelectorAll('.form-error');
+  let err = null;
+  for (const e of errs) { if (e.style.display && e.style.display !== 'none') { err = e; break; } }
+  if (!err) return;
+  const sec = err.closest('.plan-modal-section');
+  if (sec) { sec.classList.remove('invalid'); void sec.offsetWidth; sec.classList.add('invalid'); }
+  const body = modal.querySelector('.modal-body');
+  if (body) {
+    const top = err.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop - 16;
+    body.scrollTo({ top: top, behavior: 'smooth' });
+  }
+}
+
+function askDelPkg(i) { pkgDelIdx = i; openModal('delete-modal'); }
+function confirmDelete() {
+  if (pkgDelIdx > -1) { PACKAGES.splice(pkgDelIdx, 1); pkgDelIdx = -1; }
+  closeModal('delete-modal');
+  renderPkgs();
+  showToast('套餐已删除');
+}
+try { renderPkgs(); } catch (e) { console.error('renderPkgs:', e); }
+try { renderCompTree(); } catch (e) { console.error('renderCompTree:', e); }
+try { renderCompDict(); } catch (e) { console.error('renderCompDict:', e); }
+
+document.querySelectorAll('.modal-overlay').forEach(ov=>{ov.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')})})
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'))}})
+
+/* ==================== 折扣配置 ==================== */
+
+function switchSectionTab(tabName, btn) {
+  document.querySelectorAll('.section-tab').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  document.querySelectorAll('.section-panel').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('panel-' + tabName).classList.add('active');
+  if (tabName === 'compdict') { try { renderCompDict(); } catch (e) { console.error('renderCompDict:', e); } }
+  if (tabName === 'reportperm') { try { renderReportPerm(); } catch (e) { console.error('renderReportPerm:', e); } }
+}
+
+function toggleGlobalDiscount(cb) {
+  var fields = document.getElementById('global-discount-fields');
+  if (cb.checked) {
+    fields.style.opacity = '';
+    fields.querySelectorAll('input,select').forEach(function(el){ el.disabled = false; });
+  } else {
+    fields.style.opacity = '0.4';
+    fields.querySelectorAll('input,select').forEach(function(el){ el.disabled = true; });
+  }
+}
+
+function clearDiscountError(el) {
+  el.classList.remove('error');
+  var errId = el.id === 'global-dc-low' ? 'dc-low-err' : 'dc-high-err';
+  var err = document.getElementById(errId);
+  if (err) err.style.display = 'none';
+  validateGlobalDiscount();
+}
+
+function validateGlobalDiscount() {
+  var low = document.getElementById('global-dc-low');
+  var high = document.getElementById('global-dc-high');
+  var lowErr = document.getElementById('dc-low-err');
+  var highErr = document.getElementById('dc-high-err');
+  var rangeErr = document.getElementById('dc-range-error');
+  var lowVal = parseFloat(low.value);
+  var highVal = parseFloat(high.value);
+  var valid = true;
+  if (isNaN(lowVal) || lowVal < 0 || lowVal > 10) {
+    low.classList.add('error');
+    lowErr.style.display = 'block';
+    valid = false;
+  } else {
+    lowErr.style.display = 'none';
+  }
+  if (isNaN(highVal) || highVal < 0 || highVal > 10) {
+    high.classList.add('error');
+    highErr.style.display = 'block';
+    valid = false;
+  } else {
+    highErr.style.display = 'none';
+  }
+  if (!isNaN(lowVal) && !isNaN(highVal) && lowVal > highVal) {
+    rangeErr.textContent = '折扣下限不能大于折扣上限';
+    rangeErr.style.display = 'block';
+    valid = false;
+  } else if (rangeErr) {
+    rangeErr.style.display = 'none';
+  }
+  return valid;
+}
+
+function openGlobalDiscount() {
+  /* 回填已保存的全局折扣 */
+  try {
+    var raw = localStorage.getItem('mysany_global_discount');
+    if (raw) {
+      var c = JSON.parse(raw);
+      if (c) {
+        var tg = document.getElementById('discount-toggle');
+        tg.checked = c.enabled !== false;
+        if (c.low !== undefined) document.getElementById('global-dc-low').value = c.low;
+        if (c.high !== undefined) document.getElementById('global-dc-high').value = c.high;
+        toggleGlobalDiscount(tg);
+      }
+    }
+  } catch (e) {}
+  openModal('global-discount-modal');
+}
+
+function saveGlobalDiscount() {
+  if (validateGlobalDiscount()) {
+    var cfg = {
+      enabled: document.getElementById('discount-toggle').checked,
+      low: parseFloat(document.getElementById('global-dc-low').value),
+      high: parseFloat(document.getElementById('global-dc-high').value)
+    };
+    try { localStorage.setItem('mysany_global_discount', JSON.stringify(cfg)); } catch (e) {}
+    closeModal('global-discount-modal');
+    showToast(cfg.high === 0 ? '已保存：0 折，用户可免费使用' : '全局折扣配置已保存');
+  }
+}
+
+function resetGlobalDiscount() {
+  document.getElementById('global-dc-low').value = '8.0';
+  document.getElementById('global-dc-high').value = '8.9';
+  document.getElementById('dc-range-error').style.display = 'none';
+  ['dc-low-err','dc-high-err'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  ['global-dc-low','global-dc-high'].forEach(function(id){
+    var el = document.getElementById(id);
+    el.classList.remove('error');
+  });
+  showToast('已恢复默认值');
+}
+
+function toggleMultiSelect(btn) {
+  var dd = btn.parentElement;
+  var wasOpen = dd.classList.contains('open');
+  document.querySelectorAll('.ms-dropdown.open').forEach(function(d){ d.classList.remove('open') });
+  if (!wasOpen) {
+    dd.classList.add('open');
+    var panel = dd.querySelector('.ms-panel');
+    var rect = btn.getBoundingClientRect();
+    var panelH = Math.min(panel.scrollHeight, 320);
+    var top = rect.bottom + 4;
+    if (top + panelH > window.innerHeight) top = rect.top - panelH - 4;
+    panel.style.top = top + 'px';
+    panel.style.left = rect.left + 'px';
+    panel.style.width = Math.min(rect.width, 300) + 'px';
+  }
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.ms-dropdown')) {
+    document.querySelectorAll('.ms-dropdown.open').forEach(function(d){ d.classList.remove('open') });
+  }
+});
+
+var cdEditRow = null;
+
+function addCountryDiscount() {
+  resetCountryDiscountModal('add');
+  openModal('country-discount-modal');
+}
+
+function editCountryDiscount(btn) {
+  var row = btn.closest('tr');
+  var countriesAttr = row.getAttribute('data-countries') || '';
+  var countries = countriesAttr ? countriesAttr.split(',') : [];
+  var nums = row.querySelectorAll('td.num');
+  var low = parseFloat((nums[0] ? nums[0].textContent : '').replace('折', ''));
+  var high = parseFloat((nums[1] ? nums[1].textContent : '').replace('折', ''));
+  var sw = row.querySelector('.switch input');
+  resetCountryDiscountModal('edit', countries);
+  document.getElementById('cd-dc-low').value = isNaN(low) ? '' : low;
+  document.getElementById('cd-dc-high').value = isNaN(high) ? '' : high;
+  document.getElementById('cd-status').checked = sw ? sw.checked : true;
+  cdEditRow = row;
+  openModal('country-discount-modal');
+}
+
+function delCountryDiscount(btn) {
+  var row = btn.closest('tr');
+  row.style.background = '#FEF2F2';
+  setTimeout(function() {
+    if (confirm('确认删除该国家折扣配置？')) {
+      row.remove();
+      showToast('已删除');
+    } else {
+      row.style.background = '';
+    }
+  }, 100);
+}
+
+function clearCdMsError(cb) {
+  if (cb.checked) {
+    var dd = document.getElementById('ms-cd-country');
+    dd.classList.remove('ms-error');
+    dd.querySelector('.ms-trigger').classList.remove('error');
+    dd.querySelector('.ms-trigger').style.borderColor = '';
+    dd.nextElementSibling.style.display = 'none';
+  }
+  updateMultiSelect(cb);
+}
+
+function updateMultiSelect(cb) {
+  var dd = cb.closest('.ms-dropdown');
+  var checked = dd.querySelectorAll('input:checked');
+  var labels = [];
+  checked.forEach(function(c){ labels.push(c.getAttribute('data-val')); });
+  dd.querySelector('.ms-label').textContent = labels.length ? labels.join('、') : '请选择';
+}
+
+function clearCdRangeError(el) {
+  el.classList.remove('error');
+  var err = el.parentElement.nextElementSibling;
+  if (err && err.classList.contains('form-error')) err.style.display = 'none';
+  var rangeErr = document.getElementById('cd-range-error');
+  var lowVal = parseFloat(document.getElementById('cd-dc-low').value);
+  var highVal = parseFloat(document.getElementById('cd-dc-high').value);
+  if (!isNaN(lowVal) && !isNaN(highVal) && lowVal > highVal) {
+    rangeErr.textContent = '折扣下限不能大于折扣上限';
+    rangeErr.style.display = 'block';
+  } else {
+    rangeErr.style.display = 'none';
+  }
+}
+
+function saveCountryDiscount() {
+  var dd = document.getElementById('ms-cd-country');
+  var checked = dd.querySelectorAll('input:checked');
+  var lowVal = document.getElementById('cd-dc-low').value;
+  var highVal = document.getElementById('cd-dc-high').value;
+  var valid = true;
+
+  if (checked.length === 0) {
+    dd.classList.add('ms-error');
+    dd.querySelector('.ms-trigger').classList.add('error');
+    dd.querySelector('.ms-trigger').style.borderColor = 'var(--error)';
+    dd.nextElementSibling.style.display = 'block';
+    valid = false;
+  }
+  var low = document.getElementById('cd-dc-low');
+  var high = document.getElementById('cd-dc-high');
+  var lowNum = parseFloat(lowVal);
+  var highNum = parseFloat(highVal);
+  if (isNaN(lowNum) || lowNum < 1 || lowNum > 10) {
+    low.classList.add('error');
+    low.parentElement.nextElementSibling.style.display = 'block';
+    valid = false;
+  }
+  if (isNaN(highNum) || highNum < 1 || highNum > 10) {
+    high.classList.add('error');
+    high.parentElement.nextElementSibling.style.display = 'block';
+    valid = false;
+  }
+  if (!isNaN(lowNum) && !isNaN(highNum) && lowNum > highNum) {
+    document.getElementById('cd-range-error').textContent = '折扣下限不能大于折扣上限';
+    document.getElementById('cd-range-error').style.display = 'block';
+    valid = false;
+  }
+
+  if (valid) {
+    var countries = [];
+    checked.forEach(function(cb){ countries.push(cb.getAttribute('data-val')); });
+    var countriesAttr = countries.join(',');
+    var tagsHtml = '<div class="country-tags">';
+    countries.forEach(function(c){ tagsHtml += '<span class="tag tag-default">' + c + '</span>'; });
+    tagsHtml += '</div>';
+    var statusOn = document.getElementById('cd-status').checked;
+
+    if (cdEditRow) {
+      /* 编辑：更新原行，保留操作列 */
+      cdEditRow.setAttribute('data-countries', countriesAttr);
+      var tds = cdEditRow.querySelectorAll('td');
+      tds[0].innerHTML = tagsHtml;
+      tds[1].textContent = lowNum.toFixed(1) + '折';
+      tds[2].textContent = highNum.toFixed(1) + '折';
+      var rowSw = cdEditRow.querySelector('.switch input');
+      if (rowSw) rowSw.checked = statusOn;
+      cdEditRow = null;
+      closeModal('country-discount-modal');
+      showToast('国家折扣配置已更新');
+    } else {
+      var tbody = document.getElementById('country-discount-list');
+      var newRow = document.createElement('tr');
+      newRow.setAttribute('data-countries', countriesAttr);
+      newRow.innerHTML = '<td>' + tagsHtml + '</td><td class="num">' + lowNum.toFixed(1) + '折</td><td class="num">' + highNum.toFixed(1) + '折</td><td><label class="switch"><input type="checkbox"' + (statusOn ? ' checked' : '') + '><span class="switch-slider"></span></label></td><td><button class="btn btn-sm btn-outline" onclick="editCountryDiscount(this)">编辑</button><button class="btn btn-sm btn-outline" onclick="delCountryDiscount(this)">删除</button></td>';
+      tbody.appendChild(newRow);
+      closeModal('country-discount-modal');
+      showToast('国家折扣配置已保存');
+    }
+  }
+}
+
+function resetCountryDiscountModal(mode, currentCountries) {
+  mode = mode || 'add';
+  cdEditRow = null;
+  document.getElementById('cd-modal-title').textContent = mode === 'edit' ? '编辑国家折扣配置' : '新增国家折扣配置';
+  document.getElementById('cd-status').checked = true;
+  var dd = document.getElementById('ms-cd-country');
+  dd.classList.add('ms-error');
+  dd.querySelector('.ms-trigger').classList.add('error');
+  dd.querySelector('.ms-trigger').style.borderColor = 'var(--error)';
+  dd.querySelector('.ms-trigger').querySelector('.ms-label').textContent = '请选择国家';
+  dd.querySelectorAll('.ms-option input').forEach(function(cb){ cb.checked = false; cb.disabled = false; cb.closest('.ms-option').style.opacity = ''; });
+  dd.nextElementSibling.style.display = 'none';
+
+  var usedCountries = [];
+  document.querySelectorAll('#country-discount-list tr').forEach(function(row) {
+    var rowCountries = (row.getAttribute('data-countries') || '').split(',').filter(Boolean);
+    if (mode === 'edit' && currentCountries) {
+      rowCountries = rowCountries.filter(function(c){ return currentCountries.indexOf(c) === -1; });
+    }
+    usedCountries = usedCountries.concat(rowCountries);
+  });
+
+  usedCountries.forEach(function(country) {
+    var option = dd.querySelector('.ms-option input[data-val="' + country + '"]');
+    if (option) {
+      option.disabled = true;
+      option.closest('.ms-option').style.opacity = '0.4';
+      option.closest('.ms-option').style.cursor = 'not-allowed';
+    }
+  });
+
+  ['cd-dc-low','cd-dc-high'].forEach(function(id){
+    var el = document.getElementById(id);
+    el.value = '';
+    el.classList.remove('error');
+    el.parentElement.nextElementSibling.style.display = 'none';
+  });
+  document.getElementById('cd-range-error').style.display = 'none';
+}
+
+/* ==================== 功能分组 ==================== */
+var dictEditKey = null;
+function capMetaHtml(x) {
+  return x.name;
+}
+
+function renderCompDict() {
+  var tbody = document.getElementById('dict-tbody');
+  if (!tbody) return;
+  try {
+    var html = '';
+    sortCompTree();
+    COMP_TREE.forEach(function(g) {
+      (g.children || []).forEach(function(c) {
+        var caps = (c.children || []).length
+          ? c.children.map(function(x) { return capMetaHtml(x); }).join('<br>')
+          : '—';
+        html += '<tr>'
+          + '<td>' + g.name + '</td>'
+          + '<td><strong>' + c.name + '</strong></td>'
+          + '<td class="dict-caps-cell">' + caps + '</td>'
+          + '<td><div class="td-actions"><button class="btn btn-sm btn-outline" onclick="editDictComp(\'' + c.key + '\')">编辑</button>'
+          + '<button class="btn btn-sm btn-outline" style="color:var(--error)" onclick="delDictComp(\'' + c.key + '\')">删除</button></div></td>'
+          + '</tr>';
+      });
+    });
+    tbody.innerHTML = html || '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px 0">暂无组件，点击右上角「新增组件」</td></tr>';
+  } catch (e) {
+    console.error('renderCompDict:', e);
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--error);padding:24px 0">示例数据渲染出错：' + (e && e.message) + '</td></tr>';
+  }
+}
+
+function sortCompTree() {
+  COMP_TREE.sort(function(a, b) { return (a.order || 999) - (b.order || 999); });
+}
+
+function fillDictCatSelect(selectedKey) {
+  sortCompTree();
+  var sel = document.getElementById('dict-cat');
+  sel.innerHTML = COMP_TREE.map(function(g) { return '<option value="' + g.key + '">' + g.name + '</option>'; }).join('');
+  sel.value = selectedKey && sel.querySelector('option[value="' + selectedKey + '"]') ? selectedKey : (COMP_TREE.length ? COMP_TREE[0].key : '');
+}
+
+function openCategoryMgr() {
+  sortCompTree();
+  var list = document.getElementById('cat-mgr-list');
+  list.innerHTML = '';
+  COMP_TREE.forEach(function(g) { addCatMgrRow(g.key, g.order, g.name); });
+  if (!COMP_TREE.length) {
+    var max = 0;
+    COMP_TREE.forEach(function(g) { if ((g.order || 0) > max) max = g.order; });
+    addCatMgrRow('', max + 1, '');
+  }
+  openModal('category-modal');
+}
+
+function addCatMgrRow(key, order, name) {
+  var list = document.getElementById('cat-mgr-list');
+  var row = document.createElement('div');
+  row.className = 'cat-mgr-row';
+  if (key) row.setAttribute('data-key', key);
+  row.innerHTML = '<input type="number" class="form-input cm-order" min="1" step="1" placeholder="序号" value="' + (order || '') + '">'
+    + '<input type="text" class="form-input cm-name" placeholder="分类名称" value="' + (name || '') + '">'
+    + '<button type="button" class="btn btn-sm btn-outline" onclick="this.closest(\'.cat-mgr-row\').remove()">删除</button>';
+  list.appendChild(row);
+}
+
+function saveCategoryMgr() {
+  var rows = document.querySelectorAll('#cat-mgr-list .cat-mgr-row');
+  var names = {}, orders = {}, cats = [];
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var name = row.querySelector('.cm-name').value.trim();
+    var order = parseInt(row.querySelector('.cm-order').value, 10);
+    var key = row.getAttribute('data-key') || '';
+    if (!name) { showToast('请填写全部分类名称'); return; }
+    if (isNaN(order) || order < 1) { showToast('序号需为大于 0 的整数'); return; }
+    if (names[name]) { showToast('分类名称重复：' + name); return; }
+    if (orders[order]) { showToast('序号重复：' + order); return; }
+    names[name] = 1; orders[order] = 1;
+    cats.push({ key: key, name: name, order: order });
+  }
+  /* 删除安全校验：分类下有组件时不允许删除 */
+  var keepKeys = {};
+  cats.forEach(function(c) { if (c.key) keepKeys[c.key] = 1; });
+  for (var j = COMP_TREE.length - 1; j >= 0; j--) {
+    var g = COMP_TREE[j];
+    if (!keepKeys[g.key] && (g.children || []).length) {
+      showToast('分类「' + g.name + '」下存在组件，无法删除'); return;
+    }
+  }
+  /* 应用变更：删、改、增 */
+  for (var k = COMP_TREE.length - 1; k >= 0; k--) {
+    if (!keepKeys[COMP_TREE[k].key]) COMP_TREE.splice(k, 1);
+  }
+  cats.forEach(function(c) {
+    var exist = null;
+    COMP_TREE.forEach(function(g) { if (g.key === c.key) exist = g; });
+    if (exist) { exist.name = c.name; exist.order = c.order; }
+    else COMP_TREE.push({ key: 'grp_' + Date.now() + '_' + Math.floor(Math.random() * 1000), name: c.name, order: c.order, children: [] });
+  });
+  sortCompTree();
+  closeModal('category-modal');
+  renderCompDict(); renderCompTree();
+  showToast('分类已保存');
+}
+
+function capTypeOptions(v) {
+  v = v || 'menu';
+  return '<option value="menu"' + (v === 'menu' ? ' selected' : '') + '>菜单权限</option>'
+    + '<option value="button"' + (v === 'button' ? ' selected' : '') + '>按钮权限</option>';
+}
+
+function addDictCapRow(cap) {
+  cap = cap || {};
+  var perms = cap.perms || {};
+  var list = document.getElementById('dict-caps-list');
+  var row = document.createElement('div');
+  row.className = 'dict-cap-row';
+  row.innerHTML = '<input type="text" class="form-input dc-name" placeholder="名称" value="' + (cap.name || '') + '">'
+    + '<input type="text" class="form-input dc-perm dc-pc-perm" placeholder="PC 键值" value="' + (perms.pc || '') + '">'
+    + '<input type="text" class="form-input dc-perm dc-app-perm" placeholder="App 键值" value="' + (perms.app || '') + '">'
+    + '<select class="form-select dc-type">' + capTypeOptions(cap.type) + '</select>';
+  list.appendChild(row);
+}
+
+function openAddDictComp() {
+  dictEditKey = null;
+  document.getElementById('dict-modal-title').textContent = '新增组件';
+  fillDictCatSelect(COMP_TREE.length ? COMP_TREE[0].key : '');
+  document.getElementById('dict-name').value = '';
+  var keyInput = document.getElementById('dict-key');
+  keyInput.value = '';
+  keyInput.readOnly = false;
+  document.getElementById('dict-caps-list').innerHTML = '';
+  addDictCapRow();
+  openModal('comp-dict-modal');
+}
+
+function editDictComp(key) {
+  var node = findCompNode(key);
+  if (!node) return;
+  var parent = null;
+  COMP_TREE.forEach(function(g) { (g.children || []).forEach(function(c) { if (c.key === key) parent = g; }); });
+  dictEditKey = key;
+  document.getElementById('dict-modal-title').textContent = '编辑组件';
+  fillDictCatSelect(parent ? parent.key : '');
+  document.getElementById('dict-name').value = node.name;
+  var keyInput = document.getElementById('dict-key');
+  keyInput.value = node.key;
+  keyInput.readOnly = true;
+  var list = document.getElementById('dict-caps-list');
+  list.innerHTML = '';
+  (node.children || []).forEach(function(x) { addDictCapRow(x); });
+  if (!(node.children || []).length) addDictCapRow();
+  openModal('comp-dict-modal');
+}
+
+function saveDictComp() {
+  var name = document.getElementById('dict-name').value.trim();
+  var key = document.getElementById('dict-key').value.trim();
+  var catSel = document.getElementById('dict-cat');
+  if (!name) { showToast('请填写组件名称'); return; }
+  if (!key) { showToast('请填写组件 Key'); return; }
+  if (!dictEditKey && COMP_TREE.some(function(g) { return (g.children || []).some(function(c) { return c.key === key; }); })) {
+    showToast('组件 Key 已存在'); return;
+  }
+  var capNodes = [];
+  document.querySelectorAll('#dict-caps-list .dict-cap-row').forEach(function(row, idx) {
+    var n = row.querySelector('.dc-name').value.trim();
+    if (!n) return;
+    var perms = {};
+    var pcPerm = row.querySelector('.dc-pc-perm').value.trim();
+    var appPerm = row.querySelector('.dc-app-perm').value.trim();
+    if (pcPerm) perms.pc = pcPerm;
+    if (appPerm) perms.app = appPerm;
+    if (!perms.pc && !perms.app) perms.pc = key + '.pc' + (idx + 1);
+    capNodes.push({ key: key + '_cap' + (idx + 1), name: n, type: row.querySelector('.dc-type').value, perms: perms });
+  });
+  var cat = null;
+  COMP_TREE.forEach(function(g) { if (g.key === catSel.value) cat = g; });
+  if (!cat) { showToast('请先在「新增分类」中创建分类'); return; }
+
+  if (dictEditKey) {
+    var oldParent = null, node = null;
+    COMP_TREE.forEach(function(g) {
+      (g.children || []).forEach(function(c) { if (c.key === dictEditKey) { oldParent = g; node = c; } });
+    });
+    if (!node) { showToast('组件不存在'); return; }
+    node.name = name;
+    node.children = capNodes;
+    if (oldParent !== cat) {
+      oldParent.children = oldParent.children.filter(function(c) { return c.key !== dictEditKey; });
+      cat.children.push(node);
+    }
+    dictEditKey = null;
+    closeModal('comp-dict-modal');
+    renderCompDict(); renderCompTree();
+    showToast('组件已更新');
+  } else {
+    cat.children.push({ key: key, name: name, children: capNodes });
+    closeModal('comp-dict-modal');
+    renderCompDict(); renderCompTree();
+    showToast('组件已新增');
+  }
+}
+
+function delDictComp(key) {
+  if (!confirm('删除后所有套餐将不再包含该组件，确认删除？')) return;
+  COMP_TREE.forEach(function(g) {
+    (g.children || []).forEach(function(c) {
+      if (c.key === key) {
+        var capKeys = compDescendants(c);
+        g.children = g.children.filter(function(x) { return x.key !== key; });
+        PACKAGES.forEach(function(p) { p.comps = (p.comps || []).filter(function(k) { return capKeys.indexOf(k) === -1; }); });
+      }
+    });
+  });
+  for (var i = COMP_TREE.length - 1; i >= 0; i--) {
+    if (!(COMP_TREE[i].children || []).length) COMP_TREE.splice(i, 1);
+  }
+  renderCompDict(); renderCompTree(); renderPkgs();
+  showToast('组件已删除');
+}
+
+/* ==================== 套餐底价 ==================== */
+
+// 打开套餐底价编辑弹窗
+// ESC 关闭弹窗
+document.querySelectorAll('.modal-overlay').forEach(function(ov){
+  ov.addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    document.querySelectorAll('.modal-overlay.open').forEach(function(m){ m.classList.remove('open'); });
+  }
+});
+
+/* ==================== 报表权限（报表 + 口径） ==================== */
+var REPORT_PERMS = [
+  { key:'rpt_workmode', name:'设备工作模式报表', cat:'作业与效率', single:0, fleet:0 },
+  { key:'rpt_move', name:'设备移动报表', cat:'位置与维保', single:0, fleet:0 },
+  { key:'rpt_energy', name:'设备能耗报表', cat:'能耗与成本', single:1, fleet:1 },
+  { key:'rpt_overtime', name:'超时工作报表', cat:'作业与效率', single:1, fleet:1 },
+  { key:'rpt_abnormal', name:'设备异常通知报表', cat:'安全与事件', single:1, fleet:1 },
+  { key:'rpt_battery', name:'电池电量报表', cat:'能耗与成本', single:1, fleet:1 },
+  { key:'asset360', name:'资产 360° 报表', cat:'设备概览', single:1, fleet:null },
+  { key:'event_count', name:'设备事件统计报表', cat:'安全与事件', single:1, fleet:null },
+  { key:'event_history', name:'设备事件历史报表', cat:'安全与事件', single:1, fleet:null },
+  { key:'fuel_single', name:'单台设备燃油效率报表', cat:'能耗与成本', single:1, fleet:null },
+  { key:'idle', name:'设备怠速分析报表', cat:'作业与效率', single:1, fleet:null },
+  { key:'usage_single', name:'单台设备利用率报表', cat:'作业与效率', single:1, fleet:null },
+  { key:'snapshot', name:'设备运行快照报表', cat:'设备概览', single:1, fleet:null },
+  { key:'cost_single', name:'单台设备成本分析报表', cat:'能耗与成本', single:2, fleet:null },
+  { key:'security_activity', name:'设备安全-用户操作报表', cat:'安全与事件', single:2, fleet:null },
+  { key:'fault_code', name:'故障码报表', cat:'安全与事件', single:2, fleet:null },
+  { key:'fluid_config', name:'油液分析-资产配置报表', cat:'位置与维保', single:1, fleet:null },
+  { key:'fluid_history', name:'油液分析-取样历史报表', cat:'位置与维保', single:1, fleet:null },
+  { key:'fluid_summary', name:'油液分析-取样汇总报表', cat:'位置与维保', single:1, fleet:null },
+  { key:'gen_standby', name:'发电机关键备用性能报表', cat:'发电机', single:2, fleet:null },
+  { key:'gen_health', name:'发电机健康汇总报表', cat:'发电机', single:2, fleet:null },
+  { key:'op_fleet', name:'机群作业状态报表', cat:'作业与效率', single:null, fleet:1 },
+  { key:'fleet_fuel', name:'机群燃油效率报表', cat:'能耗与成本', single:null, fleet:1 },
+  { key:'fleet_status', name:'机群状态清单报表', cat:'设备概览', single:null, fleet:1 },
+  { key:'fleet_usage', name:'机群使用情况报表', cat:'作业与效率', single:null, fleet:1 },
+  { key:'fleet_utilization', name:'机群怠速与利用率报表', cat:'作业与效率', single:null, fleet:2 },
+  { key:'cost_fleet', name:'机群成本分析报表', cat:'能耗与成本', single:null, fleet:2 },
+  { key:'gen_fleet', name:'发电机机群运营报表', cat:'发电机', single:null, fleet:2 },
+  { key:'location', name:'位置历史报表', cat:'位置与维保', single:null, fleet:1 },
+  { key:'shared_view', name:'共享资产视图报表', cat:'设备概览', single:null, fleet:2 },
+  { key:'site_runtime', name:'工地停留报表', cat:'位置与维保', single:null, fleet:1 },
+  { key:'proj_production', name:'项目生产报表（按行程）', cat:'项目维度', single:null, fleet:null, project:2 },
+  { key:'proj_efficiency', name:'项目效率报表', cat:'项目维度', single:null, fleet:null, project:2 },
+  { key:'proj_energy', name:'项目能耗报表', cat:'项目维度', single:null, fleet:null, project:2 },
+  { key:'proj_safety', name:'项目安全报表', cat:'项目维度', single:null, fleet:null, project:2 },
+  { key:'proj_assets', name:'项目设备清单报表', cat:'项目维度', single:null, fleet:null, project:2 }
+];
+
+var REPORT_GRANTS = [
+  { plan:'专业版', report:'设备成本分析类', scope:'单机', type:'include' },
+  { plan:'进阶版', report:'机群成本分析报表', scope:'机群', type:'exclude' }
+];
+
+var RP_EDIT_KEY = null;
+
+function rpRankLabel(r) { return r === 0 ? '免费版' : (r === 1 ? '进阶版' : '专业版'); }
+function rpRankTag(r) {
+  var cls = r === 0 ? 'tag-success' : (r === 1 ? 'tag-info' : 'tag-info');
+  return '<span class="tag ' + cls + '" style="font-size:11px">' + rpRankLabel(r) + '</span>';
+}
+
+function rpLoad() {
+  try {
+    var raw = localStorage.getItem('mysany_report_permissions');
+    if (!raw) return;
+    var cfg = JSON.parse(raw);
+    REPORT_PERMS.forEach(function (r) {
+      var c = cfg[r.key];
+      if (!c) return;
+      if (typeof c.single === 'number' || c.single === null) r.single = c.single;
+      if (typeof c.fleet === 'number' || c.fleet === null) r.fleet = c.fleet;
+      if (c.status) r.status = c.status;
+      if (c.langs) r.langs = c.langs;
+      if (c.trial !== undefined) r.trial = c.trial;
+      if (c.standalone !== undefined) r.standalone = c.standalone;
+      if (c.updatedAt) r.updatedAt = c.updatedAt;
+    });
+  } catch (e) {}
+}
+
+function rpSave() {
+  var out = {};
+  REPORT_PERMS.forEach(function (r) {
+    out[r.key] = { single: r.single, fleet: r.fleet, status: r.status || 'on',
+                   langs: r.langs || 16, trial: r.trial === undefined ? 1 : r.trial,
+                   standalone: r.standalone === undefined ? 1 : r.standalone,
+                   updatedAt: r.updatedAt || '' };
+  });
+  try { localStorage.setItem('mysany_report_permissions', JSON.stringify(out)); } catch (e) {}
+}
+
+function rpInitFilters() {
+  var sel = document.getElementById('rp-cat');
+  if (!sel || sel.dataset.ready) return;
+  var cats = [];
+  REPORT_PERMS.forEach(function (r) { if (cats.indexOf(r.cat) < 0) cats.push(r.cat); });
+  cats.forEach(function (c) {
+    var o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o);
+  });
+  sel.dataset.ready = '1';
+}
+
+function renderReportPerm() {
+  rpInitFilters();
+  var tbody = document.getElementById('rp-tbody');
+  if (!tbody) return;
+  var kw = (document.getElementById('rp-kw').value || '').trim().toLowerCase();
+  var cat = document.getElementById('rp-cat').value;
+  var rank = document.getElementById('rp-rank').value;
+  var status = document.getElementById('rp-status').value;
+
+  var rows = REPORT_PERMS.filter(function (r) {
+    if (kw && (r.name.toLowerCase().indexOf(kw) < 0 && r.key.toLowerCase().indexOf(kw) < 0)) return false;
+    if (cat && r.cat !== cat) return false;
+    if (status && (r.status || 'on') !== status) return false;
+    if (rank !== '' && Number(rank) !== r.single && Number(rank) !== r.fleet) return false;
+    return true;
+  });
+
+  tbody.innerHTML = rows.map(function (r) {
+    var on = (r.status || 'on') === 'on';
+    return '<tr>'
+      + '<td><input type="checkbox" class="rp-check" data-key="' + r.key + '" onchange="rpUpdateSelected()"></td>'
+      + '<td><strong>' + r.name + '</strong><div style="font-size:11px;color:var(--text-muted)">' + r.key + '</div></td>'
+      + '<td>' + r.cat + '</td>'
+      + '<td>' + rpSelect(r.key, 'single', r.single) + '</td>'
+      + '<td>' + rpSelect(r.key, 'fleet', r.fleet) + '</td>'
+      + '<td>' + (r.langs || 16) + ' / 16</td>'
+      + '<td>' + (on ? '<span class="tag tag-success">上架</span>' : '<span class="tag tag-default">下架</span>') + '</td>'
+      + '<td style="font-size:12px;color:var(--text-muted)">' + (r.updatedAt || '2026-11-20 10:00') + '</td>'
+      + '<td><div class="td-actions">'
+      + '<button class="btn btn-sm btn-outline" onclick="openReportEdit(\'' + r.key + '\')">编辑</button>'
+      + '<button class="btn btn-sm btn-outline" style="color:var(--error)" onclick="rpToggleStatus(\'' + r.key + '\')">' + (on ? '下架' : '上架') + '</button>'
+      + '</div></td>'
+      + '</tr>';
+  }).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:32px 0">无匹配报表</td></tr>';
+
+  rpUpdateSelected();
+  renderGrants();
+}
+
+function rpSelect(key, field, val) {
+  function opt(v, t) {
+    var dis = (val === null || val === undefined) ? ' disabled' : '';
+    var sel = (val === v) ? ' selected' : '';
+    return '<option value="' + v + '"' + sel + dis + '>' + t + '</option>';
+  }
+  var head = (val === null || val === undefined) ? '<option value="" selected>不适用</option>' : '';
+  return '<select class="filter-select" style="width:120px;height:30px" onchange="rpSetRank(\'' + key + '\',\'' + field + '\',this.value)">'
+    + head + opt(0, '免费版') + opt(1, '进阶版') + opt(2, '专业版') + '</select>';
+}
+
+function rpSetRank(key, field, val) {
+  var r = REPORT_PERMS.find(function (x) { return x.key === key; });
+  if (!r) return;
+  r[field] = val === '' ? null : Number(val);
+  r.updatedAt = '2026-11-23 12:00';
+  rpSave();
+  showToast('已保存：' + r.name + ' · ' + (field === 'single' ? '单机' : '机群') + ' → ' + rpRankLabel(r[field]));
+}
+
+function rpToggleStatus(key) {
+  var r = REPORT_PERMS.find(function (x) { return x.key === key; });
+  if (!r) return;
+  r.status = ((r.status || 'on') === 'on') ? 'off' : 'on';
+  r.updatedAt = '2026-11-23 12:00';
+  rpSave(); renderReportPerm();
+  showToast('已' + (r.status === 'on' ? '上架' : '下架') + '：' + r.name);
+}
+
+function toggleAllReport(cb) {
+  document.querySelectorAll('.rp-check').forEach(function (c) { c.checked = cb.checked; });
+  rpUpdateSelected();
+}
+
+function rpUpdateSelected() {
+  var n = document.querySelectorAll('.rp-check:checked').length;
+  var el = document.getElementById('rp-selected');
+  if (el) el.textContent = '已选 ' + n + ' 项';
+}
+
+function applyBulkRank() {
+  var keys = Array.prototype.map.call(document.querySelectorAll('.rp-check:checked'), function (c) { return c.dataset.key; });
+  if (!keys.length) { showToast('请先勾选报表'); return; }
+  var scope = document.getElementById('rp-bulk-scope').value;
+  var rank = Number(document.getElementById('rp-bulk-rank').value);
+  keys.forEach(function (k) {
+    var r = REPORT_PERMS.find(function (x) { return x.key === k; });
+    if (!r) return;
+    if (scope === 'both' || scope === 'single') { if (r.single !== null && r.single !== undefined) r.single = rank; }
+    if (scope === 'both' || scope === 'fleet') { if (r.fleet !== null && r.fleet !== undefined) r.fleet = rank; }
+    r.updatedAt = '2026-11-23 12:00';
+  });
+  rpSave(); renderReportPerm();
+  showToast('已批量设置 ' + keys.length + ' 张报表为「' + rpRankLabel(rank) + '」');
+}
+
+function openReportEdit(key) {
+  RP_EDIT_KEY = key || null;
+  var r = key ? REPORT_PERMS.find(function (x) { return x.key === key; }) : null;
+  document.getElementById('rp-modal-title').textContent = r ? '编辑报表权限' : '新增报表';
+  document.getElementById('rp-name').value = r ? r.name : '';
+  document.getElementById('rp-key').value = r ? r.key : '';
+  document.getElementById('rp-key').disabled = !!r;
+  document.getElementById('rp-category').value = r ? r.cat : '';
+  document.getElementById('rp-status-sel').value = r ? (r.status || 'on') : 'on';
+  document.getElementById('rp-single').value = r && r.single !== null && r.single !== undefined ? r.single : '';
+  document.getElementById('rp-fleet').value = r && r.fleet !== null && r.fleet !== undefined ? r.fleet : '';
+  document.getElementById('rp-langs').value = r ? (r.langs || 16) : 16;
+  document.getElementById('rp-trial').value = String(r && r.trial !== undefined ? r.trial : 1);
+  document.getElementById('rp-standalone').value = String(r && r.standalone !== undefined ? r.standalone : 1);
+  document.getElementById('rp-err').style.display = 'none';
+  openModal('report-perm-modal');
+}
+
+function saveReportPerm() {
+  var name = document.getElementById('rp-name').value.trim();
+  var key = document.getElementById('rp-key').value.trim();
+  var err = document.getElementById('rp-err');
+  if (!name || !key) { err.textContent = '请填写报表名称与报表标识'; err.style.display = 'block'; return; }
+  if (!RP_EDIT_KEY && REPORT_PERMS.some(function (x) { return x.key === key; })) {
+    err.textContent = '报表标识已存在'; err.style.display = 'block'; return;
+  }
+  var rec = RP_EDIT_KEY ? REPORT_PERMS.find(function (x) { return x.key === RP_EDIT_KEY; }) : null;
+  if (!rec) { rec = { key: key }; REPORT_PERMS.push(rec); }
+  rec.name = name;
+  rec.cat = document.getElementById('rp-category').value.trim() || '其他';
+  rec.status = document.getElementById('rp-status-sel').value;
+  rec.single = document.getElementById('rp-single').value === '' ? null : Number(document.getElementById('rp-single').value);
+  rec.fleet = document.getElementById('rp-fleet').value === '' ? null : Number(document.getElementById('rp-fleet').value);
+  rec.langs = Number(document.getElementById('rp-langs').value) || 16;
+  rec.trial = Number(document.getElementById('rp-trial').value);
+  rec.standalone = Number(document.getElementById('rp-standalone').value);
+  rec.updatedAt = '2026-11-23 12:00';
+  rpSave(); closeModal('report-perm-modal'); renderReportPerm();
+  showToast('已保存报表权限：' + rec.name);
+}
+
+function resetReportPerm() {
+  try { localStorage.removeItem('mysany_report_permissions'); } catch (e) {}
+  location.reload();
+}
+
+/* ---------- 套餐覆盖 ---------- */
+function renderGrants() {
+  var tbody = document.getElementById('grant-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = REPORT_GRANTS.map(function (g, i) {
+    return '<tr><td>' + g.plan + '</td><td>' + g.report + '</td><td>' + g.scope + '</td>'
+      + '<td>' + (g.type === 'include' ? '<span class="tag tag-success">额外放行</span>' : '<span class="tag tag-info">额外排除</span>') + '</td>'
+      + '<td><button class="btn btn-sm btn-outline" style="color:var(--error)" onclick="delGrant(' + i + ')">删除</button></td></tr>';
+  }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px 0">暂无覆盖规则（默认按报表声明的所需版本判定）</td></tr>';
+}
+
+function openGrantAdd() {
+  var sel = document.getElementById('grant-report');
+  sel.innerHTML = REPORT_PERMS.map(function (r) { return '<option>' + r.name + '</option>'; }).join('');
+  openModal('grant-modal');
+}
+
+function saveGrant() {
+  REPORT_GRANTS.push({
+    plan: document.getElementById('grant-plan').value,
+    report: document.getElementById('grant-report').value,
+    scope: document.getElementById('grant-scope').value === 'single' ? '单机' : '机群',
+    type: document.getElementById('grant-type').value
+  });
+  closeModal('grant-modal'); renderGrants(); showToast('已新增套餐覆盖规则');
+}
+
+function delGrant(i) {
+  REPORT_GRANTS.splice(i, 1);
+  renderGrants(); showToast('已删除覆盖规则');
+}
+
+/* 初始化 */
+rpLoad();
+try { renderReportPerm(); } catch (e) { console.error('renderReportPerm:', e); }
+
+
+/* ==================== 套餐分配权限 ==================== */
+var PERM_TAB = 'feature';
+var PLAN_COMPS = new Set();      /* 功能分组 key */
+var PLAN_REPORTS = new Set();    /* RPT-S-key / RPT-F-key */
+
+function switchPermTab(tab, btn) {
+  PERM_TAB = tab;
+  document.querySelectorAll('#sec-perms .perm-tab').forEach(function (b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  document.getElementById('perm-pane-feature').style.display = tab === 'feature' ? '' : 'none';
+  document.getElementById('perm-pane-report').style.display = tab === 'report' ? '' : 'none';
+  renderPermPicker();
+}
+
+function permKeyOfReport(r, scope) {
+  return (scope === '单机' ? 'RPT-S-' : 'RPT-F-') + r.key;
+}
+
+function renderPermPicker() {
+  var kw = (document.getElementById('perm-search').value || '').trim().toLowerCase();
+
+  /* 功能分组 */
+  var fbox = document.getElementById('perm-pane-feature');
+  if (fbox) {
+    var groups = (typeof COMP_TREE !== 'undefined' ? COMP_TREE : []).filter(function (g) {
+      return !kw || (g.name || '').toLowerCase().indexOf(kw) > -1;
+    });
+    fbox.innerHTML = groups.map(function (g) {
+      var on = PLAN_COMPS.has(g.key);
+      return '<label class="perm-row"><input type="checkbox" ' + (on ? 'checked' : '') +
+        ' onchange="togglePlanComp(\'' + g.key + '\')"><span>' + g.name + '</span>' +
+        '<span class="perm-id">' + g.key + '</span></label>';
+    }).join('') || '<div style="padding:20px 0;text-align:center;color:var(--text-muted);font-size:12.5px">无匹配功能分组</div>';
+  }
+
+  /* 报表 */
+  var rbox = document.getElementById('perm-pane-report');
+  if (rbox) {
+    var cats = [];
+    REPORT_PERMS.forEach(function (r) { if (cats.indexOf(r.cat) < 0) cats.push(r.cat); });
+    var html = '';
+    cats.forEach(function (cat) {
+      var rows = REPORT_PERMS.filter(function (r) {
+        if (r.cat !== cat) return false;
+        if (!kw) return true;
+        return r.name.toLowerCase().indexOf(kw) > -1 || r.key.toLowerCase().indexOf(kw) > -1;
+      });
+      if (!rows.length) return;
+      html += '<div class="perm-group">' + cat + '</div>';
+      rows.forEach(function (r) {
+        html += '<div class="perm-row"><span>' + r.name + '</span>';
+        ['单机', '机群'].forEach(function (sc) {
+          var val = sc === '单机' ? r.single : r.fleet;
+          if (val === null || val === undefined) return;
+          var id = permKeyOfReport(r, sc);
+          var on = PLAN_REPORTS.has(id);
+          html += '<label class="perm-scope' + (sc === '机群' ? ' on' : '') + '" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer">' +
+            '<input type="checkbox" ' + (on ? 'checked' : '') + ' onchange="togglePlanReport(\'' + id + '\')">' + sc + '</label>';
+        });
+        html += '<span class="perm-id">' + r.key + '</span></div>';
+      });
+    });
+    rbox.innerHTML = html || '<div style="padding:20px 0;text-align:center;color:var(--text-muted);font-size:12.5px">无匹配报表</div>';
+  }
+
+  var n = PLAN_COMPS.size + PLAN_REPORTS.size;
+  var el = document.getElementById('perm-count');
+  if (el) el.textContent = '已选 ' + n + ' 项';
+}
+
+function togglePlanComp(key) {
+  PLAN_COMPS.has(key) ? PLAN_COMPS.delete(key) : PLAN_COMPS.add(key);
+  renderPermPicker();
+}
+function togglePlanReport(id) {
+  PLAN_REPORTS.has(id) ? PLAN_REPORTS.delete(id) : PLAN_REPORTS.add(id);
+  renderPermPicker();
+}
+function resetPlanPerms() { PLAN_COMPS.clear(); PLAN_REPORTS.clear(); renderPermPicker(); }
+function selectAllPlanPerms() {
+  (typeof COMP_TREE !== 'undefined' ? COMP_TREE : []).forEach(function (g) { PLAN_COMPS.add(g.key); });
+  REPORT_PERMS.forEach(function (r) {
+    if (r.single !== null && r.single !== undefined) PLAN_REPORTS.add(permKeyOfReport(r, '单机'));
+    if (r.fleet !== null && r.fleet !== undefined) PLAN_REPORTS.add(permKeyOfReport(r, '机群'));
+  });
+  renderPermPicker();
+}
+
+</script>
+
+<!-- 报表权限编辑弹窗 -->
+<div class="modal-overlay" id="report-perm-modal">
+  <div class="modal" style="width:560px" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <span class="modal-title" id="rp-modal-title">编辑报表权限</span>
+      <button class="modal-close" onclick="closeModal('report-perm-modal')" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">报表名称 <span style="color:var(--error)">*</span></label>
+          <input class="form-input" id="rp-name" placeholder="如：设备工作模式报表">
+        </div>
+        <div class="form-group">
+          <label class="form-label">报表标识 key <span style="color:var(--error)">*</span></label>
+          <input class="form-input" id="rp-key" placeholder="如：work_mode">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">分类</label>
+          <input class="form-input" id="rp-category" placeholder="如：作业与效率">
+        </div>
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <select class="form-input" id="rp-status-sel">
+            <option value="on">上架</option>
+            <option value="off">下架</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">单机所需版本</label>
+          <select class="form-input" id="rp-single">
+            <option value="0">免费版</option>
+            <option value="1">进阶版</option>
+            <option value="2">专业版</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">机群所需版本</label>
+          <select class="form-input" id="rp-fleet">
+            <option value="0">免费版</option>
+            <option value="1">进阶版</option>
+            <option value="2">专业版</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">语言数</label>
+          <input class="form-input" id="rp-langs" type="number" min="1" max="16" value="16">
+        </div>
+        <div class="form-group">
+          <label class="form-label">试用期是否可见</label>
+          <select class="form-input" id="rp-trial">
+            <option value="1">可见</option>
+            <option value="0">不可见</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">允许单独开通（0 元弹窗）</label>
+        <select class="form-input" id="rp-standalone">
+          <option value="1">允许</option>
+          <option value="0">不允许（需升级版本）</option>
+        </select>
+      </div>
+      <div class="form-error" id="rp-err" style="display:none"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('report-perm-modal')">取消</button>
+      <button class="btn btn-primary" onclick="saveReportPerm()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 套餐覆盖新增弹窗 -->
+<div class="modal-overlay" id="grant-modal">
+  <div class="modal" style="width:480px" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <span class="modal-title">新增套餐覆盖</span>
+      <button class="modal-close" onclick="closeModal('grant-modal')" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">套餐</label>
+        <select class="form-input" id="grant-plan">
+          <option>进阶版</option>
+          <option>专业版</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">报表</label>
+        <select class="form-input" id="grant-report"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">口径</label>
+          <select class="form-input" id="grant-scope">
+            <option value="single">单机</option>
+            <option value="fleet">机群</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">类型</label>
+          <select class="form-input" id="grant-type">
+            <option value="include">额外放行</option>
+            <option value="exclude">额外排除</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('grant-modal')">取消</button>
+      <button class="btn btn-primary" onclick="saveGrant()">保存</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

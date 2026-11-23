@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的订阅 - Mysany</title>
+<style>
+:root {
+  --primary: #E60012;--primary-hover: #B8000E;--primary-light: #FDECEC;
+  --success: #10B981;--success-light: #D1FAE5;--warning: #F59E0B;
+  --warning-light: #FEF3C7;--error: #EF4444;--error-light: #FEE2E2;
+  --text-primary: #1E293B;--text-secondary: #64748B;--text-muted: #94A3B8;
+  --text-white: #FFFFFF;--border: #E2E8F0;--border-light: #F1F5F9;
+  --bg-page: #F8FAFC;--bg-card: #FFFFFF;
+  --shadow-card: 0 1px 3px rgba(0,0,0,.06);
+  --shadow-hover: 0 4px 12px rgba(0,0,0,.08);
+  --shadow-modal: 0 16px 48px rgba(0,0,0,.16);
+  --radius-sm: 4px;--radius-md: 8px;--radius-lg: 12px;
+  --transition-fast: 150ms cubic-bezier(.23,1,.32,1);
+  /* 侧边栏所需变量（复刻自个人中心） */
+  --primary-bg: rgba(230,0,18,.06);
+  --bg-block: var(--bg-card);
+  --radius-card: 12px;
+  --shadow-md: 0 4px 12px rgba(0,0,0,.06);
+  --text-1: var(--text-primary);
+  --text-2: var(--text-secondary);
+  --text-3: var(--text-muted);
+  --hd-h: 48px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;color:var(--text-primary);background:var(--bg-page);min-height:100vh}
+/* Top Nav */
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;background:var(--bg-card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+/* ===== 顶部 Header（复刻自个人中心） ===== */
+.header{height:48px;background:#FFF;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center}
+.logo{font-size:20px;color:var(--primary);display:flex;align-items:baseline;line-height:1}
+.logo .logo-my{font-style:italic;font-weight:600;font-family:Georgia,"Times New Roman",serif;margin-right:1px}
+.logo .logo-sany{font-weight:800;letter-spacing:.5px}
+.header-right{display:flex;align-items:center;gap:22px;font-size:13px;color:var(--text-2)}
+.lang-switch{cursor:pointer;display:flex;align-items:center;gap:5px;color:var(--text-1)}
+.lang-switch svg{color:var(--text-3)}
+.hd-select{display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text-1)}
+.hd-select:hover{color:var(--primary)}
+.hd-select svg{color:var(--text-3)}
+.hd-entry{display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text-1)}
+.hd-entry:hover{color:var(--primary)}
+.hd-entry svg{color:var(--text-3)}
+.hd-entry-badge{position:relative;top:-7px;margin-left:1px;padding:1px 6px;font-size:10px;font-weight:600;line-height:1.5;color:#FFF;background:var(--primary);border-radius:10px 10px 10px 2px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.user-info{display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--text-1)}
+.user-info:hover{color:var(--primary)}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#FFB88C,#DE6262);display:flex;align-items:center;justify-content:center;color:#FFF;font-size:12px;font-weight:600}
+.chev{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid currentColor}
+.nav-brand{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:700;color:var(--primary);text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:24px}
+.nav-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;transition:color var(--transition-fast)}
+.nav-links a:hover,.nav-links a.active{color:var(--primary)}
+.nav-actions{display:flex;align-items:center;gap:12px}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;font-size:13px;font-weight:500;border-radius:var(--radius-sm);cursor:pointer;border:1px solid transparent;transition:all var(--transition-fast);height:36px;white-space:nowrap}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-hover)}
+.btn-outline{background:var(--bg-card);border-color:var(--border);color:var(--text-primary)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-danger{background:var(--error);color:#fff}
+.btn-danger:hover{background:#DC2626}
+.btn-danger-outline{background:var(--bg-card);border-color:var(--error);color:var(--error)}
+.btn-danger-outline:hover{background:var(--error-light)}
+.btn-lg{padding:10px 24px;height:42px;font-size:14px;font-weight:600;border-radius:var(--radius-md)}
+.btn-sm{padding:4px 12px;height:30px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+/* Page */
+.page-container{max-width:1200px;margin:0 auto;padding:32px 32px 60px;display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}
+/* Card */
+.card{background:var(--bg-card);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border-light)}
+.card-title{font-size:15px;font-weight:600}
+.card-body{padding:20px}
+/* 状态演示切换（未订阅 / 已订阅） */
+.sub-state-switch{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:12px}
+.sub-state-label{font-size:12px;color:var(--text-3,#9CA3AF)}
+.sub-state-tabs{display:flex;background:var(--bg-block,#F3F4F6);border:1px solid var(--border,#E5E7EB);border-radius:18px;padding:3px}
+.sub-state-tab{padding:6px 14px;font-size:12px;font-weight:500;color:var(--text-2,#6B7280);border-radius:15px;cursor:pointer;transition:all .15s;user-select:none}
+.sub-state-tab:hover{color:var(--text-1,#111827)}
+.sub-state-tab.active{background:#FFF;color:var(--primary,#E60012);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+
+/* Subscription Empty State（未生效订阅） */
+.sub-empty{padding:56px 24px;background:var(--bg-card,#FFF);border:1px solid var(--border,#E5E7EB);border-radius:var(--radius-lg);display:flex;flex-direction:column;align-items:center;text-align:center}
+.sub-empty-icon{width:64px;height:64px;border-radius:50%;background:rgba(0,0,0,.04);color:var(--text-3,#9CA3AF);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.sub-empty-icon svg{width:30px;height:30px}
+.sub-empty-title{font-size:16px;font-weight:600;color:var(--text-1,#111827);margin-bottom:8px}
+.sub-empty-desc{font-size:13px;line-height:1.6;color:var(--text-3,#9CA3AF);max-width:360px;margin-bottom:20px}
+.sub-empty-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 28px;font-size:14px;font-weight:500;color:#FFF;background:var(--primary,#E60012);border:none;border-radius:22px;cursor:pointer;transition:background .15s}
+.sub-empty-btn:hover{background:var(--primary-hover,#C00010)}
+
+/* Subscription Status Card */
+.sub-status{padding:24px;background:linear-gradient(135deg,#E60012,#B8000E);color:#fff;border-radius:var(--radius-lg)}
+.sub-status.expiring{background:linear-gradient(135deg,#F59E0B,#D97706)}
+.sub-status.expired{background:linear-gradient(135deg,#EF4444,#DC2626)}
+.sub-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sub-plan-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(255,255,255,.2);border-radius:100px;font-size:13px;font-weight:500;backdrop-filter:blur(4px)}
+.sub-plan-name{font-size:13px;font-weight:500}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+.sub-plan-main{margin-top:4px}
+.sub-plan-title{font-size:28px;font-weight:800;line-height:1.2}
+.sub-plan-expiry{font-size:12px;opacity:.85;margin-top:4px}
+/* Alert Bar */
+.alert-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--radius-md);margin-bottom:16px;font-size:13px}
+.alert-bar.warning{background:var(--warning-light);color:#92400E;border:1px solid var(--warning)}
+.alert-bar.error{background:var(--error-light);color:#991B1B;border:1px solid var(--error)}
+.alert-bar.info{background:var(--primary-light);color:var(--primary);border:1px solid var(--primary)}
+.alert-bar svg{flex-shrink:0}
+/* Tags */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:12px;font-weight:500;white-space:nowrap}
+.tag-success{background:var(--success-light);color:#065F46}
+.tag-warning{background:var(--warning-light);color:#92400E}
+.tag-error{background:var(--error-light);color:#991B1B}
+.tag-default{background:var(--border-light);color:var(--text-secondary)}
+/* Auto-renew toggle */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--border-light);border-radius:var(--radius-md);margin-top:16px}
+.toggle-info{display:flex;flex-direction:column;gap:2px}
+.toggle-label{font-size:13px;font-weight:500}
+.toggle-hint{font-size:11px;color:var(--text-muted)}
+.toggle-switch{position:relative;width:44px;height:24px;border-radius:12px;background:var(--border);cursor:pointer;transition:background var(--transition-fast);border:none}
+.toggle-switch.active{background:var(--primary)}
+.toggle-switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform var(--transition-fast)}
+.toggle-switch.active::after{transform:translateX(20px)}
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-modal);animation:modalIn .25s cubic-bezier(.65,0,.35,1)}
+.modal.sm{width:400px}
+.modal.md{width:500px}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border-light)}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;color:var(--text-muted);border-radius:var(--radius-sm);transition:all var(--transition-fast)}
+.modal-close:hover{background:var(--border-light);color:var(--text-primary)}
+.modal-body{padding:20px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--border-light)}
+.modal-destructive{text-align:center;padding:8px 0}
+.modal-destructive-icon{margin-bottom:12px;width:48px;height:48px;background:var(--error-light);border-radius:50%;display:inline-flex;align-items:center;justify-content:center}
+.modal-destructive-icon svg{color:var(--error)}
+.modal-destructive-text{font-size:13px;color:var(--text-secondary);margin-top:8px}
+/* Form */
+.form-group{margin-bottom:14px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:4px}
+.form-label .required{color:var(--error);margin-left:2px}
+.form-input{width:100%;padding:7px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);outline:none;transition:border var(--transition-fast);font-family:monospace}
+.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(30,111,255,.1)}
+/* Price Calc in upgrade modal */
+.price-breakdown{margin-top:16px;padding:12px;background:var(--border-light);border-radius:var(--radius-md);font-size:13px}
+.price-row{display:flex;justify-content:space-between;padding:6px 0}
+.price-row+.price-row{border-top:1px solid var(--border)}
+.price-total{display:flex;justify-content:space-between;padding:8px 0 0;border-top:2px solid var(--border);margin-top:6px;font-weight:700;font-size:16px}
+.price-total-value{color:var(--primary)}
+/* Toast */
+.toast-container{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:#1E293B;color:#fff;padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;box-shadow:var(--shadow-modal);animation:toastIn var(--transition-fast);text-align:center}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+/* Period Toggle */
+.period-toggle{display:inline-flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.period-toggle button{padding:5px 14px;font-size:12px;font-weight:500;border:none;background:var(--bg-card);color:var(--text-secondary);cursor:pointer;transition:all var(--transition-fast)}
+.period-toggle button.active{background:var(--primary);color:#fff}
+/* Status Card Actions */
+.status-actions{display:flex;gap:10px;margin-top:20px}
+.status-actions button{flex:1;height:38px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition-fast)}
+.status-actions button:first-child{background:rgba(255,255,255,.22);color:#fff}
+.status-actions button:first-child:hover{background:rgba(255,255,255,.34)}
+.status-actions button:last-child{background:#fff;color:var(--primary)}
+.status-actions button:last-child:hover{background:var(--border-light)}
+.status-actions button:only-child{flex:0 1 auto;padding:0 28px}
+.status-countdown{font-size:12px;opacity:.9}
+/* Quick Actions */
+.quick-actions{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);margin-top:16px;overflow:hidden}
+.quick-action{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;cursor:pointer;transition:background var(--transition-fast)}
+.quick-action+.quick-action{border-top:1px solid var(--border-light)}
+.quick-action:hover{background:var(--border-light)}
+.quick-action-left{display:flex;align-items:center;gap:12px}
+.quick-action-icon{width:32px;height:32px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.quick-action-icon.support{background:var(--primary-light);color:var(--primary)}
+.quick-action-icon.cancel{background:var(--error-light);color:var(--error)}
+.quick-action-name{font-size:13px;font-weight:500}
+.quick-action-arrow{color:var(--text-muted);font-size:18px;line-height:1}
+/* FAQ */
+.faq-section{margin-top:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+.faq-title{font-size:15px;font-weight:600;margin-bottom:14px}
+.faq-item{border-bottom:1px solid var(--border-light);cursor:pointer}
+.faq-item:last-child{border-bottom:none}
+.faq-q{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0}
+.faq-q-text{font-size:13px;font-weight:500}
+.faq-q-icon{flex-shrink:0;width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);stroke:currentColor;transition:transform var(--transition-fast)}
+.faq-item.open .faq-q-icon{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.faq-item.open .faq-a{max-height:240px}
+.faq-a-text{font-size:12.5px;color:var(--text-secondary);line-height:1.75;padding-bottom:14px}
+/* Stepper */
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.stepper-btn{width:28px;height:28px;border:none;background:var(--bg-card);color:var(--text-primary);font-size:15px;line-height:1;cursor:pointer;transition:background var(--transition-fast)}
+.stepper-btn:hover:not(:disabled){background:var(--border-light)}
+.stepper-btn:disabled{opacity:.35;cursor:not-allowed}
+.stepper-val{min-width:38px;text-align:center;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+/* Renew info */
+.renew-info{padding:10px 12px;background:var(--border-light);border-radius:var(--radius-md);font-size:13px;margin-bottom:14px}
+.renew-info-row{display:flex;justify-content:space-between;padding:3px 0}
+.renew-info-label{color:var(--text-secondary)}
+.renew-info-value{font-weight:500}
+/* Upgrade targets */
+.up-current{padding:12px 14px;background:var(--primary-light);border-radius:var(--radius-md);margin-bottom:16px}
+.up-current-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--primary)}
+.up-current-main{font-size:13px;font-weight:600;margin-top:6px}
+.up-section-title{font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:10px}
+.up-targets{display:flex;flex-direction:column;gap:10px}
+.up-target{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);cursor:pointer;transition:all var(--transition-fast)}
+.up-target:hover{border-color:var(--primary)}
+.up-target.active{border-color:var(--primary);background:var(--primary-light)}
+.up-target-name{font-size:13px;font-weight:600}
+.up-target-desc{font-size:11.5px;color:var(--text-muted);margin-top:3px}
+.up-target-btn{padding:5px 14px;font-size:12px;font-weight:500;border-radius:var(--radius-sm);border:1px solid var(--primary);background:var(--bg-card);color:var(--primary);cursor:pointer;flex-shrink:0}
+.up-target-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0}
+.up-target.active .up-target-check{border-color:var(--primary);background:var(--primary);box-shadow:inset 0 0 0 3px #fff}
+/* Quick Stats sidebar */
+.stat-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0}
+.stat-item+.stat-item{border-top:1px solid var(--border-light)}
+.stat-label{font-size:12px;color:var(--text-secondary)}
+.stat-value{font-size:14px;font-weight:600}
+/* 消费记录 */
+.consume-more{text-align:center;padding:12px 0 4px;font-size:13px;color:var(--text-secondary);cursor:pointer;border-top:1px solid var(--border-light);margin-top:8px}
+.consume-table{width:100%;border-collapse:collapse;font-size:12px}
+.consume-table th{text-align:left;padding:8px 10px;color:var(--text-secondary);font-weight:500;background:var(--border-light);white-space:nowrap}
+.consume-table th:first-child{border-radius:8px 0 0 8px}
+.consume-table th:last-child{border-radius:0 8px 8px 0}
+.consume-table td{padding:10px;border-bottom:1px solid var(--border-light);color:var(--text-primary);white-space:nowrap}
+.consume-table td.muted{color:var(--text-secondary)}
+.refund-link{color:var(--primary);cursor:pointer;font-weight:500}
+.refund-link:hover{text-decoration:underline}
+.status-tag{display:inline-block;padding:2px 10px;font-size:11px;font-weight:500;border-radius:10px;color:var(--text-secondary);background:var(--border-light)}
+.status-tag.ok{color:var(--success);background:var(--success-light)}
+.status-tag.warn{color:var(--warning);background:var(--warning-light)}
+/* 退款申请弹窗 */
+.rf-order{background:#F8FAFC;border:1px solid var(--border-light);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.rf-oid{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--text-secondary);background:var(--border-light);border-radius:6px;padding:2px 10px;margin-bottom:10px}
+.rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.rf-cell-label{display:block;font-size:11px;color:var(--text-muted);margin-bottom:2px}
+.rf-cell-value{font-size:13px;color:var(--text-primary);font-weight:500}
+.rf-est{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--success);background:var(--success-light);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.rf-est-label{font-size:13px;font-weight:600;color:#067647}
+.rf-est-rule{font-size:11px;color:#067647;opacity:.85;margin-top:2px}
+.rf-est-value{font-size:24px;font-weight:700;color:#067647}
+.rf-reasons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rf-reason{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:var(--radius-sm,8px);padding:10px 12px;font-size:13px;color:var(--text-primary);cursor:pointer;transition:all .15s}
+.rf-reason:hover{border-color:var(--primary)}
+.rf-reason:has(input:checked){border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:500}
+.rf-reason input{accent-color:var(--primary);margin:0}
+.rf-rule{font-size:11px;color:var(--text-muted);line-height:1.7;background:var(--border-light);border-radius:8px;padding:10px 12px}
+.refund-note{width:100%;padding:10px 12px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm,8px);font-family:inherit;resize:vertical}
+
+/* 免费版权益 */
+.benefit-item{display:flex;align-items:flex-start;gap:8px;padding:8px 0;font-size:13px;color:var(--text-primary)}
+.benefit-item+.benefit-item{border-top:1px solid var(--border-light)}
+.benefit-item svg{width:16px;height:16px;flex-shrink:0;color:var(--success);margin-top:1px}
+*:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+@media(max-width:900px){.page-container{grid-template-columns:1fr;padding:20px 16px 60px}}
+    /* ===== 侧边栏（复刻自个人中心） ===== */
+    .layout { display: flex; min-height: 100vh }
+    .sidebar { width: 180px; background: #FFF; border-right: 1px solid var(--border); flex-shrink: 0; position: sticky; top: var(--hd-h, 48px); align-self: flex-start; height: calc(100vh - var(--hd-h, 48px)); display: flex; flex-direction: column; z-index: 40 }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0 }
+    .menu-parent { padding: 10px 16px; font-size: 13px; font-weight: 600; color: var(--text-1); cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 9px }
+    .menu-parent svg { flex-shrink: 0; color: var(--text-2) }
+    .menu-parent:hover { color: var(--primary); background: #FAFAFA }
+    .menu-parent:hover svg { color: var(--primary) }
+    .menu-parent.active { color: var(--primary); background: var(--primary-bg) }
+    .menu-parent.active svg { color: var(--primary) }
+    .menu-parent .arrow { margin-left: auto; transition: transform .15s }
+    .menu-parent.collapsed .arrow { transform: rotate(180deg) }
+    .menu-group { overflow: hidden }
+    .menu-group.collapsed { display: none }
+    .menu-item { padding: 9px 16px 9px 41px; font-size: 13px; color: var(--text-2); cursor: pointer; transition: all .15s }
+    .menu-item:hover { color: var(--primary); background: #FAFAFA }
+    .menu-item.active { color: var(--primary); background: var(--primary-bg); font-weight: 500 }
+    .side-deco { padding: 0 10px 6px; pointer-events: none }
+    .side-deco svg { width: 100%; height: auto; display: block }
+    .sidebar-toggle { padding: 12px 16px; border-top: 1px solid var(--border-light); text-align: center; color: var(--text-3); cursor: pointer; display: flex; align-items: center; justify-content: center }
+    .sidebar-toggle:hover { color: var(--primary) }
+    .main { flex: 1; min-width: 0; padding: 20px 24px }
+
+</style>
+</head>
+<body>
+
+<!-- ========== 顶部 Header（个人中心样式） ========== -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo"><span class="logo-my">My</span><span class="logo-sany">SANY</span></div>
+  </div>
+  <div class="header-right">
+    <div class="hd-entry" onclick="location.href='我的订阅管理页.html'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      订阅
+      <span class="hd-entry-badge">新上</span>
+    </div>
+    <div class="lang-switch" onclick="showToast('语言切换')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      简体中文
+    </div>
+    <div class="hd-select" onclick="showToast('切换租户')">
+      TIRAN INDONESIA
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="user-info" onclick="showToast('账号菜单')">
+      <div class="avatar" id="nav-avatar">D</div>
+      <span id="nav-user-name">David Chen</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</header>
+
+<!-- Page Content -->
+<div class="layout">
+
+    <!-- ========== 侧边导航（复刻自个人中心） ========== -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+
+        <div class="menu-parent" onclick="sbGo('工作台-有数据.html')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          工作台
+        </div>
+
+        <div class="menu-parent" onclick="sbGo('报表模版.html')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span style="flex:1">机群报表</span>
+        </div>
+
+      </nav>
+
+      <div class="side-deco">
+        <svg viewBox="0 0 160 54" fill="none">
+          <path d="M-10 54 L34 12 L58 54 Z" fill="#BFE8DC"/>
+          <path d="M18 54 L58 20 L96 54 Z" fill="#8FD6C0"/>
+          <path d="M52 54 L92 26 L134 54 Z" fill="#CDEEE2"/>
+          <circle cx="120" cy="18" r="7" fill="#EAF7F1"/>
+        </svg>
+      </div>
+
+      <div class="sidebar-toggle" onclick="sbToggleSidebar()" title="收起菜单">
+        <svg id="sb-collapse-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>
+      </div>
+    </aside>
+
+    <main class="main">
+
+    <div class="page-container">
+
+  <!-- Main Column -->
+  <div>
+
+    <!-- 状态演示切换（未订阅 / 已订阅） -->
+    <div class="sub-state-switch">
+      <span class="sub-state-label">状态演示</span>
+      <div class="sub-state-tabs">
+        <div class="sub-state-tab" id="tab-none" onclick="setSubState('none')">未订阅</div>
+        <div class="sub-state-tab active" id="tab-active" onclick="setSubState('active')">已订阅</div>
+        <div class="sub-state-tab" id="tab-expired" onclick="setSubState('expired')">已过期</div>
+      </div>
+    </div>
+
+    <!-- Subscription Empty State（未订阅状态显示：无生效订阅） -->
+    <div class="sub-empty" id="sub-empty" style="display:none">
+      <div class="sub-empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+        </svg>
+      </div>
+      <div class="sub-empty-title">暂无生效中的订阅</div>
+      <div class="sub-empty-desc">您当前尚未开通付费订阅，开通后即可使用机群监控、远程诊断、电子围栏等全部权益。</div>
+      <button class="sub-empty-btn" onclick="location.href='版本选购页.html'">立即订阅</button>
+    </div>
+
+    <!-- Subscription Status -->
+    <div class="sub-status" id="sub-status">
+      <div class="sub-header">
+        <div class="sub-plan-badge">
+          <span class="status-dot"></span>
+          <span class="sub-plan-name" id="status-badge-text">生效中</span>
+        </div>
+        <span class="status-countdown" id="status-countdown">剩余 30 天</span>
+      </div>
+      <div class="sub-plan-main">
+        <div class="sub-plan-title" id="sub-plan-title">免费版</div>
+        <div class="sub-plan-expiry">到期 <span id="sub-expiry">—</span></div>
+      </div>
+    </div>
+
+    <!-- 消费记录（已订阅，含退款申请入口） -->
+    <div class="card" style="margin-bottom:16px" id="sub-consume-card">
+      <div class="card-header">
+        <div class="card-title">消费记录</div>
+      </div>
+      <div class="card-body" style="padding-top:12px">
+        <table class="consume-table">
+          <thead>
+            <tr><th>时间</th><th>项目</th><th>订单状态</th><th>支付方式</th><th>订单 ID</th><th>操作</th></tr>
+          </thead>
+          <tbody id="consume-tbody"></tbody>
+        </table>
+        <div class="consume-more" id="consume-more" style="display:none" onclick="loadMoreConsume()">加载更多</div>
+      </div>
+    </div>
+
+    <!-- FAQ 常见问题（对齐 APP 端） -->
+    <div class="faq-section">
+      <h2 class="faq-title">常见问题</h2>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <span class="faq-q-text">Mysany 订阅如何定价？</span>
+            <span class="faq-q-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+          </div>
+          <div class="faq-a">
+            <p class="faq-a-text">Mysany 免费版开放给所有用户使用。付费方案（进阶版、专业版、企业定制版）开通后即可使用对应版本的全部功能。我们提供按月与按年两种周期方案，月付为原价，年付立省 17%。企业定制版需联系销售获取报价。</p>
+          </div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <span class="faq-q-text">Mysany 是免费的吗？</span>
+            <span class="faq-q-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+          </div>
+          <div class="faq-a">
+            <p class="faq-a-text">Mysany 免费版开放所有人使用。升级至进阶版、专业版或企业定制版方案，可使用更多机群管理与功能，畅享更强大的体验。</p>
+          </div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <span class="faq-q-text">有哪些付款方式？</span>
+            <span class="faq-q-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+          </div>
+          <div class="faq-a">
+            <p class="faq-a-text">你可以使用 Apple Pay、Google Pay 绑卡，或通过国际信用卡渠道自助购买进阶版与专业版。企业定制版需联系销售人员，支持银行电汇等专属付款方式。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div>
+    <!-- Quick Stats -->
+    <div class="card" style="margin-bottom:16px" id="sub-overview-card">
+      <div class="card-header"><div class="card-title">账户概览</div></div>
+      <div class="card-body">
+        <div class="stat-item">
+          <span class="stat-label">当前版本</span>
+          <span class="stat-value" id="stat-plan">免费版</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">订阅周期</span>
+          <span class="stat-value">1 个月</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">开始日期</span>
+          <span class="stat-value" id="stat-start">—</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">订阅到期</span>
+          <span class="stat-value" style="color:var(--success)" id="stat-expiry">30天后</span>
+        </div>
+                      </div>
+    </div>
+
+    <!-- 免费版可用权益（未订阅） -->
+    <div class="card" style="margin-bottom:16px;display:none" id="free-benefits-card">
+      <div class="card-header"><div class="card-title">免费版可用权益</div></div>
+      <div class="card-body">
+        <div class="benefit-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          机群监控（基础版）
+        </div>
+        <div class="benefit-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          设备数据查看最近 7 天
+        </div>
+        <div class="benefit-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          报表功能每月试用 3 天
+        </div>
+        <div class="benefit-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          基础工单支持
+        </div>
+        <div class="alert-bar" style="background:var(--primary-light);margin:12px 0 0;color:var(--primary)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span style="flex:1;min-width:0">升级付费订阅，解锁全部权益</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ MODALS ============ -->
+
+<!-- Cancel Auto-Renew Modal -->
+<div class="modal-overlay" id="cancel-renew-modal">
+  <div class="modal sm">
+    <div class="modal-header">
+      <div class="modal-title">取消自动续费</div>
+      <button class="modal-close" onclick="closeModal('cancel-renew-modal')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-destructive">
+        <div class="modal-destructive-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div style="font-weight:600;margin-bottom:4px">确认关闭自动续费？</div>
+        <div class="modal-destructive-text">
+          当前订阅有效至 <strong id="cancel-expiry">—</strong>，到期后将不再自动扣款，所有功能将降级为免费版。
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('cancel-renew-modal')">暂不关闭</button>
+      <button class="btn btn-danger" onclick="toggleAutoRenew(false)">确认关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upgrade Modal -->
+<div class="modal-overlay" id="upgrade-modal">
+  <div class="modal md">
+    <div class="modal-header">
+      <div class="modal-title">升级订阅</div>
+      <button class="modal-close" onclick="closeModal('upgrade-modal')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="up-current">
+        <div class="up-current-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          当前订阅方案
+        </div>
+        <div class="up-current-main" id="up-current-text">进阶版 · 剩余 365 天</div>
+      </div>
+      <div class="up-section-title">选择升级方案</div>
+      <div class="up-targets" id="up-targets"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('upgrade-modal')">取消</button>
+      <button class="btn btn-primary" onclick="confirmUpgrade()">前往升级</button>
+    </div>
+  </div>
+</div>
+
+<!-- Renew Modal -->
+<div class="modal-overlay" id="renew-modal">
+  <div class="modal sm">
+    <div class="modal-header">
+      <div class="modal-title">续费订阅</div>
+      <button class="modal-close" onclick="closeModal('renew-modal')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="renew-info">
+        <div class="renew-info-row">
+          <span class="renew-info-label">当前方案</span>
+          <span class="renew-info-value" id="r-plan">进阶版</span>
+        </div>
+        <div class="renew-info-row">
+          <span class="renew-info-label">当前到期</span>
+          <span class="renew-info-value" id="r-expiry">—</span>
+        </div>
+        <div class="renew-info-row">
+          <span class="renew-info-label">剩余时长</span>
+          <span class="renew-info-value" id="r-remain">—</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">订阅周期</label>
+        <div class="period-toggle" id="renew-period">
+          <button class="active" onclick="switchRenewPeriod('annual',this)">按年</button>
+          <button onclick="switchRenewPeriod('monthly',this)">按月</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">续费时长</label>
+        <div class="stepper">
+          <button type="button" class="stepper-btn" id="renew-minus-btn" onclick="changeRenewMonths(-1)" aria-label="减少">−</button>
+          <span class="stepper-val" id="r-months">1</span>
+          <button type="button" class="stepper-btn" onclick="changeRenewMonths(1)" aria-label="增加">＋</button>
+        </div>
+      </div>
+      <div class="price-breakdown">
+        <div class="price-row">
+          <span id="r-item-label">进阶版续费</span>
+          <span id="r-subtotal">—</span>
+        </div>
+        <div class="price-row" id="r-disc-row">
+          <span id="r-disc-label">年付优惠（立省 17%）</span>
+          <span id="r-discount" style="color:var(--success)">—</span>
+        </div>
+        <div class="price-row">
+          <span id="r-tax-label">税费（US Sales Tax 8.25%）</span>
+          <span id="r-tax">—</span>
+        </div>
+        <div class="price-total">
+          <span>续费应付（含税）</span>
+          <span class="price-total-value" id="r-total">—</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('renew-modal')">取消</button>
+      <button class="btn btn-primary btn-lg" onclick="doRenew()">确认续费</button>
+    </div>
+  </div>
+</div>
+
+<!-- Refund Apply Modal -->
+<div class="modal-overlay" id="refund-modal">
+  <div class="modal sm">
+    <div class="modal-header">
+      <div class="modal-title">申请退款</div>
+      <button class="modal-close" onclick="closeModal('refund-modal')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="rf-order">
+        <span class="rf-oid" id="refund-oid">—</span>
+        <div class="rf-grid">
+          <div><span class="rf-cell-label">订阅项目</span><b class="rf-cell-value" id="refund-item">—</b></div>
+          <div><span class="rf-cell-label">支付金额</span><b class="rf-cell-value" id="refund-amount">—</b></div>
+          <div><span class="rf-cell-label">支付方式</span><span class="rf-cell-value" id="refund-pay">—</span></div>
+          <div><span class="rf-cell-label">服务使用</span><span class="rf-cell-value" id="refund-used">—</span></div>
+        </div>
+      </div>
+
+      <div class="rf-est">
+        <div>
+          <div class="rf-est-label">预计可退金额</div>
+          <div class="rf-est-rule" id="refund-est-rule">—</div>
+        </div>
+        <div class="rf-est-value" id="refund-est">—</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">退款原因 *</label>
+        <div class="rf-reasons">
+          <label class="rf-reason"><input type="radio" name="refund-reason" checked>误购 / 非本人操作</label>
+          <label class="rf-reason"><input type="radio" name="refund-reason">重复支付</label>
+          <label class="rf-reason"><input type="radio" name="refund-reason">功能与预期不符</label>
+          <label class="rf-reason"><input type="radio" name="refund-reason">其他原因</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">补充说明</label>
+        <textarea class="refund-note" id="refund-note" rows="3" placeholder="可补充退款说明（选填）"></textarea>
+      </div>
+
+      <div class="rf-rule">退款将原路退回，5-10 个工作日到账；退款通过后，对应订阅权益将按规则回收。</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('refund-modal')">取消</button>
+      <button class="btn btn-primary" onclick="submitRefund()">提交申请</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+let autoRenew = true;
+
+/* ===== 常量与口径（对齐 APP 端） ===== */
+const US_RATE = 7.2;
+const US_VAT = 0.0825;
+// 价格口径对齐管理后台「订阅配置」：月付原价 ¥299，年付套餐价 ¥2,990（立省 17%）
+const PLAN = {
+  key: 'basic',
+  name: '免费版',
+  monthly: 0,
+  annual: 0,
+  total: 30,
+  remain: 30
+};
+
+function fmtMoney(cny) { return '$' + Math.round(cny / US_RATE).toLocaleString(); }
+
+function fmtDate(d) {
+  const m = d.getMonth() + 1, day = d.getDate();
+  return d.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (day < 10 ? '0' + day : day);
+}
+function shiftDays(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+const END_DATE = shiftDays(PLAN.total);
+
+function openModal(id) { document.getElementById(id).classList.add('open') }
+function closeModal(id) { document.getElementById(id).classList.remove('open') }
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id) })
+});
+
+function toggleAutoRenewUI() {
+  if (autoRenew) {
+    openModal('cancel-renew-modal');
+  } else {
+    toggleAutoRenew(true);
+  }
+}
+
+function toggleAutoRenew(on) {
+  autoRenew = on;
+  const toggle = document.getElementById('auto-renew-toggle');
+  const alert = document.getElementById('alert-auto-renew');
+  if (!toggle) return;
+  if (on) {
+    toggle.classList.add('active');
+    toggle.setAttribute('aria-checked', 'true');
+    alert.style.display = 'none';
+    showToast('自动续费已开启');
+  } else {
+    toggle.classList.remove('active');
+    toggle.setAttribute('aria-checked', 'false');
+    alert.style.display = 'flex';
+    showToast('自动续费已关闭');
+  }
+  closeModal('cancel-renew-modal');
+}
+
+function doRenew() {
+  closeModal('renew-modal');
+  showToast('续费成功，到期日已延长');
+}
+
+/* ===== 续费逻辑（对齐 APP 端） ===== */
+let renewPeriod = 'annual';
+let renewMonths = 12;
+
+function openRenew() {
+  renewPeriod = 'annual';
+  renewMonths = 12;
+  document.querySelectorAll('#renew-period button').forEach((b, i) => b.classList.toggle('active', i === 0));
+  renderRenew();
+  openModal('renew-modal');
+}
+
+function switchRenewPeriod(p, btn) {
+  renewPeriod = p;
+  renewMonths = (p === 'annual') ? 12 : 1;
+  document.querySelectorAll('#renew-period button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderRenew();
+}
+
+function changeRenewMonths(d) {
+  const step = (renewPeriod === 'annual') ? 12 : 1;
+  let next = renewMonths + d * step;
+  if (next < step) next = step;
+  renewMonths = next;
+  renderRenew();
+}
+
+function renderRenew() {
+  const subtotalCNY = PLAN.monthly * renewMonths;
+  const years = renewMonths / 12;
+  const baseCNY = (renewPeriod === 'annual') ? Math.round(PLAN.annual * years) : subtotalCNY;
+  const discCNY = subtotalCNY - baseCNY;
+  const taxCNY = Math.round(baseCNY * US_VAT);
+  const totalCNY = baseCNY + taxCNY;
+
+  const step = (renewPeriod === 'annual') ? 12 : 1;
+  const periodLabel = (renewPeriod === 'annual' && renewMonths % 12 === 0) ? (renewMonths / 12) : renewMonths;
+  const unitText = (renewPeriod === 'annual') ? ' 年' : ' 个月';
+
+  document.getElementById('r-months').textContent = periodLabel;
+  document.getElementById('renew-minus-btn').disabled = (renewMonths <= step);
+  document.getElementById('r-item-label').textContent = PLAN.name + '续费（' + periodLabel + unitText + '）';
+  document.getElementById('r-subtotal').textContent = fmtMoney(subtotalCNY);
+  document.getElementById('r-disc-row').style.display = discCNY > 0 ? 'flex' : 'none';
+  document.getElementById('r-disc-label').textContent = '年付优惠（立省 17%）';
+  document.getElementById('r-discount').textContent = '-' + fmtMoney(discCNY);
+  document.getElementById('r-tax').textContent = fmtMoney(taxCNY);
+  document.getElementById('r-total').textContent = fmtMoney(totalCNY);
+}
+
+/* ===== 升级订阅（对齐 APP 端） ===== */
+const upgradeCtx = {
+  fromPlan: 'basic',
+  fromName: '进阶版',
+  fromPaid: 299 * 12,
+  total: 365,
+  remain: 365,
+  target: 'pro'
+};
+
+const upgradeTargets = [
+  { key: 'pro', name: '专业版', price: 599, desc: '机群监控 · 远程诊断 · 生产力分析', selectable: true },
+  { key: 'enterprise', name: '企业定制版', price: 0, desc: '私有部署 · 专属客户经理 · SLA保障', selectable: false }
+];
+
+function openUpgrade() {
+  renderUpgrade();
+  openModal('upgrade-modal');
+}
+
+function renderUpgrade() {
+  document.getElementById('up-current-text').textContent =
+    upgradeCtx.fromName + ' · 剩余 ' + upgradeCtx.remain + ' 天';
+
+  const wrap = document.getElementById('up-targets');
+  wrap.innerHTML = upgradeTargets.map(function (t) {
+    if (!t.selectable) {
+      return '<div class="up-target">' +
+        '<div class="up-target-info"><div class="up-target-name">' + t.name + '</div>' +
+        '<div class="up-target-desc">' + t.desc + '</div></div>' +
+        '<button class="up-target-btn" onclick="contactSales()">联系销售</button></div>';
+    }
+    const active = (t.key === upgradeCtx.target) ? ' active' : '';
+    return '<div class="up-target' + active + '" data-key="' + t.key + '" onclick="pickUpgradeTarget(\'' + t.key + '\')">' +
+      '<div class="up-target-info"><div class="up-target-name">' + t.name + '</div>' +
+      '<div class="up-target-desc">' + t.desc + '</div></div>' +
+      '<div class="up-target-check"></div></div>';
+  }).join('');
+}
+
+function pickUpgradeTarget(key) {
+  upgradeCtx.target = key;
+  renderUpgrade();
+}
+
+function contactSales() {
+  showToast('已收到您的需求，企业顾问将尽快与您联系');
+}
+
+function confirmUpgrade() {
+  const tgt = upgradeTargets.find(t => t.key === upgradeCtx.target);
+  if (!tgt || !tgt.selectable) { contactSales(); return; }
+  const p = new URLSearchParams();
+  p.set('upgrade', '1');
+  p.set('from', upgradeCtx.fromPlan);
+  p.set('fromPaid', upgradeCtx.fromPaid);
+  p.set('remain', upgradeCtx.remain);
+  p.set('total', upgradeCtx.total);
+  p.set('v', upgradeCtx.target);
+  p.set('c', 'US');
+  closeModal('upgrade-modal');
+  window.location.href = '收银台与支付页.html?' + p.toString();
+}
+
+/* ===== FAQ 折叠（对齐 APP 端） ===== */
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+function showToast(msg) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  c.appendChild(t); setTimeout(() => t.remove(), 3000);
+}
+
+/* ===== 消费记录（已订阅态，status: paid 已支付 / refunding 退款审核中 / refunded 已退款 / done 已完成） ===== */
+const CONSUME_RECORDS = [
+      { oid: 'SUB-20261122-014', date: '2026-11-22 10:00', item: 'Mysany订阅-免费版·1个月', amount: 0, pay: '免费开通', status: 'done', totalDays: 30, usedDays: 1 },
+      { oid: 'SUB-20261020-2213', date: '2026-10-20 14:32', item: 'Mysany订阅-专业版·1个月', amount: 299, pay: '在线支付', status: 'paid', totalDays: 30, usedDays: 30 },
+      { oid: 'SUB-20260920-1908', date: '2026-09-20 09:18', item: 'Mysany订阅-专业版·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 },
+      { oid: 'SUB-20260818-1587', date: '2026-08-18 16:05', item: 'Mysany订阅-专业版·1个月', amount: 299, pay: '在线支付', status: 'refunded', totalDays: 30, usedDays: 12 },
+      { oid: 'SUB-20260715-1024', date: '2026-07-15 11:24', item: 'Mysany订阅-专业版·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 }
+    ];
+
+function consumeStatusTag(status) {
+  if (status === 'paid') return '<span class="status-tag ok">已支付</span>';
+  if (status === 'refunding') return '<span class="status-tag warn">退款审核中</span>';
+  if (status === 'refunded') return '<span class="status-tag">已退款</span>';
+  return '<span class="status-tag">已完成</span>';
+}
+
+let consumeShown = 3;
+
+function loadMoreConsume() {
+  consumeShown = CONSUME_RECORDS.length;
+  renderConsume();
+}
+
+function renderConsume() {
+  const rows = CONSUME_RECORDS.slice(0, consumeShown);
+  document.getElementById('consume-tbody').innerHTML = rows.map(function (r) {
+    let op = '<span class="muted" style="color:var(--text-muted)">—</span>';
+    if (r.status === 'paid') op = '<span class="refund-link" onclick="openRefund(\'' + r.oid + '\')">申请退款</span>';
+    else if (r.status === 'refunding') op = '<span class="muted" style="color:var(--text-muted)">审核中</span>';
+    return '<tr>'
+      + '<td class="muted">' + r.date + '</td>'
+      + '<td>' + r.item + '</td>'
+      + '<td>' + consumeStatusTag(r.status) + '</td>'
+      + '<td class="muted">' + r.pay + '</td>'
+      + '<td class="muted">' + r.oid + '</td>'
+      + '<td>' + op + '</td>'
+      + '</tr>';
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px 0">暂无消费记录</td></tr>';
+
+  var more = document.getElementById('consume-more');
+  if (more) more.style.display = CONSUME_RECORDS.length > consumeShown ? 'block' : 'none';
+}
+
+function openRefund(oid) {
+  const r = CONSUME_RECORDS.find(x => x.oid === oid);
+  if (!r) return;
+  document.getElementById('refund-oid').textContent = r.oid;
+  document.getElementById('refund-item').textContent = r.item;
+  document.getElementById('refund-pay').textContent = r.pay;
+  document.getElementById('refund-amount').textContent = '¥' + r.amount.toFixed(2);
+  document.getElementById('refund-used').textContent = '服务周期 ' + r.totalDays + ' 天 · 已使用 ' + r.usedDays + ' 天';
+  // 预计可退金额：7 天内无理由全额；超 7 天按剩余时长比例
+  const refundable = r.usedDays <= 7
+    ? r.amount
+    : Math.round(r.amount * (r.totalDays - r.usedDays) / r.totalDays * 100) / 100;
+  document.getElementById('refund-est').textContent = '¥' + refundable.toFixed(2);
+  document.getElementById('refund-est-rule').textContent = r.usedDays <= 7
+    ? '支付后 7 天内申请，可全额退款'
+    : '超 7 天，按剩余时长比例计算（' + (r.totalDays - r.usedDays) + '/' + r.totalDays + ' 天）';
+  openModal('refund-modal');
+}
+
+function submitRefund() {
+  const checked = document.querySelector('input[name="refund-reason"]:checked');
+  if (!checked) { showToast('请选择退款原因'); return; }
+  const oid = document.getElementById('refund-oid').textContent;
+  const r = CONSUME_RECORDS.find(x => x.oid === oid);
+  if (r) r.status = 'refunding';
+  closeModal('refund-modal');
+  renderConsume();
+  showToast('退款申请已提交，我们将在 1-3 个工作日内完成审核');
+}
+
+/* ===== 状态演示切换：未订阅 / 已订阅 / 已过期 ===== */
+function setSubState(mode) {
+  var isNone = mode === 'none';
+  var isExpired = mode === 'expired';
+  document.getElementById('sub-empty').style.display = isNone ? 'flex' : 'none';
+  /* 已订阅 / 已过期共用区块：订阅状态卡、消费记录（历史消费+开票）、账户概览 */
+  ['sub-status', 'sub-consume-card', 'sub-overview-card'].forEach(function (id) {
+    var el = document.getElementById(id); if (el) el.style.display = isNone ? 'none' : '';
+  });
+  /* 自动续费仅已订阅态显示（过期后失效） */
+  var ar = document.getElementById('sub-autorenew-card');
+  if (ar) ar.style.display = (mode === 'active') ? '' : 'none';
+  var qa = document.querySelector('.quick-actions');
+  if (qa) qa.style.display = isNone ? 'none' : '';
+  /* 未订阅专属区块 */
+  ['free-benefits-card'].forEach(function (id) {
+    var el = document.getElementById(id); if (el) el.style.display = isNone ? 'block' : 'none';
+  });
+  /* 订阅状态卡文案（已过期红色样式） */
+  var subStatus = document.getElementById('sub-status');
+  subStatus.classList.toggle('expired', isExpired);
+  var endStr = fmtDate(END_DATE);
+  if (isExpired) {
+    document.getElementById('status-badge-text').textContent = '已过期';
+    document.getElementById('status-countdown').textContent = '已于 ' + endStr + ' 到期';
+    document.getElementById('sub-expiry').textContent = endStr;
+    var se = document.getElementById('stat-expiry');
+    se.textContent = '已到期';
+    se.style.color = 'var(--text-muted)';
+  } else {
+    document.getElementById('status-badge-text').textContent = '生效中';
+    document.getElementById('status-countdown').textContent = '剩余 ' + PLAN.remain + ' 天';
+    document.getElementById('sub-expiry').textContent = endStr;
+    var se2 = document.getElementById('stat-expiry');
+    se2.textContent = PLAN.remain + '天后';
+    se2.style.color = 'var(--success)';
+  }
+  /* Tab 高亮 */
+  document.getElementById('tab-none').classList.toggle('active', isNone);
+  document.getElementById('tab-active').classList.toggle('active', mode === 'active');
+  document.getElementById('tab-expired').classList.toggle('active', isExpired);
+}
+
+/* ===== 初始化：日期 / 概览 ===== */
+(function initPage(){
+  /* URL 带 ?expired=1 初始为「已过期」，?none=1 为「未订阅」，默认「已订阅」 */
+  var mode = new URLSearchParams(location.search).get('expired') === '1'
+    ? 'expired'
+    : (new URLSearchParams(location.search).get('none') === '1' ? 'none' : 'active');
+  setSubState(mode);
+  if (mode !== 'active') return;
+
+  const endStr = fmtDate(END_DATE);
+
+  document.getElementById('sub-plan-title').textContent = PLAN.name;
+  document.getElementById('sub-expiry').textContent = endStr;
+  document.getElementById('status-countdown').textContent = '剩余 ' + PLAN.remain + ' 天';
+
+  document.getElementById('r-expiry').textContent = endStr;
+  document.getElementById('r-remain').textContent = PLAN.remain + ' 天';
+  document.getElementById('stat-plan').textContent = PLAN.name;
+  document.getElementById('stat-expiry').textContent = PLAN.remain + '天后';
+  document.getElementById('cancel-expiry').textContent = endStr;
+
+  /* 概览补充数据 */
+  document.getElementById('stat-start').textContent = fmtDate(shiftDays(0));
+
+  renderRenew();
+  renderUpgrade();
+  renderConsume();
+})();
+
+</script>
+
+    </main>
+  </div>
+
+  <script>
+    function sbGo(href) { location.href = href; }
+    function sbToggleGroup(headEl, groupId) {
+      var g = document.getElementById(groupId);
+      if (!g) return;
+      headEl.classList.toggle('collapsed');
+      g.classList.toggle('collapsed');
+    }
+    function sbToggleSidebar() {
+      var sb = document.querySelector('.sidebar');
+      if (!sb) return;
+      var collapsed = sb.style.width === '56px';
+      sb.style.width = collapsed ? '180px' : '56px';
+      document.querySelectorAll('.menu-parent, .menu-item, .side-deco').forEach(function (el) {
+        el.style.display = collapsed ? '' : 'none';
+      });
+      var ic = document.getElementById('sb-collapse-icon');
+      if (ic) ic.style.transform = collapsed ? '' : 'rotate(180deg)';
+    }
+  </script>
+
+</body>
+</html>
