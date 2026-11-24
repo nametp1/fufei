@@ -7,14 +7,14 @@
   <title>工作台</title>
   <style>
     :root {
-      --primary: #C41E29;
-      --primary-hover: #A01822;
-      --primary-bg: rgba(196, 30, 41, 0.04);
+      --primary: #2F80ED;
+      --primary-hover: #1B62C4;
+      --primary-bg: rgba(47, 128, 237, 0.04);
       --bg-page: #F5F7FA;
       --bg-card: #FFFFFF;
       --success: #52C41A;
       --warning: #FAAD14;
-      --error: #FF4D4F;
+      --error: #E5484D;
       --info: #1677FF;
       --text-1: #1F1F1F;
       --text-2: #666666;
@@ -324,7 +324,7 @@
       width: 36px; height: 36px; flex-shrink: 0;
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(196, 30, 41, .08); color: var(--primary)
+      background: rgba(47, 128, 237, .08); color: var(--primary)
     }
     .feed-icon svg { width: 18px; height: 18px }
 
@@ -340,101 +340,6 @@
     .feed-sn { color: var(--info) }
     .feed-time { font-size: 12px; color: var(--text-3); flex-shrink: 0; padding-top: 2px }
 
-    /* ========== 付费拦截（Paywall）========== */
-    body.locked .layout { filter: blur(7px); pointer-events: none; user-select: none }
-    body.locked .header { filter: blur(0); pointer-events: none }
-    body.locked .header .header-right,
-    body.locked .header .header-left { pointer-events: auto }
-
-    .paywall-overlay {
-      position: fixed; inset: 0; z-index: 500;
-      display: flex; align-items: center; justify-content: center;
-      background: transparent;
-      padding: 32px 24px;
-      overflow-y: auto;
-      animation: pwFadeIn .4s ease both;
-    }
-    @keyframes pwFadeIn { from { opacity: 0 } to { opacity: 1 } }
-    .paywall-overlay.hidden { display: none }
-
-    .pw-card {
-      position: relative;
-      width: 100%; max-width: 460px;
-      background: linear-gradient(180deg, #FFFFFF 0%, #FDFDFE 100%);
-      border-radius: 20px;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, .28), 0 2px 8px rgba(0, 0, 0, .08);
-      padding: 36px 34px 26px;
-      text-align: center;
-      animation: pwSlideUp .45s cubic-bezier(.32, .72, 0, 1) both;
-    }
-    @keyframes pwSlideUp { from { opacity: 0; transform: translateY(24px) scale(.98) } to { opacity: 1; transform: none } }
-
-    .pw-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 14px; border-radius: 100px;
-      background: rgba(196, 30, 41, .08);
-      color: var(--primary); font-size: 12px; font-weight: 600;
-      letter-spacing: .3px; margin-bottom: 18px;
-    }
-    .pw-badge svg { width: 13px; height: 13px }
-
-    .pw-title { font-size: 24px; font-weight: 700; letter-spacing: -.4px; color: var(--text-1); line-height: 1.25 }
-    .pw-desc { font-size: 13.5px; color: var(--text-2); line-height: 1.7; margin: 10px auto 0; }
-
-    /* 年度订阅报价区 */
-    .pw-offer {
-      margin-top: 22px;
-      border: 1.5px solid var(--primary);
-      border-radius: 16px;
-      padding: 20px 22px;
-      background: linear-gradient(180deg, rgba(196, 30, 41, .05), rgba(196, 30, 41, 0));
-      box-shadow: 0 0 0 3px rgba(196, 30, 41, .07);
-      text-align: left;
-    }
-    .pw-offer-head { display: flex; align-items: center; justify-content: space-between }
-    .pw-offer-name { font-size: 14px; font-weight: 700; color: var(--text-1) }
-    .pw-save-pill {
-      font-size: 11px; font-weight: 600; padding: 3px 10px;
-      border-radius: 100px; background: #E8F7EE; color: #1B9E4B;
-    }
-    .pw-offer-price { margin: 12px 0 4px; display: flex; align-items: baseline; gap: 3px }
-    .pw-offer-price .cur { font-size: 15px; font-weight: 600; color: var(--text-1) }
-    .pw-offer-price .num { font-size: 36px; font-weight: 700; letter-spacing: -.5px; color: var(--text-1); font-family: "Helvetica Neue", Arial, sans-serif }
-    .pw-offer-price .per { font-size: 13px; color: var(--text-3) }
-    .pw-offer-price .strike { font-size: 13px; color: var(--text-3); text-decoration: line-through; margin-left: 8px }
-    .pw-offer-note { font-size: 12px; color: var(--text-3) }
-
-    .pw-feats { list-style: none; margin: 16px 0 0; padding: 14px 0 0; border-top: 1px dashed var(--border-light); display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px }
-    .pw-feats li {
-      display: flex; align-items: flex-start; gap: 8px;
-      font-size: 12.5px; color: var(--text-2); line-height: 1.5;
-      padding: 3.5px 0;
-    }
-    .pw-feats li svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; color: #1B9E4B }
-
-    .pw-cta {
-      width: 100%; margin-top: 20px;
-      padding: 13px 0; border: none; border-radius: 12px;
-      font-size: 15px; font-weight: 600; font-family: inherit;
-      cursor: pointer; transition: all .2s;
-      background: linear-gradient(90deg, #C41E29, #E0454F);
-      color: #FFF;
-    }
-    .pw-cta:hover {
-      background: linear-gradient(90deg, #A01822, #C41E29);
-      transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(196, 30, 41, .35);
-    }
-
-    .pw-close {
-      position: absolute; top: 10px; right: 10px;
-      width: 30px; height: 30px; border: none; border-radius: 50%;
-      background: transparent; color: var(--text-3); font-size: 20px; line-height: 1;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-family: inherit;
-    }
-    .pw-close:hover { background: #F2F3F5; color: var(--text-1) }
-
   </style>
 </head>
 
@@ -445,7 +350,7 @@
   <!-- ========== 顶部 Header ========== -->
   <header class="header">
     <div class="header-left">
-      <div class="logo"><span class="logo-my">My</span><span class="logo-sany">SANY</span></div>
+      <div class="logo"><span class="logo-my">San</span><span class="logo-sany">VIST</span></div>
     </div>
     <div class="header-right">
       <div class="hd-entry" onclick="location.href='我的订阅管理页.html'">
@@ -478,7 +383,6 @@
         <div class="menu-parent active" onclick="sbGo('工作台-有数据.html')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           <span style="flex:1">工作台</span>
-          <svg class="menu-lock" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.55"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
         </div>
 
         <div class="menu-parent" onclick="sbGo('报表模版.html')">
@@ -653,40 +557,6 @@
     </main>
   </div>
 
-  <!-- ========== 付费拦截弹窗（直接开通一年）========== -->
-  <div class="paywall-overlay hidden" id="paywall-overlay">
-    <div class="pw-card">
-      <button class="pw-close" onclick="hidePaywall()" aria-label="关闭" title="关闭">×</button>
-      <div class="pw-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        <span id="pw-badge-text">0 元开通即可使用</span>
-      </div>
-      <div class="pw-title" id="pw-title">0 元开通，立即使用</div>
-      <div class="pw-desc">当前功能支持 0 元开通。开通后即可使用机群监控、任务协同、报表与实时动态等平台功能，不收取任何费用。</div>
-
-      <div class="pw-offer">
-        <div class="pw-offer-head">
-          <span class="pw-offer-name" id="pw-offer-name">0 元开通 · 免费使用</span>
-          <span class="pw-save-pill" id="pw-save-pill">限时免费</span>
-        </div>
-        <div class="pw-offer-price">
-          <span class="cur" id="pw-cur" style="display:none">$</span><span class="num" id="pw-num">0</span><span class="per" id="pw-per">元</span>
-          <span class="strike" id="pw-strike" style="display:none">$756</span>
-        </div>
-        <div class="pw-offer-note" id="pw-note">开通即用 · 不自动扣费 · 可随时关闭</div>
-        <ul class="pw-feats">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>机群监控看板</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>任务协同与审核流</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>报表库 · 生产力报告</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>电子围栏 · 远程诊断</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>实时动态与全量历史数据</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>不限设备数量 · 优先支持</li>
-        </ul>
-        <button class="pw-cta" id="pw-cta" onclick="pwUpgrade()">0 元开通，立即使用</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     function showToast(msg) {
       var t = document.getElementById('toast');
@@ -703,107 +573,6 @@
     }
 
     function sbGo(href) { location.href = href; }
-
-    /* ===== 付费拦截逻辑 ===== */
-    (function () {
-      // 演示：默认进入即为锁定态（如需默认已解锁，改为 false）
-      document.body.classList.add('locked');
-      if (typeof renderPaywallPricing === 'function') renderPaywallPricing();
-      if (typeof showPaywall === 'function') setTimeout(showPaywall, 0);
-    })();
-
-
-        /* ===== 全局折扣联动（0 折 = 免费） ===== */
-        function getGlobalDiscountConfig() {
-            var cfg = { enabled: true, low: 0, high: 0 };
-            try {
-                var raw = null; // 固定 0 折：折扣后 0 元免费开通
-                if (raw) {
-                    var c = JSON.parse(raw);
-                    if (c) {
-                        cfg.enabled = c.enabled !== false;
-                        if (c.low !== undefined && c.low !== null) cfg.low = Number(c.low);
-                        if (c.high !== undefined && c.high !== null) cfg.high = Number(c.high);
-                    }
-                }
-            } catch (e) {}
-            return cfg;
-        }
-
-        /* 按后台配置计算应付金额：high=0 视为免费 */
-        function getPaywallPricing(basePrice) {
-            var cfg = getGlobalDiscountConfig();
-            if (!cfg.enabled) return { free: false, rate: 10, price: basePrice };
-            var low = cfg.low, high = cfg.high;
-            if (!isFinite(low)) low = 8.0;
-            if (!isFinite(high)) high = 8.9;
-            if (high <= 0) return { free: true, rate: 0, price: 0 };
-            if (low < 0) low = 0;
-            if (high > 10) high = 10;
-            var rate = parseFloat(sessionStorage.getItem('mysany_session_discount'));
-            if (!(rate >= low && rate <= high)) {
-                rate = Math.round((low + Math.random() * (high - low)) * 10) / 10;
-                try { sessionStorage.setItem('mysany_session_discount', String(rate)); } catch (e) {}
-            }
-            return { free: false, rate: rate, price: Math.round(basePrice * rate / 10) };
-        }
-
-    /* 按全局折扣渲染弹窗 */
-    function renderPaywallPricing() {
-      var p = getPaywallPricing(756);
-      var free = p.free;
-      document.getElementById('pw-badge-text').textContent = free ? '限时特惠 · 0 元开通' : '需开通订阅后使用';
-      document.getElementById('pw-title').textContent = free ? '限时特惠，0 元开通' : '开通订阅，立即使用';
-      document.getElementById('pw-offer-name').textContent = free ? '限时特惠 · 全部免费' : '专业版 · 年度订阅';
-      document.getElementById('pw-save-pill').textContent = free ? '全部免费' : ('立省 ' + Math.round((10 - p.rate) * 10) + '%');
-      document.getElementById('pw-cur').style.display = 'none';
-      document.getElementById('pw-num').textContent = free ? '0' : p.price;
-      document.getElementById('pw-per').textContent = free ? '元' : '/年';
-      document.getElementById('pw-strike').style.display = '';
-      document.getElementById('pw-strike').textContent = '$756';
-      document.getElementById('pw-note').textContent = free
-        ? '原价 $756/年 · 限时特惠全部免费 · 0 元即可开通'
-        : '折后价 · 12 个月全功能 · 到期提醒续费';
-      document.getElementById('pw-cta').textContent = free ? '0 元开通，立即使用' : ('立即开通 · $' + p.price);
-    }
-
-    function hidePaywall() {
-      var overlay = document.getElementById('paywall-overlay');
-      overlay.style.transition = '';
-      overlay.style.opacity = '';
-      overlay.classList.add('hidden');
-      /* 关闭弹窗时同步解除锁定态，背景不再模糊/压暗 */
-      document.body.classList.remove('locked');
-    }
-
-    function showPaywall() {
-      renderPaywallPricing();
-      var overlay = document.getElementById('paywall-overlay');
-      overlay.style.opacity = '';
-      overlay.classList.remove('hidden');
-    }
-
-    /* 点击遮罩关闭 */
-    document.getElementById('paywall-overlay').addEventListener('click', function (e) {
-      if (e.target === this) hidePaywall();
-    });
-    /* ESC 关闭 */
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') hidePaywall();
-    });
-
-    function pwUpgrade() {
-      var overlay = document.getElementById('paywall-overlay');
-      overlay.style.transition = 'opacity .35s';
-      overlay.style.opacity = '0';
-      setTimeout(function () {
-        overlay.classList.add('hidden');
-        document.body.classList.remove('locked');
-        try { localStorage.setItem('mysany_subscribed', '1'); } catch (e) {}
-        showToast('已开通（演示），欢迎使用');
-      }, 350);
-    }
-
 
     function sbToggleSidebar() {
       var sb = document.querySelector('.sidebar');

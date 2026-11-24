@@ -4,18 +4,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>我的订阅 - Mysany APP</title>
+  <title>我的订阅 - SanVIST APP</title>
   <style>
     :root {
-      --primary: #E60012;
-      --primary-hover: #B8000E;
-      --primary-light: #FDECEC;
+      --primary: #2F80ED;
+      --primary-hover: #1B62C4;
+      --primary-light: #EAF2FE;
       --success: #10B981;
       --success-light: #D1FAE5;
       --warning: #F59E0B;
       --warning-light: #FEF3C7;
       --error: #EF4444;
-      --error-light: #FEE2E2;
+      --error-light: #EAF2FE;
       --text-primary: #1E293B;
       --text-secondary: #64748B;
       --text-muted: #94A3B8;
@@ -103,14 +103,14 @@
 
     /* Status Card */
     .status-card {
-      background: linear-gradient(135deg, #E60012, #FF4D5A);
+      background: linear-gradient(135deg, #2F80ED, #6FA8F5);
       border-radius: var(--radius-md);
       padding: 20px;
       color: #fff;
       margin-bottom: 12px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 8px 22px rgba(230, 0, 18, .28)
+      box-shadow: 0 8px 22px rgba(47, 128, 237, .28)
     }
 
     .status-card::after {
@@ -153,7 +153,7 @@
     }
 
     .status-badge.expired-badge::before {
-      background: #FCA5A5;
+      background: #9CC3F5;
       box-shadow: 0 0 0 3px rgba(252, 165, 165, .3)
     }
 
@@ -174,16 +174,21 @@
     }
 
     .status-plan {
-      font-size: 21px;
+      font-size: 22px;
       font-weight: 800;
-      margin-bottom: 3px;
       letter-spacing: .3px
     }
 
+    .status-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px
+    }
+
     .status-date {
-      font-size: 11px;
-      opacity: .75;
-      margin-top: 4px
+      font-size: 12px;
+      opacity: .8
     }
 
     .status-actions {
@@ -345,7 +350,7 @@
     }
 
     .quick-action-icon.cancel {
-      background: #FEE2E2;
+      background: #EAF2FE;
       color: var(--error)
     }
 
@@ -431,7 +436,7 @@
       flex-direction: column;
       gap: 12px;
       padding: 16px;
-      background: linear-gradient(135deg, #FFF5F5, #FFE7EC);
+      background: linear-gradient(135deg, #F4F8FE, #DDEBFC);
       border: 1px solid #FFD6DA;
       border-radius: var(--radius-md);
       margin-bottom: 18px
@@ -444,7 +449,7 @@
       top: -34px;
       width: 110px;
       height: 110px;
-      background: radial-gradient(circle, rgba(230, 0, 18, .10), transparent 70%);
+      background: radial-gradient(circle, rgba(47, 128, 237, .10), transparent 70%);
       pointer-events: none
     }
 
@@ -460,10 +465,10 @@
       font-size: 11px;
       font-weight: 700;
       color: #fff;
-      background: linear-gradient(135deg, var(--primary), #FF4D5E);
+      background: linear-gradient(135deg, var(--primary), #6FA8F5);
       padding: 4px 11px;
       border-radius: 100px;
-      box-shadow: 0 4px 10px rgba(230, 0, 18, .2)
+      box-shadow: 0 4px 10px rgba(47, 128, 237, .2)
     }
 
     .up-current-main {
@@ -520,7 +525,7 @@
     .up-target.active {
       border-color: var(--primary);
       background: var(--primary-light);
-      box-shadow: 0 0 0 3px rgba(230, 0, 18, .08)
+      box-shadow: 0 0 0 3px rgba(47, 128, 237, .08)
     }
 
     .up-target-info {
@@ -617,7 +622,7 @@
       border-radius: 100px;
       margin-left: 6px;
       vertical-align: middle;
-      box-shadow: 0 2px 6px rgba(230, 0, 18, .25)
+      box-shadow: 0 2px 6px rgba(47, 128, 237, .25)
     }
 
     .up-summary .price-total {
@@ -684,7 +689,7 @@
       flex-direction: column;
       gap: 8px;
       padding: 14px 16px;
-      background: linear-gradient(135deg, #FFF1F1, #FFE8E8);
+      background: linear-gradient(135deg, #F0F6FF, #E6F0FD);
       border: 1px solid #FFD4D4;
       border-radius: var(--radius-md);
       margin-bottom: 14px
@@ -1081,35 +1086,6 @@
       background: var(--primary-hover)
     }
 
-    /* 免费版权益 */
-    .benefit-card {
-      background: var(--bg-card);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-sm);
-      padding: 4px 16px;
-      margin-bottom: 12px
-    }
-
-    .benefit-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      padding: 11px 0;
-      font-size: 13px;
-      color: var(--text-primary)
-    }
-
-    .benefit-item+.benefit-item {
-      border-top: 1px solid var(--border-light)
-    }
-
-    .benefit-item svg {
-      width: 15px;
-      height: 15px;
-      flex-shrink: 0;
-      color: var(--success);
-      margin-top: 2px
-    }
 
     /* 概览卡 */
     .ov-card {
@@ -1167,6 +1143,36 @@
 
     .consume-list {
       padding: 2px 16px
+    }
+
+    /* 基础权益 */
+    .benefit-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: 4px 16px;
+      margin-bottom: 12px
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 11px 0;
+      font-size: 13px;
+      color: var(--text-primary)
+    }
+
+    .benefit-item+.benefit-item {
+      border-top: 1px solid var(--border-light)
+    }
+
+    .benefit-item svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      color: var(--success);
+      margin-top: 2px
     }
 
     .consume-more {
@@ -1369,7 +1375,73 @@
       border-radius: 8px;
       padding: 10px 12px
     }
-  </style>
+      /* ================= 报表付费弹窗 ================= */
+    .paywall-overlay {
+        position: fixed; inset: 0; z-index: 200;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(15,23,42,.42); backdrop-filter: blur(2px);
+        padding: 20px 16px; overflow-y: auto;
+        animation: pwFade .3s ease both;
+    }
+    @keyframes pwFade { from { opacity: 0 } to { opacity: 1 } }
+    .paywall-overlay.hidden { display: none; }
+
+    .pw-card {
+        width: 100%; max-width: 400px; max-height: calc(100vh - 40px); overflow-y: auto;
+        background: linear-gradient(180deg,#fff,#fdfdfe); border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,.3), 0 2px 8px rgba(0,0,0,.08);
+        padding: 26px 20px 20px; text-align: center;
+        animation: pwUp .35s cubic-bezier(.32,.72,0,1) both;
+    }
+    @keyframes pwUp { from { opacity: 0; transform: translateY(20px) scale(.98) } to { opacity: 1; transform: none } }
+
+    .pw-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 12px; border-radius: 100px;
+        background: #EAF2FE; color: #2F80ED; font-size: 12px; font-weight: 600;
+        margin-bottom: 14px;
+    }
+    .pw-badge svg { width: 13px; height: 13px }
+
+    .pw-title { font-size: 19px; font-weight: 700; color: #161a2e; line-height: 1.35; letter-spacing: -.2px }
+    .pw-title b { color: #2F80ED; font-weight: 700 }
+    .pw-desc { font-size: 12.5px; color: #8b90a0; line-height: 1.65; margin-top: 8px }
+
+    .pw-offer {
+        margin-top: 18px; border: 1.5px solid #2F80ED; border-radius: 16px;
+        padding: 16px; text-align: left;
+        background: linear-gradient(180deg,rgba(47,128,237,.05),rgba(47,128,237,0));
+        box-shadow: 0 0 0 3px rgba(47,128,237,.06);
+    }
+    .pw-offer-head { display: flex; align-items: center; justify-content: space-between }
+    .pw-offer-name { font-size: 13.5px; font-weight: 700; color: #161a2e }
+    .pw-save-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 100px; background: #E8F7EE; color: #1B9E4B }
+    .pw-offer-price { margin: 10px 0 4px; display: flex; align-items: baseline; gap: 3px }
+    .pw-offer-price .cur { font-size: 14px; font-weight: 600; color: #161a2e }
+    .pw-offer-price .num { font-size: 32px; font-weight: 700; letter-spacing: -.5px; color: #161a2e; font-family: "Helvetica Neue", Arial, sans-serif }
+    .pw-offer-price .per { font-size: 12.5px; color: #a7abb8 }
+    .pw-offer-price .strike { font-size: 12.5px; color: #a7abb8; text-decoration: line-through; margin-left: 6px }
+    .pw-offer-note { font-size: 11.5px; color: #a7abb8 }
+
+    .pw-feats { list-style: none; margin: 12px 0 0; padding: 12px 0 0; border-top: 1px dashed #edeff3; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px }
+    .pw-feats li { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: #5a6472; line-height: 1.5; padding: 3px 0 }
+    .pw-feats li svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 2px; color: #1B9E4B }
+
+    .pw-cta {
+        width: 100%; margin-top: 16px; padding: 13px 0; border: none; border-radius: 12px;
+        font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; color: #fff;
+        background: linear-gradient(90deg,#2F80ED,#6FA8F5);
+        transition: transform .15s, box-shadow .15s;
+    }
+    .pw-cta:active { transform: scale(.98); box-shadow: 0 8px 20px rgba(47,128,237,.3) }
+
+    .pw-later {
+        margin-top: 10px; padding: 6px 10px; border: none; background: none;
+        font-family: inherit; font-size: 12.5px; color: #a7abb8; cursor: pointer;
+    }
+    .pw-later:hover { color: #5a6472 }
+
+</style>
 </head>
 
 <body>
@@ -1406,38 +1478,19 @@
           </svg>
         </div>
         <div class="empty-sub-title">暂无生效中的订阅</div>
-        <div class="empty-sub-desc">您当前尚未开通付费订阅，开通后即可使用机群监控、远程诊断、电子围栏等全部权益。</div>
-        <button class="empty-sub-btn" onclick="location.href='版本选购页.html'">立即订阅</button>
+        <div class="empty-sub-desc">当前没有生效中的订阅。部分报表、考勤等模块需开通后使用，基础功能不受影响。</div>
+        <button class="empty-sub-btn" onclick="openPaywall('机群报表')">立即开通</button>
       </div>
 
       <!-- Status Card -->
       <div class="status-card" id="status-card">
         <div class="status-card-header">
+          <div class="status-plan">专业版</div>
           <span class="status-badge" id="status-badge">生效中</span>
+        </div>
+        <div class="status-bottom">
+          <span class="status-date" id="status-date">到期 —</span>
           <span class="status-countdown" id="countdown">剩余 30 天</span>
-        </div>
-        <div class="status-main">
-          <div class="status-info">
-            <div class="status-plan">免费版</div>
-            <div class="status-date" id="status-date">到期 —</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 账户概览 -->
-      <div class="ov-card" id="ov-card">
-        <div class="ov-head">
-          <span class="ov-head-title">账户概览</span>
-        </div>
-        <div class="ov-body">
-          <div class="field-row">
-            <span class="field-label">当前版本</span>
-            <span style="font-size:14px;font-weight:600" id="ov-plan">免费版 · 1 个月</span>
-          </div>
-          <div class="field-row">
-            <span class="field-label">订阅到期</span>
-            <span style="font-size:14px;font-weight:600;color:var(--success)" id="ov-expiry">—</span>
-          </div>
         </div>
       </div>
 
@@ -1450,35 +1503,35 @@
         <div class="consume-more" id="consume-more" style="display:none" onclick="loadMoreConsume()">加载更多</div>
       </div>
 
-      <!-- 免费版权益（未订阅） -->
+      <!-- 基础权益（未订阅） -->
       <div class="benefit-card" id="benefit-card" style="display:none">
         <div class="benefit-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
             stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
-          机群监控（基础版）
+          基础数据随时可查
         </div>
         <div class="benefit-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
             stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
-          设备数据查看最近 7 天
+          部分报表与考勤等模块需开通
         </div>
         <div class="benefit-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
             stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
-          报表功能每月试用 3 天
+          设备管理与告警正常使用
         </div>
         <div class="benefit-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
             stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
-          基础工单支持
+          账号数据随时可查
         </div>
       </div>
 
@@ -1488,7 +1541,7 @@
         <div class="faq-list">
           <div class="faq-item" onclick="toggleFaq(this)">
             <div class="faq-q">
-              <span class="faq-q-text">Mysany 订阅如何定价？</span>
+              <span class="faq-q-text">哪些功能需要开通订阅？</span>
               <span class="faq-q-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.5"
                   stroke-linecap="round">
                   <line x1="12" y1="5" x2="12" y2="19" />
@@ -1496,13 +1549,12 @@
                 </svg></span>
             </div>
             <div class="faq-a">
-              <p class="faq-a-text">Mysany
-                免费版开放给所有用户使用。付费方案（进阶版、专业版、企业定制版）均为订阅制，开通后即可使用对应版本的全部功能。我们提供按月与按年两种周期方案，月付为原价，年付立省 17%。企业定制版需联系销售获取报价。</p>
+              <p class="faq-a-text">只有少量报表和考勤等模块需要开通订阅，其余功能无需开通。</p>
             </div>
           </div>
           <div class="faq-item" onclick="toggleFaq(this)">
             <div class="faq-q">
-              <span class="faq-q-text">Mysany 是免费的吗？</span>
+              <span class="faq-q-text">不开通订阅，还能正常使用吗？</span>
               <span class="faq-q-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.5"
                   stroke-linecap="round">
                   <line x1="12" y1="5" x2="12" y2="19" />
@@ -1510,12 +1562,12 @@
                 </svg></span>
             </div>
             <div class="faq-a">
-              <p class="faq-a-text">Mysany 免费版开放所有人使用。升级至进阶版、专业版或企业定制版方案，可使用更多机群管理与功能，畅享更强大的体验。</p>
+              <p class="faq-a-text">可以。未开通仅影响少量报表与考勤模块，其他页面和功能不受限制，也不会影响已有数据。</p>
             </div>
           </div>
           <div class="faq-item" onclick="toggleFaq(this)">
             <div class="faq-q">
-              <span class="faq-q-text">有哪些付款方式？</span>
+              <span class="faq-q-text">如何付款？支持哪些币种？</span>
               <span class="faq-q-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.5"
                   stroke-linecap="round">
                   <line x1="12" y1="5" x2="12" y2="19" />
@@ -1523,7 +1575,7 @@
                 </svg></span>
             </div>
             <div class="faq-a">
-              <p class="faq-a-text">你可以使用 Apple Pay、Google Pay 绑卡，或通过国际信用卡渠道自助购买进阶版与专业版。企业定制版需联系销售人员，支持银行电汇等专属付款方式。</p>
+              <p class="faq-a-text">本期全部免费开通，无需付款。开通后在有效期内可使用对应模块，到期可再次免费开通。</p>
             </div>
           </div>
         </div>
@@ -1567,7 +1619,7 @@
         </div>
         <div class="price-card">
           <div class="price-row">
-            <span id="r-item-label">进阶版续费</span>
+            <span id="r-item-label">订阅续费</span>
             <span id="r-subtotal">$0</span>
           </div>
           <div class="price-row price-discount" id="r-disc-row">
@@ -1650,7 +1702,7 @@
         </div>
         <div style="font-weight:600;font-size:15px;margin-bottom:4px">确认关闭自动续费？</div>
         <div class="destructive-text">
-          当前订阅有效至 <strong>2027-08-04</strong>，到期后将不再自动扣款，所有功能将降级为免费版。
+          当前订阅有效至 <strong>2027-08-04</strong>，到期后将不再自动扣款，到期后将不再自动扣款，部分功能将不可用。
         </div>
       </div>
       <div class="sheet-footer">
@@ -1662,6 +1714,39 @@
 
   <!-- Toast -->
   <div class="toast" id="toast"></div>
+
+<!-- ==================== 报表付费弹窗 ==================== -->
+<div class="paywall-overlay hidden" id="report-paywall">
+    <div class="pw-card">
+        <div class="pw-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <span id="pw-badge-text">部分功能需开通</span>
+        </div>
+        <div class="pw-title">开通订阅，解锁更多模块</div>
+        <div class="pw-desc">订阅包含部分报表、考勤等模块，开通后即可使用；基础功能不受影响。</div>
+
+        <div class="pw-offer">
+            <div class="pw-offer-head">
+                <span class="pw-offer-name" id="pw-offer-name">订阅权益</span>
+                <span class="pw-save-pill" id="pw-save-pill">限时免费</span>
+            </div>
+            <div class="pw-offer-price">
+                <span class="cur" id="pw-cur" style="display:none">$</span><span class="num" id="pw-num">0</span><span class="per" id="pw-per"></span>
+                <span class="strike" id="pw-strike" style="display:none">$756</span>
+            </div>
+            <div class="pw-offer-note" id="pw-note">本次升级有效期 1 个月</div>
+            <ul class="pw-feats">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>全部付费报表</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>考勤等增值模块</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>历史区间与导出</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>基础功能不受影响</li>
+            </ul>
+            <button class="pw-cta" id="pw-cta" onclick="pwUpgrade()">升级</button>
+        </div>
+
+        <button class="pw-later" onclick="closePaywall()">暂时不看</button>
+    </div>
+
   </div>
 
   <script>
@@ -1687,7 +1772,7 @@
     });
 
     /* ===== 价格口径（对齐管理后台订阅配置） ===== */
-    const PLAN = { key: 'free', name: '免费版', monthly: 0, annual: 0, total: 30, remain: 30 };
+    const PLAN = { key: 'free', name: '专业版', monthly: 0, annual: 0, total: 30, remain: 30 };
     const END_DATE = shiftDays(PLAN.total);
 
     /* ===== 状态切换：未订阅 / 已订阅 / 已过期 ===== */
@@ -1696,28 +1781,27 @@
       const isExpired = mode === 'expired';
       document.getElementById('empty-sub').style.display = isNone ? 'block' : 'none';
       document.getElementById('status-card').style.display = isNone ? 'none' : '';
-      document.getElementById('ov-card').style.display = isNone ? 'none' : '';
       document.getElementById('consume-card').style.display = isNone ? 'none' : '';
+      document.getElementById('benefit-card').style.display = isNone ? 'block' : 'none';
       var renewRow = document.getElementById('renew-row');
       if (renewRow) renewRow.style.display = (mode === 'active') ? '' : 'none';
       var alertRenew = document.getElementById('alert-renew');
       if (alertRenew) alertRenew.style.display = (mode === 'active' && !autoRenew) ? 'flex' : 'none';
-      document.getElementById('benefit-card').style.display = isNone ? 'block' : 'none';
       const badge = document.getElementById('status-badge');
       badge.classList.toggle('expired-badge', isExpired);
       const endStr = fmtDate(END_DATE);
       if (isExpired) {
         badge.childNodes[badge.childNodes.length - 1].textContent = '已过期';
-        document.getElementById('countdown').textContent = '已于 ' + endStr + ' 到期';
+        var cdExp = document.getElementById('countdown');
+        cdExp.textContent = '';
+        cdExp.style.display = 'none';
         document.getElementById('status-date').textContent = '到期 ' + endStr;
-        document.getElementById('ov-expiry').textContent = '已到期';
-        document.getElementById('ov-expiry').style.color = 'var(--text-muted)';
       } else {
         badge.childNodes[badge.childNodes.length - 1].textContent = '生效中';
-        document.getElementById('countdown').textContent = '剩余 ' + PLAN.remain + ' 天';
+        var cdAct = document.getElementById('countdown');
+        cdAct.style.display = '';
+        cdAct.textContent = '剩余 ' + PLAN.remain + ' 天';
         document.getElementById('status-date').textContent = '到期 ' + endStr;
-        document.getElementById('ov-expiry').textContent = endStr + ' · 剩余 ' + PLAN.remain + ' 天';
-        document.getElementById('ov-expiry').style.color = 'var(--success)';
       }
       ['tab-none', 'tab-active', 'tab-expired'].forEach(function (id, i) {
         var el = document.getElementById(id);
@@ -1727,11 +1811,11 @@
 
     /* ===== 消费记录（status: paid/refunding/refunded/done） ===== */
     const CONSUME_RECORDS = [
-      { oid: 'SUB-20261122-014', date: '2026-11-22 10:00', item: 'Mysany订阅-免费版·1个月', amount: 0, pay: '免费开通', status: 'done', totalDays: 30, usedDays: 1 },
-      { oid: 'SUB-20261020-2213', date: '2026-10-20 14:32', item: 'Mysany订阅-专业版·1个月', amount: 299, pay: '在线支付', status: 'paid', totalDays: 30, usedDays: 30 },
-      { oid: 'SUB-20260920-1908', date: '2026-09-20 09:18', item: 'Mysany订阅-专业版·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 },
-      { oid: 'SUB-20260818-1587', date: '2026-08-18 16:05', item: 'Mysany订阅-专业版·1个月', amount: 299, pay: '在线支付', status: 'refunded', totalDays: 30, usedDays: 12 },
-      { oid: 'SUB-20260715-1024', date: '2026-07-15 11:24', item: 'Mysany订阅-专业版·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 }
+      { oid: 'SUB-20261122-014', date: '2026-11-22 10:00', item: 'SanVIST订阅·1个月', amount: 0, pay: '免费开通', status: 'done', totalDays: 30, usedDays: 1 },
+      { oid: 'SUB-20261020-2213', date: '2026-10-20 14:32', item: 'SanVIST订阅·1个月', amount: 299, pay: '在线支付', status: 'paid', totalDays: 30, usedDays: 30 },
+      { oid: 'SUB-20260920-1908', date: '2026-09-20 09:18', item: 'SanVIST订阅·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 },
+      { oid: 'SUB-20260818-1587', date: '2026-08-18 16:05', item: 'SanVIST订阅·1个月', amount: 299, pay: '在线支付', status: 'refunded', totalDays: 30, usedDays: 12 },
+      { oid: 'SUB-20260715-1024', date: '2026-07-15 11:24', item: 'SanVIST订阅·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 }
     ];
 
     function consumeStatusTag(status) {
@@ -1837,7 +1921,7 @@
       const minusBtn = document.getElementById('renew-minus-btn');
       if (minusBtn) minusBtn.disabled = (renewMonths <= step);
 
-      document.getElementById('r-item-label').textContent = '免费版续期（' + periodLabel + '）';
+      document.getElementById('r-item-label').textContent = '专业版续期（' + periodLabel + '）';
       document.getElementById('r-subtotal').textContent = fmtMoney(subtotalCNY);
       document.getElementById('r-random').textContent = '-' + fmtMoney(discCNY);
       document.getElementById('r-tax').textContent = fmtMoney(taxCNY);
@@ -1851,52 +1935,6 @@
       showToast('续费成功，到期日已延长');
     }
 
-    /* ===== 升级订阅 ===== */
-    const upgradeCtx = {
-      fromPlan: 'basic',
-      fromName: '免费版',
-      fromPaid: 0,
-      total: 30,
-      remain: 30,
-      cycle: 'year',
-      target: 'pro'
-    };
-
-    const upgradeTargets = [
-      { key: 'pro', name: '专业版', price: 599, desc: '机群监控 · 远程诊断 · 生产力分析', selectable: true },
-      { key: 'enterprise', name: '企业定制版', price: 0, desc: '私有部署 · 专属客户经理 · SLA保障', selectable: false }
-    ];
-    function renderUpgrade() {
-      document.getElementById('up-current-text').textContent =
-        upgradeCtx.fromName + ' · 剩余 ' + upgradeCtx.remain + ' 天';
-
-      const wrap = document.getElementById('up-targets');
-      wrap.innerHTML = upgradeTargets.map(function (t) {
-        if (!t.selectable) {
-          return '<div class="up-target">' +
-            '<div class="up-target-info"><div class="up-target-name">' + t.name + '</div>' +
-            '<div class="up-target-desc">' + t.desc + '</div></div>' +
-            '<button class="up-target-btn" onclick="contactSales()">联系销售</button></div>';
-        }
-        const active = (t.key === upgradeCtx.target) ? ' active' : '';
-        return '<div class="up-target' + active + '" data-key="' + t.key + '" onclick="pickUpgradeTarget(\'' + t.key + '\')">' +
-          '<div class="up-target-info"><div class="up-target-name">' + t.name + '</div>' +
-          '<div class="up-target-desc">' + t.desc + '</div></div>' +
-          '<div class="up-target-check"></div></div>';
-      }).join('');
-
-      // 升级弹窗已简化为方案选择，周期/时长/费用明细移至收银台页面展示，
-      // 跳转沿用默认年付参数（upgradeCtx.cycle='year'、target='pro'）
-    }
-
-    function pickUpgradeTarget(key) {
-      upgradeCtx.target = key;
-      renderUpgrade();
-    }
-
-    function contactSales() {
-      showToast('已收到您的需求，企业顾问将尽快与您联系');
-    }
     /* ===== 自动续费开关 ===== */
     function toggleRenewUI() {
       if (autoRenew) {
@@ -1949,7 +1987,89 @@
         : (params.get('none') === '1' ? 'none' : 'active');
       setSubState(mode);
     })();
-  </script>
+  /* ===== 全局折扣联动（0 折 = 免费） ===== */
+function getGlobalDiscountConfig() {
+    var cfg = { enabled: true, low: 0, high: 0 };
+    try {
+        var raw = null; // 固定 0 折：折扣后 $0 免费开通
+        if (raw) {
+            var c = JSON.parse(raw);
+            if (c) {
+                cfg.enabled = c.enabled !== false;
+                if (c.low !== undefined && c.low !== null) cfg.low = Number(c.low);
+                if (c.high !== undefined && c.high !== null) cfg.high = Number(c.high);
+            }
+        }
+    } catch (e) {}
+    return cfg;
+}
+
+function getPaywallPricing(basePrice) {
+    var cfg = getGlobalDiscountConfig();
+    if (!cfg.enabled) return { free: false, rate: 10, price: basePrice };
+    var low = cfg.low, high = cfg.high;
+    if (!isFinite(low)) low = 8.0;
+    if (!isFinite(high)) high = 8.9;
+    if (high <= 0) return { free: true, rate: 0, price: 0 };
+    if (low < 0) low = 0;
+    if (high > 10) high = 10;
+    var rate = parseFloat(sessionStorage.getItem('SanVIST_session_discount'));
+    if (!(rate >= low && rate <= high)) {
+        rate = Math.round((low + Math.random() * (high - low)) * 10) / 10;
+        try { sessionStorage.setItem('SanVIST_session_discount', String(rate)); } catch (e) {}
+    }
+    return { free: false, rate: rate, price: Math.round(basePrice * rate / 10) };
+}
+
+function renderPaywallPricing() {
+    var p = getPaywallPricing(756);
+    var free = p.free;
+    document.getElementById('pw-badge-text').textContent = '部分功能需开通';
+    document.getElementById('pw-offer-name').textContent = '订阅权益';
+    document.getElementById('pw-save-pill').textContent = free ? '当前免费' : ('立省 ' + Math.round((10 - p.rate) * 10) + '%');
+    document.getElementById('pw-cur').style.display = free ? 'inline' : 'none';
+    document.getElementById('pw-num').textContent = free ? '0' : p.price;
+    document.getElementById('pw-per').textContent = free ? '' : '/年';
+    document.getElementById('pw-strike').style.display = 'none';
+    document.getElementById('pw-strike').textContent = '$756';
+    document.getElementById('pw-note').textContent = free
+        ? '本次升级有效期 1 个月'
+        : '折后价 · 12 个月全功能 · 到期提醒续费';
+    document.getElementById('pw-cta').textContent = free ? '升级' : ('升级 · $' + p.price);
+}
+
+/* 打开订阅弹窗（与机群报表页同一套） */
+function openPaywall(name) {
+    renderPaywallPricing();
+    var el = document.getElementById('report-paywall');
+    el.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closePaywall() {
+    document.getElementById('report-paywall').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+/* 演示：开通后关闭弹窗，订阅状态同步为已订阅 */
+function pwUpgrade() {
+    closePaywall();
+    try { setSubState('active'); } catch (e) {}
+    showToast('订阅成功');
+}
+
+/* 点击遮罩关闭 */
+document.getElementById('report-paywall').addEventListener('click', function (e) {
+    if (e.target === this) closePaywall();
+});
+/* ESC 关闭 */
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closePaywall();
+});
+
+/* 返回上一页（无历史记录时只提示一下） */
+
+</script>
 </body>
 
 </html>

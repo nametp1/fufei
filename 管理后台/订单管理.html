@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>订单管理 - Mysany 管理后台</title>
+<title>订单管理 - SanVIST 管理后台</title>
 <style>
 :root {
-  --primary: #DC2626;--primary-hover: #B91C1C;--sidebar-bg: #0F172A;
-  --sidebar-hover: #1E293B;--sidebar-active: rgba(220,38,38,0.15);
+  --primary: #24839B;--primary-hover: #226884;--sidebar-bg: #1E3255;
+  --sidebar-hover: rgba(255,255,255,.08);--sidebar-active: rgba(41,190,206,0.20);
   --success: #10B981;--warning: #F59E0B;--error: #EF4444;--info: #3B82F6;
-  --text-primary: #1E293B;--text-secondary: #64748B;--text-muted: #94A3B8;
+  --text-primary: #2A4266;--text-secondary: #64748B;--text-muted: #94A3B8;
   --text-white: #E2E8F0;--border: #E2E8F0;--border-light: #F1F5F9;
   --bg-page: #F8FAFC;--bg-card: #FFFFFF;
   --shadow-card: 0 1px 3px rgba(0,0,0,.05);--shadow-modal: 0 8px 24px rgba(0,0,0,.12);
@@ -64,14 +64,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .filter-item{display:flex;flex-direction:column;gap:4px}
 .filter-label{font-size:12px;color:var(--text-secondary)}
 .filter-input,.filter-select{padding:6px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);background:var(--bg-card);outline:none;transition:border-color var(--transition-fast);min-width:130px;height:32px}
-.filter-input:focus,.filter-select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(220,38,38,.1)}
+.filter-input:focus,.filter-select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(41,190,206,.1)}
 .filter-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:28px}
 .filter-input.date-picker{min-width:128px;width:128px}
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;font-size:13px;font-weight:500;border-radius:var(--radius-sm);cursor:pointer;border:1px solid transparent;transition:all var(--transition-fast);white-space:nowrap;height:32px}
 .btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-hover)}
 .btn-outline{background:var(--bg-card);border-color:var(--border);color:var(--text-primary)}.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
-.btn-danger{background:var(--error);color:#fff}.btn-danger:hover{background:#DC2626}
+.btn-danger{background:var(--error);color:#fff}.btn-danger:hover{background:#24839B}
 .btn-ghost{background:transparent;color:var(--text-secondary)}.btn-ghost:hover{background:var(--border-light)}
 .btn-sm{padding:4px 10px;height:28px;font-size:12px}
 .btn-xs{padding:2px 8px;height:24px;font-size:12px;font-weight:400}
@@ -103,7 +103,7 @@ tr:hover .last-col{background:#FAFBFC}
 .tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 5px;border-radius:9px;font-size:11px;font-weight:600;background:var(--border-light);color:var(--text-secondary)}
 .tab-count.warn{background:#FEF3C7;color:#92400E}
 .tab-count.success{background:#D1FAE5;color:#065F46}
-.tab-count.error{background:#FEE2E2;color:#991B1B}
+.tab-count.error{background:#EAF7F9;color:#1F6D82}
 .tab-count.muted{background:var(--border-light);color:var(--text-muted)}
 .order-panel{display:none}
 .order-panel.active{display:block}
@@ -113,8 +113,8 @@ tr:hover .last-col{background:#FAFBFC}
 .tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:12px;font-weight:500}
 .tag-success{background:#D1FAE5;color:#065F46}
 .tag-warning{background:#FEF3C7;color:#92400E}
-.tag-error{background:#FEE2E2;color:#991B1B}
-.tag-info{background:#FEE2E2;color:#991B1B}
+.tag-error{background:#EAF7F9;color:#1F6D82}
+.tag-info{background:#EAF7F9;color:#1F6D82}
 .tag-default{background:#F1F5F9;color:#475569}
 .tag-orange{background:#FFF7ED;color:#9A3412}
 /* Pagination（全后台统一组件：信息居左、按钮固定右下角） */
@@ -126,7 +126,7 @@ tr:hover .last-col{background:#FAFBFC}
 .page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600}
 .page-btn:disabled{opacity:.4;cursor:not-allowed}
 /* Modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(30,50,85,.45);z-index:1000;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
 .modal{background:var(--bg-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-modal);width:540px;max-height:80vh;overflow-y:auto;animation:modalIn var(--transition-modal)}
 @keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
@@ -141,7 +141,7 @@ tr:hover .last-col{background:#FAFBFC}
 .form-label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:4px}
 .form-label .required{color:var(--error);margin-left:2px}
 .form-input,.form-select,.form-textarea{width:100%;padding:7px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);outline:none;transition:border var(--transition-fast);font-family:inherit}
-.form-input:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(220,38,38,.1)}
+.form-input:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(41,190,206,.1)}
 .form-input.error{border-color:var(--error)}
 .form-error{font-size:11px;color:var(--error);margin-top:4px}
 .form-input:disabled,.form-select:disabled{background:var(--border-light);color:var(--text-muted);cursor:not-allowed}
@@ -150,9 +150,9 @@ tr:hover .last-col{background:#FAFBFC}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 /* Alert */
 .alert-warning{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:#92400E;margin-top:12px}
-.alert-error{background:#FEF2F2;border:1px solid #FECACA;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:#991B1B;margin-top:12px}
+.alert-error{background:#F4FBFC;border:1px solid #C7E9EF;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:#1F6D82;margin-top:12px}
 /* Drawer (right side) */
-.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:1000}
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(30,50,85,.45);z-index:1000}
 .drawer-overlay.open{display:block}
 .drawer{position:fixed;top:0;right:0;width:680px;height:100vh;background:var(--bg-card);box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:1001;transform:translateX(100%);transition:transform var(--transition-modal)}
 .drawer-overlay.open .drawer{transform:translateX(0)}
@@ -180,7 +180,7 @@ tr:hover .last-col{background:#FAFBFC}
 .timeline-item .tl-text{font-size:13px;color:var(--text-primary)}
 /* Toast */
 .toast-container{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{background:#1E293B;color:#fff;padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;box-shadow:var(--shadow-modal);animation:toastIn var(--transition-fast);text-align:center}
+.toast{background:#2A4266;color:#fff;padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;box-shadow:var(--shadow-modal);animation:toastIn var(--transition-fast);text-align:center}
 @keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 *:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 /* Info Block (detail card) */
@@ -192,8 +192,20 @@ tr:hover .last-col{background:#FAFBFC}
 /* Empty state */
 .empty-state{text-align:center;padding:40px 20px;color:var(--text-muted)}
 .empty-state .empty-icon{margin-bottom:12px}
-  tr.row-focus td { background: #FFF6F6 !important; box-shadow: inset 0 0 0 1px rgba(196,30,41,.22) }
-  tr.row-focus td:first-child { box-shadow: inset 3px 0 0 var(--primary), inset 0 0 0 1px rgba(196,30,41,.22) }
+  tr.row-focus td { background: #FFF6F6 !important; box-shadow: inset 0 0 0 1px rgba(41,190,206,.22) }
+  tr.row-focus td:first-child { box-shadow: inset 3px 0 0 var(--primary), inset 0 0 0 1px rgba(41,190,206,.22) }
+</style>
+<style>
+/* ===== 主题：对齐机群报表配置（深蓝顶栏 + 青色高亮） ===== */
+.topbar{background:#172742;border-bottom:1px solid rgba(255,255,255,.06)}
+.topbar-title{color:#fff}
+.topbar-breadcrumb{color:rgba(255,255,255,.6)}
+.topbar-breadcrumb span{color:rgba(255,255,255,.4)!important}
+.topbar span{color:rgba(255,255,255,.6)}
+.sidebar{background:#1E3255}
+.menu-item.active,.menu-parent.active{color:#fff!important;background:linear-gradient(90deg,rgba(41,190,206,0) 0%,rgba(41,190,206,.55) 100%)!important;box-shadow:inset 3px 0 0 #29BECE;font-weight:600}
+.menu-item.active:hover,.menu-parent.active:hover{color:#fff!important}
+.page-content,.main{background:#f4f5f7}
 </style>
 </head>
 <body>
@@ -201,8 +213,8 @@ tr:hover .last-col{background:#FAFBFC}
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#DC2626"/><text x="16" y="21" text-anchor="middle" fill="white" font-size="14" font-weight="700">M</text></svg>
-    <span>Mysany 管理后台</span>
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="6" fill="#24839B"/><text x="16" y="21" text-anchor="middle" fill="white" font-size="14" font-weight="700">M</text></svg>
+    <span>SanVIST 管理后台</span>
   </div>
   <nav class="sidebar-menu">
     <div class="menu-group open">

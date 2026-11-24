@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>我的订阅 - Mysany</title>
+<title>我的订阅 - SanVIST</title>
 <style>
 :root {
-  --primary: #E60012;--primary-hover: #B8000E;--primary-light: #FDECEC;
+  --primary: #2F80ED;--primary-hover: #1B62C4;--primary-light: #EAF2FE;
   --success: #10B981;--success-light: #D1FAE5;--warning: #F59E0B;
-  --warning-light: #FEF3C7;--error: #EF4444;--error-light: #FEE2E2;
+  --warning-light: #FEF3C7;--error: #EF4444;--error-light: #EAF2FE;
   --text-primary: #1E293B;--text-secondary: #64748B;--text-muted: #94A3B8;
   --text-white: #FFFFFF;--border: #E2E8F0;--border-light: #F1F5F9;
   --bg-page: #F8FAFC;--bg-card: #FFFFFF;
@@ -18,7 +18,7 @@
   --radius-sm: 4px;--radius-md: 8px;--radius-lg: 12px;
   --transition-fast: 150ms cubic-bezier(.23,1,.32,1);
   /* 侧边栏所需变量（复刻自个人中心） */
-  --primary-bg: rgba(230,0,18,.06);
+  --primary-bg: rgba(47,128,237,.06);
   --bg-block: var(--bg-card);
   --radius-card: 12px;
   --shadow-md: 0 4px 12px rgba(0,0,0,.06);
@@ -82,7 +82,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .sub-state-tabs{display:flex;background:var(--bg-block,#F3F4F6);border:1px solid var(--border,#E5E7EB);border-radius:18px;padding:3px}
 .sub-state-tab{padding:6px 14px;font-size:12px;font-weight:500;color:var(--text-2,#6B7280);border-radius:15px;cursor:pointer;transition:all .15s;user-select:none}
 .sub-state-tab:hover{color:var(--text-1,#111827)}
-.sub-state-tab.active{background:#FFF;color:var(--primary,#E60012);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.sub-state-tab.active{background:#FFF;color:var(--primary,#2F80ED);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 
 /* Subscription Empty State（未生效订阅） */
 .sub-empty{padding:56px 24px;background:var(--bg-card,#FFF);border:1px solid var(--border,#E5E7EB);border-radius:var(--radius-lg);display:flex;flex-direction:column;align-items:center;text-align:center}
@@ -90,11 +90,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .sub-empty-icon svg{width:30px;height:30px}
 .sub-empty-title{font-size:16px;font-weight:600;color:var(--text-1,#111827);margin-bottom:8px}
 .sub-empty-desc{font-size:13px;line-height:1.6;color:var(--text-3,#9CA3AF);max-width:360px;margin-bottom:20px}
-.sub-empty-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 28px;font-size:14px;font-weight:500;color:#FFF;background:var(--primary,#E60012);border:none;border-radius:22px;cursor:pointer;transition:background .15s}
-.sub-empty-btn:hover{background:var(--primary-hover,#C00010)}
 
 /* Subscription Status Card */
-.sub-status{padding:24px;background:linear-gradient(135deg,#E60012,#B8000E);color:#fff;border-radius:var(--radius-lg)}
+.sub-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.sub-status{padding:24px;background:linear-gradient(135deg,#2F80ED,#1B62C4);color:#fff;border-radius:var(--radius-lg)}
 .sub-status.expiring{background:linear-gradient(135deg,#F59E0B,#D97706)}
 .sub-status.expired{background:linear-gradient(135deg,#EF4444,#DC2626)}
 .sub-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
@@ -107,14 +106,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 /* Alert Bar */
 .alert-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--radius-md);margin-bottom:16px;font-size:13px}
 .alert-bar.warning{background:var(--warning-light);color:#92400E;border:1px solid var(--warning)}
-.alert-bar.error{background:var(--error-light);color:#991B1B;border:1px solid var(--error)}
+.alert-bar.error{background:var(--error-light);color:#1B62C4;border:1px solid var(--error)}
 .alert-bar.info{background:var(--primary-light);color:var(--primary);border:1px solid var(--primary)}
 .alert-bar svg{flex-shrink:0}
 /* Tags */
 .tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:12px;font-weight:500;white-space:nowrap}
 .tag-success{background:var(--success-light);color:#065F46}
 .tag-warning{background:var(--warning-light);color:#92400E}
-.tag-error{background:var(--error-light);color:#991B1B}
+.tag-error{background:var(--error-light);color:#1B62C4}
 .tag-default{background:var(--border-light);color:var(--text-secondary)}
 /* Auto-renew toggle */
 .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--border-light);border-radius:var(--radius-md);margin-top:16px}
@@ -292,7 +291,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <!-- ========== 顶部 Header（个人中心样式） ========== -->
 <header class="header">
   <div class="header-left">
-    <div class="logo"><span class="logo-my">My</span><span class="logo-sany">SANY</span></div>
+    <div class="logo"><span class="logo-my">San</span><span class="logo-sany">VIST</span></div>
   </div>
   <div class="header-right">
     <div class="hd-entry" onclick="location.href='我的订阅管理页.html'">
@@ -375,22 +374,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
         </svg>
       </div>
       <div class="sub-empty-title">暂无生效中的订阅</div>
-      <div class="sub-empty-desc">您当前尚未开通付费订阅，开通后即可使用机群监控、远程诊断、电子围栏等全部权益。</div>
-      <button class="sub-empty-btn" onclick="location.href='版本选购页.html'">立即订阅</button>
+      <div class="sub-empty-desc">当前没有生效中的订阅。部分报表、考勤等模块需开通后使用，基础功能不受影响。</div>
     </div>
 
     <!-- Subscription Status -->
     <div class="sub-status" id="sub-status">
       <div class="sub-header">
+        <div class="sub-plan-title" id="sub-plan-title">专业版</div>
         <div class="sub-plan-badge">
           <span class="status-dot"></span>
           <span class="sub-plan-name" id="status-badge-text">生效中</span>
         </div>
-        <span class="status-countdown" id="status-countdown">剩余 30 天</span>
       </div>
-      <div class="sub-plan-main">
-        <div class="sub-plan-title" id="sub-plan-title">免费版</div>
+      <div class="sub-footer">
         <div class="sub-plan-expiry">到期 <span id="sub-expiry">—</span></div>
+        <span class="status-countdown" id="status-countdown">剩余 30 天</span>
       </div>
     </div>
 
@@ -416,29 +414,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
       <div class="faq-list">
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-q">
-            <span class="faq-q-text">Mysany 订阅如何定价？</span>
+            <span class="faq-q-text">哪些功能需要开通订阅？</span>
             <span class="faq-q-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
           </div>
           <div class="faq-a">
-            <p class="faq-a-text">Mysany 免费版开放给所有用户使用。付费方案（进阶版、专业版、企业定制版）开通后即可使用对应版本的全部功能。我们提供按月与按年两种周期方案，月付为原价，年付立省 17%。企业定制版需联系销售获取报价。</p>
+            <p class="faq-a-text">只有少量报表和考勤等模块需要开通订阅，其余功能无需开通。</p>
           </div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-q">
-            <span class="faq-q-text">Mysany 是免费的吗？</span>
+            <span class="faq-q-text">不开通订阅，还能正常使用吗？</span>
             <span class="faq-q-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
           </div>
           <div class="faq-a">
-            <p class="faq-a-text">Mysany 免费版开放所有人使用。升级至进阶版、专业版或企业定制版方案，可使用更多机群管理与功能，畅享更强大的体验。</p>
+            <p class="faq-a-text">可以。未开通仅影响少量报表与考勤模块，其他页面和功能不受限制，也不会影响已有数据。</p>
           </div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
           <div class="faq-q">
-            <span class="faq-q-text">有哪些付款方式？</span>
+            <span class="faq-q-text">如何付款？支持哪些币种？</span>
             <span class="faq-q-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
           </div>
           <div class="faq-a">
-            <p class="faq-a-text">你可以使用 Apple Pay、Google Pay 绑卡，或通过国际信用卡渠道自助购买进阶版与专业版。企业定制版需联系销售人员，支持银行电汇等专属付款方式。</p>
+            <p class="faq-a-text">本期全部免费开通，无需付款。开通后在有效期内可使用对应模块，到期可再次免费开通。</p>
           </div>
         </div>
       </div>
@@ -453,7 +451,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
       <div class="card-body">
         <div class="stat-item">
           <span class="stat-label">当前版本</span>
-          <span class="stat-value" id="stat-plan">免费版</span>
+          <span class="stat-value" id="stat-plan">专业版</span>
         </div>
         <div class="stat-item">
           <span class="stat-label">订阅周期</span>
@@ -472,27 +470,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 
     <!-- 免费版可用权益（未订阅） -->
     <div class="card" style="margin-bottom:16px;display:none" id="free-benefits-card">
-      <div class="card-header"><div class="card-title">免费版可用权益</div></div>
+      <div class="card-header"><div class="card-title">基础权益</div></div>
       <div class="card-body">
         <div class="benefit-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          机群监控（基础版）
+          基础数据随时可查
         </div>
         <div class="benefit-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          设备数据查看最近 7 天
+          部分报表与考勤等模块需开通
         </div>
         <div class="benefit-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          报表功能每月试用 3 天
+          设备管理与告警正常使用
         </div>
         <div class="benefit-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          基础工单支持
-        </div>
-        <div class="alert-bar" style="background:var(--primary-light);margin:12px 0 0;color:var(--primary)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          <span style="flex:1;min-width:0">升级付费订阅，解锁全部权益</span>
+          账号数据随时可查
         </div>
       </div>
     </div>
@@ -518,7 +512,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
         </div>
         <div style="font-weight:600;margin-bottom:4px">确认关闭自动续费？</div>
         <div class="modal-destructive-text">
-          当前订阅有效至 <strong id="cancel-expiry">—</strong>，到期后将不再自动扣款，所有功能将降级为免费版。
+          当前订阅有效至 <strong id="cancel-expiry">—</strong>，到期后将不再自动扣款，部分功能将不可用。
         </div>
       </div>
     </div>
@@ -544,7 +538,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           当前订阅方案
         </div>
-        <div class="up-current-main" id="up-current-text">进阶版 · 剩余 365 天</div>
+        <div class="up-current-main" id="up-current-text">专业版 · 剩余 365 天</div>
       </div>
       <div class="up-section-title">选择升级方案</div>
       <div class="up-targets" id="up-targets"></div>
@@ -569,7 +563,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
       <div class="renew-info">
         <div class="renew-info-row">
           <span class="renew-info-label">当前方案</span>
-          <span class="renew-info-value" id="r-plan">进阶版</span>
+          <span class="renew-info-value" id="r-plan">专业版</span>
         </div>
         <div class="renew-info-row">
           <span class="renew-info-label">当前到期</span>
@@ -597,7 +591,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
       </div>
       <div class="price-breakdown">
         <div class="price-row">
-          <span id="r-item-label">进阶版续费</span>
+          <span id="r-item-label">专业版续费</span>
           <span id="r-subtotal">—</span>
         </div>
         <div class="price-row" id="r-disc-row">
@@ -685,7 +679,7 @@ const US_VAT = 0.0825;
 // 价格口径对齐管理后台「订阅配置」：月付原价 ¥299，年付套餐价 ¥2,990（立省 17%）
 const PLAN = {
   key: 'basic',
-  name: '免费版',
+  name: '专业版',
   monthly: 0,
   annual: 0,
   total: 30,
@@ -798,7 +792,7 @@ function renderRenew() {
 /* ===== 升级订阅（对齐 APP 端） ===== */
 const upgradeCtx = {
   fromPlan: 'basic',
-  fromName: '进阶版',
+  fromName: '专业版',
   fromPaid: 299 * 12,
   total: 365,
   remain: 365,
@@ -874,11 +868,11 @@ function showToast(msg) {
 
 /* ===== 消费记录（已订阅态，status: paid 已支付 / refunding 退款审核中 / refunded 已退款 / done 已完成） ===== */
 const CONSUME_RECORDS = [
-      { oid: 'SUB-20261122-014', date: '2026-11-22 10:00', item: 'Mysany订阅-免费版·1个月', amount: 0, pay: '免费开通', status: 'done', totalDays: 30, usedDays: 1 },
-      { oid: 'SUB-20261020-2213', date: '2026-10-20 14:32', item: 'Mysany订阅-专业版·1个月', amount: 299, pay: '在线支付', status: 'paid', totalDays: 30, usedDays: 30 },
-      { oid: 'SUB-20260920-1908', date: '2026-09-20 09:18', item: 'Mysany订阅-专业版·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 },
-      { oid: 'SUB-20260818-1587', date: '2026-08-18 16:05', item: 'Mysany订阅-专业版·1个月', amount: 299, pay: '在线支付', status: 'refunded', totalDays: 30, usedDays: 12 },
-      { oid: 'SUB-20260715-1024', date: '2026-07-15 11:24', item: 'Mysany订阅-专业版·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 }
+      { oid: 'SUB-20261122-014', date: '2026-11-22 10:00', item: 'SanVIST订阅·1个月', amount: 0, pay: '免费开通', status: 'done', totalDays: 30, usedDays: 1 },
+      { oid: 'SUB-20261020-2213', date: '2026-10-20 14:32', item: 'SanVIST订阅·1个月', amount: 299, pay: '在线支付', status: 'paid', totalDays: 30, usedDays: 30 },
+      { oid: 'SUB-20260920-1908', date: '2026-09-20 09:18', item: 'SanVIST订阅·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 },
+      { oid: 'SUB-20260818-1587', date: '2026-08-18 16:05', item: 'SanVIST订阅·1个月', amount: 299, pay: '在线支付', status: 'refunded', totalDays: 30, usedDays: 12 },
+      { oid: 'SUB-20260715-1024', date: '2026-07-15 11:24', item: 'SanVIST订阅·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 }
     ];
 
 function consumeStatusTag(status) {
@@ -969,17 +963,21 @@ function setSubState(mode) {
   var endStr = fmtDate(END_DATE);
   if (isExpired) {
     document.getElementById('status-badge-text').textContent = '已过期';
-    document.getElementById('status-countdown').textContent = '已于 ' + endStr + ' 到期';
+    var cdExp = document.getElementById('status-countdown');
+    cdExp.textContent = '';
+    cdExp.style.display = 'none';
     document.getElementById('sub-expiry').textContent = endStr;
     var se = document.getElementById('stat-expiry');
     se.textContent = '已到期';
     se.style.color = 'var(--text-muted)';
   } else {
     document.getElementById('status-badge-text').textContent = '生效中';
-    document.getElementById('status-countdown').textContent = '剩余 ' + PLAN.remain + ' 天';
+    var cdAct = document.getElementById('status-countdown');
+    cdAct.style.display = '';
+    cdAct.textContent = '剩余 ' + PLAN.remain + ' 天';
     document.getElementById('sub-expiry').textContent = endStr;
     var se2 = document.getElementById('stat-expiry');
-    se2.textContent = PLAN.remain + '天后';
+    se2.textContent = endStr;
     se2.style.color = 'var(--success)';
   }
   /* Tab 高亮 */
@@ -1006,7 +1004,7 @@ function setSubState(mode) {
   document.getElementById('r-expiry').textContent = endStr;
   document.getElementById('r-remain').textContent = PLAN.remain + ' 天';
   document.getElementById('stat-plan').textContent = PLAN.name;
-  document.getElementById('stat-expiry').textContent = PLAN.remain + '天后';
+  document.getElementById('stat-expiry').textContent = fmtDate(END_DATE);
   document.getElementById('cancel-expiry').textContent = endStr;
 
   /* 概览补充数据 */

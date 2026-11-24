@@ -7,14 +7,14 @@
   <title>报表模版</title>
   <style>
     :root {
-      --primary: #C41E29;
-      --primary-hover: #A01822;
-      --primary-bg: rgba(196, 30, 41, 0.04);
+      --primary: #2F80ED;
+      --primary-hover: #1B62C4;
+      --primary-bg: rgba(47, 128, 237, 0.04);
       --bg-page: #F5F7FA;
       --bg-card: #FFFFFF;
       --success: #52C41A;
       --warning: #FAAD14;
-      --error: #FF4D4F;
+      --error: #E5484D;
       --info: #1677FF;
       --text-1: #1F1F1F;
       --text-2: #666666;
@@ -324,7 +324,7 @@
       width: 36px; height: 36px; flex-shrink: 0;
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(196, 30, 41, .08); color: var(--primary)
+      background: rgba(47, 128, 237, .08); color: var(--primary)
     }
     .feed-icon svg { width: 18px; height: 18px }
 
@@ -371,10 +371,21 @@
     }
     @keyframes pwSlideUp { from { opacity: 0; transform: translateY(24px) scale(.98) } to { opacity: 1; transform: none } }
 
+    .pw-card { position: relative }
+
+    .pw-close {
+      position: absolute; top: 10px; right: 10px;
+      width: 30px; height: 30px; border: none; border-radius: 50%;
+      background: transparent; color: var(--text-3); font-size: 20px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-family: inherit;
+    }
+    .pw-close:hover { background: #F2F3F5; color: var(--text-1) }
+
     .pw-badge {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 5px 14px; border-radius: 100px;
-      background: rgba(196, 30, 41, .08);
+      background: rgba(47, 128, 237, .08);
       color: var(--primary); font-size: 12px; font-weight: 600;
       letter-spacing: .3px; margin-bottom: 18px;
     }
@@ -389,8 +400,8 @@
       border: 1.5px solid var(--primary);
       border-radius: 16px;
       padding: 20px 22px;
-      background: linear-gradient(180deg, rgba(196, 30, 41, .05), rgba(196, 30, 41, 0));
-      box-shadow: 0 0 0 3px rgba(196, 30, 41, .07);
+      background: linear-gradient(180deg, rgba(47, 128, 237, .05), rgba(47, 128, 237, 0));
+      box-shadow: 0 0 0 3px rgba(47, 128, 237, .07);
       text-align: left;
     }
     .pw-offer-head { display: flex; align-items: center; justify-content: space-between }
@@ -414,18 +425,24 @@
     }
     .pw-feats li svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; color: #1B9E4B }
 
+    .pw-later {
+      margin-top: 10px; padding: 6px 10px; border: none; background: none;
+      font-family: inherit; font-size: 12.5px; color: #a7abb8; cursor: pointer;
+    }
+    .pw-later:hover { color: #5a6472 }
+
     .pw-cta {
       width: 100%; margin-top: 20px;
       padding: 13px 0; border: none; border-radius: 12px;
       font-size: 15px; font-weight: 600; font-family: inherit;
       cursor: pointer; transition: all .2s;
-      background: linear-gradient(90deg, #C41E29, #E0454F);
+      background: linear-gradient(90deg, #2F80ED, #6FA8F5);
       color: #FFF;
     }
     .pw-cta:hover {
-      background: linear-gradient(90deg, #A01822, #C41E29);
+      background: linear-gradient(90deg, #2F80ED, #6FA8F5);
       transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(196, 30, 41, .35);
+      box-shadow: 0 8px 20px rgba(47, 128, 237, .35);
     }
 
     /* 顶部锁定提示 */
@@ -433,7 +450,7 @@
       align-items: center; gap: 5px;
       padding: 4px 12px; border-radius: 100px;
       font-size: 12px; font-weight: 600;
-      background: rgba(196, 30, 41, .08); color: var(--primary);
+      background: rgba(47, 128, 237, .08); color: var(--primary);
     }
     .hd-lock-tag svg { width: 12px; height: 12px }
   
@@ -482,7 +499,7 @@
         }
 
         .tab:hover {
-            color: #E60012;
+            color: #2F80ED;
         }
 
         .tab.active {
@@ -497,7 +514,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background-color: #E60012;
+            background-color: #2F80ED;
         }
 
         /* 顶部标签页右侧的「我需要更多报表」入口 */
@@ -516,16 +533,16 @@
             padding: 0 14px;
             font-size: 13px;
             font-family: inherit;
-            color: #E60012;
+            color: #2F80ED;
             background: #fff;
-            border: 1px solid #E60012;
+            border: 1px solid #2F80ED;
             border-radius: 16px;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .more-reports-entry:hover {
-            background: #E60012;
+            background: #2F80ED;
             color: #fff;
         }
 
@@ -550,9 +567,9 @@
         .scope-seg button em { font-style: normal; font-size: 11px; color: #9aa0ad; }
         .scope-seg button:hover { color: #161a2e; }
         .scope-seg button.on {
-            background: #fff; color: #E60012; font-weight: 600; box-shadow: 0 1px 3px rgba(22,26,46,.12);
+            background: #fff; color: #2F80ED; font-weight: 600; box-shadow: 0 1px 3px rgba(22,26,46,.12);
         }
-        .scope-seg button.on em { color: #E60012; opacity: .7; }
+        .scope-seg button.on em { color: #2F80ED; opacity: .7; }
 
         .toolbar-left {
             display: flex;
@@ -572,7 +589,7 @@
         }
 
         .search-box:focus-within {
-            border-color: #E60012;
+            border-color: #2F80ED;
         }
 
         .search-box svg {
@@ -625,7 +642,7 @@
         }
 
         .view-toggle button:not(.active):hover {
-            color: #E60012;
+            color: #2F80ED;
         }
 
         /* ====== 列表视图 ====== */
@@ -702,7 +719,7 @@
 
         .btn-link {
             font-size: 13px;
-            color: #E60012;
+            color: #2F80ED;
             background: none;
             border: none;
             cursor: pointer;
@@ -716,7 +733,7 @@
         }
 
         .btn-primary {
-            background: #E60012;
+            background: #2F80ED;
             border: none;
             border-radius: 4px;
             padding: 0 16px;
@@ -729,7 +746,7 @@
         }
 
         .btn-primary:hover {
-            background: #cc0010;
+            background: #1B62C4;
         }
 
         /* 空状态 */
@@ -836,13 +853,13 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn:hover { border-color: #E60012; color: #E60012; }
+        .btn:hover { border-color: #2F80ED; color: #2F80ED; }
         .btn-primary {
-            background: #E60012;
-            border-color: #E60012;
+            background: #2F80ED;
+            border-color: #2F80ED;
             color: #fff;
         }
-        .btn-primary:hover { background: #cc0010; border-color: #cc0010; color: #fff; }
+        .btn-primary:hover { background: #1B62C4; border-color: #1B62C4; color: #fff; }
 
         /* 弹窗工具栏：搜索框 + 单机/机群 Tab 同一行 */
         .more-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
@@ -850,7 +867,7 @@
             flex: 1; display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 10px;
             border: 1px solid #e6e8ee; border-radius: 8px; background: #fff; color: #9aa0ad;
         }
-        .more-search:focus-within { border-color: #E60012; }
+        .more-search:focus-within { border-color: #2F80ED; }
         .more-search input {
             flex: 1; min-width: 0; border: none; outline: none; background: transparent;
             font-family: inherit; font-size: 13px; color: #161a2e;
@@ -862,7 +879,7 @@
             font-family: inherit; font-size: 13px; color: #5a6472; cursor: pointer;
         }
         .more-seg button.on {
-            background: #fff; color: #E60012; font-weight: 600; box-shadow: 0 1px 3px rgba(22,26,46,.12);
+            background: #fff; color: #2F80ED; font-weight: 600; box-shadow: 0 1px 3px rgba(22,26,46,.12);
         }
         .more-empty { padding: 28px 0; text-align: center; font-size: 12.5px; color: #9aa0ad; }
 
@@ -883,7 +900,7 @@
             transition: all 0.2s;
         }
         .more-option + .more-option { margin-top: 10px; }
-        .more-option:hover { border-color: #E60012; background: #fffafa; }
+        .more-option:hover { border-color: #2F80ED; background: #F5F9FF; }
         /* 整卡可点：隐藏原生复选框，选中 = 卡片淡红底 + 红边 */
         .more-option {
             position: relative;
@@ -893,13 +910,13 @@
         }
         .more-option:active { background: #fafbfc; }
         .more-option input { position: absolute; opacity: 0; width: 0; height: 0; }
-        .more-option.checked { border-color: #f6a8ae; background: #fff7f7; }
+        .more-option.checked { border-color: #9CC3F5; background: #F0F6FF; }
         /* 分组标题行右侧「已选 N 项」 */
         .more-section-title { display: flex; align-items: center; justify-content: space-between; }
         .more-section-title .sel-count {
             font-size: 12px;
             font-weight: 400;
-            color: #E60012;
+            color: #2F80ED;
         }
         .more-option-name {
             font-size: 13px;
@@ -942,7 +959,7 @@
             display: block;
             transition: transform 0.25s ease;
         }
-        .more-option-thumb:hover { border-color: #E60012; }
+        .more-option-thumb:hover { border-color: #2F80ED; }
         .more-option-thumb:hover img { transform: scale(1.06); }
         .more-option-thumb .zoom {
             position: absolute;
@@ -1010,13 +1027,13 @@
             resize: vertical;
             box-sizing: border-box;
         }
-        .more-note-input:focus { outline: none; border-color: #E60012; }
+        .more-note-input:focus { outline: none; border-color: #2F80ED; }
         .more-form-tip {
             font-size: 12px;
             margin-top: 10px;
             display: none;
         }
-        .more-form-tip.error   { display: block; color: #E60012; }
+        .more-form-tip.error   { display: block; color: #2F80ED; }
         .more-form-tip.success { display: block; color: #52c41a; }
 
         /* 预览表格区域 */
@@ -1081,12 +1098,12 @@
         }
 
         .preview-table .col-name {
-            color: #E60012;
+            color: #2F80ED;
             font-weight: 500;
         }
 
         .preview-table .col-asset {
-            color: #E60012;
+            color: #2F80ED;
             font-weight: 500;
         }
 
@@ -1100,7 +1117,7 @@
 
         .preview-table .cell-tag.good { background: #f6ffed; color: #52c41a; }
         .preview-table .cell-tag.warn { background: #fff7e6; color: #fa8c16; }
-        .preview-table .cell-tag.bad  { background: #fff2f0; color: #ff4d4f; }
+        .preview-table .cell-tag.bad  { background: #fff2f0; color: #E5484D; }
 
         /* PDF 版式预览（导出 PDF 的效果示意） */
         .pdf-stage {
@@ -1125,14 +1142,14 @@
             align-items: flex-start;
             justify-content: space-between;
             gap: 18px;
-            border-bottom: 4px solid #E60012;
+            border-bottom: 4px solid #2F80ED;
             padding-bottom: 12px;
         }
 
         .pdf-brand { display: flex; align-items: center; gap: 10px; }
 
         .pdf-logo {
-            background: #E60012;
+            background: #2F80ED;
             color: #fff;
             font-weight: 900;
             font-size: 20px;
@@ -1151,7 +1168,7 @@
             margin-left: 8px;
             vertical-align: middle;
             background: #fff2f2;
-            color: #E60012;
+            color: #2F80ED;
             border: 1px solid #f7ccd0;
             font-size: 10px;
             font-weight: 700;
@@ -1162,7 +1179,7 @@
         .pdf-period {
             display: inline-block;
             margin-top: 8px;
-            background: #E60012;
+            background: #2F80ED;
             color: #fff;
             font-size: 11px;
             padding: 3px 12px;
@@ -1190,7 +1207,7 @@
             font-size: 13px;
             font-weight: 700;
             padding-left: 9px;
-            border-left: 3px solid #E60012;
+            border-left: 3px solid #2F80ED;
         }
 
         .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -1265,12 +1282,12 @@
 
         .pv-switch-btn svg { width: 14px; height: 14px; }
 
-        .pv-switch-btn:hover { border-color: #f6a8ae; color: #E60012; }
+        .pv-switch-btn:hover { border-color: #9CC3F5; color: #2F80ED; }
 
         .pv-switch-btn.active {
-            background: #fdecee;
-            border-color: #f6a8ae;
-            color: #E60012;
+            background: #EAF2FE;
+            border-color: #9CC3F5;
+            color: #2F80ED;
             font-weight: 600;
         }
 
@@ -1296,7 +1313,7 @@
 
         .type-tag.single {
             background: #e6f7ff;
-            color: #E60012;
+            color: #2F80ED;
             border: 1px solid #91d5ff;
         }
 
@@ -1344,13 +1361,13 @@
         .tour-highlight {
             position: relative;
             z-index: 9999 !important;
-            box-shadow: 0 0 0 3px #E60012, 0 0 12px rgba(230,0,18,0.25) !important;
+            box-shadow: 0 0 0 3px #2F80ED, 0 0 12px rgba(47,128,237,0.25) !important;
             border-radius: 6px !important;
             animation: tourBreathe 2.5s ease-in-out infinite;
         }
         @keyframes tourBreathe {
-            0%, 100% { box-shadow: 0 0 0 3px #E60012, 0 0 12px rgba(230,0,18,0.25); }
-            50%      { box-shadow: 0 0 0 3px #E60012, 0 0 18px rgba(230,0,18,0.35); }
+            0%, 100% { box-shadow: 0 0 0 3px #2F80ED, 0 0 12px rgba(47,128,237,0.25); }
+            50%      { box-shadow: 0 0 0 3px #2F80ED, 0 0 18px rgba(47,128,237,0.35); }
         }
 
         /* 浮动提示卡片 */
@@ -1407,9 +1424,9 @@
             font-size: 12px;
             font-weight: 600;
             background: #fff0f1;
-            color: #E60012;
+            color: #2F80ED;
             margin-bottom: 12px;
-            border: 1px solid #ffd6d9;
+            border: 1px solid #CFE0FB;
         }
         .tour-step-title {
             font-size: 18px;
@@ -1422,7 +1439,7 @@
             color: #666;
             line-height: 1.7;
         }
-        .tour-step-desc .hl { color: #E60012; font-weight: 600; }
+        .tour-step-desc .hl { color: #2F80ED; font-weight: 600; }
 
         .tour-dots {
             display: flex;
@@ -1440,7 +1457,7 @@
         .tour-dot.active {
             width: 18px;
             border-radius: 3px;
-            background: #E60012;
+            background: #2F80ED;
         }
 
         .tour-actions {
@@ -1459,7 +1476,7 @@
             padding: 6px 0;
             transition: color 0.2s;
         }
-        .tour-skip:hover { color: #E60012; }
+        .tour-skip:hover { color: #2F80ED; }
         .tour-nav { display: flex; gap: 10px; }
         .tour-btn {
             padding: 8px 20px;
@@ -1474,11 +1491,11 @@
         }
         .tour-btn:hover { border-color: #ccc; color: #333; }
         .tour-btn.primary {
-            background: #E60012;
-            border-color: #E60012;
+            background: #2F80ED;
+            border-color: #2F80ED;
             color: #fff;
         }
-        .tour-btn.primary:hover { background: #c40011; border-color: #c40011; }
+        .tour-btn.primary:hover { background: #1B62C4; border-color: #1B62C4; }
 
         /* ====== 统一网格卡片（无分组标题） ====== */
         .dim-cards-grid {
@@ -1611,74 +1628,6 @@
             border-top: 1px solid #f5f5f5;
             background: #fafafa;
         }
-          /* ================= 报表 0 元开通弹窗 ================= */
-        .paywall-overlay {
-            position: fixed; inset: 0; z-index: 1200;
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(15,23,42,.38); padding: 24px;
-            animation: pwFade .3s ease both;
-        }
-        @keyframes pwFade { from { opacity: 0 } to { opacity: 1 } }
-        .paywall-overlay.hidden { display: none; }
-
-        .pw-card {
-            position: relative; width: 100%; max-width: 440px; max-height: 86vh; overflow-y: auto;
-            background: #fff; border-radius: 20px; text-align: center;
-            padding: 32px 30px 22px;
-            box-shadow: 0 24px 80px rgba(0,0,0,.28), 0 2px 8px rgba(0,0,0,.08);
-            animation: pwUp .35s cubic-bezier(.32,.72,0,1) both;
-        }
-        @keyframes pwUp { from { opacity: 0; transform: translateY(20px) scale(.98) } to { opacity: 1; transform: none } }
-
-        .pw-close {
-            position: absolute; top: 8px; right: 8px; width: 30px; height: 30px;
-            border: none; border-radius: 50%; background: transparent; color: #b0b4bd;
-            font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-        .pw-close:hover { background: #f2f3f5; color: #333; }
-
-        .pw-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 5px 12px; border-radius: 100px; margin-bottom: 14px;
-            background: #fdecee; color: #E60012; font-size: 12px; font-weight: 600;
-        }
-        .pw-badge svg { width: 13px; height: 13px }
-
-        .pw-title { font-size: 20px; font-weight: 700; color: #161a2e; line-height: 1.4; letter-spacing: -.2px }
-        .pw-title b { color: #E60012 }
-        .pw-desc { font-size: 13px; color: #8b90a0; line-height: 1.7; margin-top: 8px }
-        .pw-desc b { color: #5a6472 }
-
-        .pw-offer {
-            margin-top: 18px; border: 1.5px solid #E60012; border-radius: 16px; padding: 16px 18px;
-            text-align: left; background: linear-gradient(180deg,rgba(230,0,18,.05),rgba(230,0,18,0));
-            box-shadow: 0 0 0 3px rgba(230,0,18,.06);
-        }
-        .pw-offer-head { display: flex; align-items: center; justify-content: space-between }
-        .pw-offer-name { font-size: 13.5px; font-weight: 700; color: #161a2e }
-        .pw-save-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 100px; background: #E8F7EE; color: #1B9E4B }
-        .pw-offer-price { margin: 10px 0 4px; display: flex; align-items: baseline; gap: 3px }
-        .pw-offer-price .num { font-size: 32px; font-weight: 700; letter-spacing: -.5px; color: #161a2e; font-family: "Helvetica Neue", Arial, sans-serif }
-        .pw-offer-price .per { font-size: 12.5px; color: #a7abb8 }
-        .pw-offer-note { font-size: 11.5px; color: #a7abb8 }
-
-        .pw-feats { list-style: none; margin: 12px 0 0; padding: 12px 0 0; border-top: 1px dashed #edeff3; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px }
-        .pw-feats li { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: #5a6472; line-height: 1.5; padding: 3px 0 }
-        .pw-feats li svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 2px; color: #1B9E4B }
-
-        .pw-cta {
-            width: 100%; margin-top: 16px; padding: 12px 0; border: none; border-radius: 12px;
-            font-size: 15px; font-weight: 600; font-family: inherit; color: #fff; cursor: pointer;
-            background: linear-gradient(90deg,#E60012,#ff4d5a);
-            transition: transform .15s, box-shadow .15s;
-        }
-        .pw-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(230,0,18,.32) }
-
-        .pw-later {
-            margin-top: 10px; padding: 6px 10px; border: none; background: none;
-            font-family: inherit; font-size: 12.5px; color: #a7abb8; cursor: pointer;
-        }
-        .pw-later:hover { color: #5a6472 }
 
     </style>
 </head>
@@ -1688,7 +1637,7 @@
 <!-- ========== 顶部 Header ========== -->
   <header class="header">
     <div class="header-left">
-      <div class="logo"><span class="logo-my">My</span><span class="logo-sany">SANY</span></div>
+      <div class="logo"><span class="logo-my">San</span><span class="logo-sany">VIST</span></div>
     </div>
     <div class="header-right">
       <div class="hd-lock-tag" onclick="showToast('订阅后即可访问工作台')">
@@ -1698,9 +1647,9 @@
       <div class="hd-entry" onclick="location.href='我的订阅管理页.html'">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
         订阅
-        <span class="hd-entry-badge">新上</span>
+        <span class="hd-entry-badge" data-i18n="badge.new">新上</span>
       </div>
-      <div class="lang-switch" onclick="showToast('语言切换')">
+      <div class="lang-switch" onclick="switchLang()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         简体中文
       </div>
@@ -1877,33 +1826,31 @@
   </div>
 
 
-    <!-- ==================== 报表 0 元开通弹窗 ==================== -->
+    <!-- ==================== 报表 $0 开通弹窗 ==================== -->
     <div class="paywall-overlay hidden" id="report-paywall">
         <div class="pw-card">
             <button class="pw-close" onclick="closePaywall()" aria-label="关闭">×</button>
             <div class="pw-badge">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-                <span id="pw-badge-text">0 元开通即可查看</span>
+                <span id="pw-badge-text">部分功能需开通</span>
             </div>
-            <div class="pw-title">《<b id="pw-report-name">该报表</b>》<span id="pw-title-suffix">支持 0 元开通</span></div>
-            <div class="pw-desc">开通后即可查看完整数据、历史区间与导出能力，<b>不收取任何费用</b>。</div>
+            <div class="pw-title">开通订阅，解锁更多模块</div>
+            <div class="pw-desc">订阅包含部分报表、考勤等模块，开通后即可使用；基础功能不受影响。</div>
 
             <div class="pw-offer">
                 <div class="pw-offer-head">
-                    <span class="pw-offer-name" id="pw-offer-name">0 元开通 · 免费使用</span>
+                    <span class="pw-offer-name" id="pw-offer-name">订阅权益</span>
                     <span class="pw-save-pill" id="pw-save-pill">限时免费</span>
                 </div>
-                <div class="pw-offer-price"><span class="cur" id="pw-cur" style="display:none">$</span><span class="num" id="pw-num">0</span><span class="per" id="pw-per">元</span><span class="strike" id="pw-strike" style="display:none">$756</span></div>
-                <div class="pw-offer-note" id="pw-note">开通即用 · 不自动扣费 · 可随时关闭</div>
+                <div class="pw-offer-price"><span class="cur" id="pw-cur" style="display:none">$</span><span class="num" id="pw-num">0</span><span class="per" id="pw-per"></span><span class="strike" id="pw-strike" style="display:none">$756</span></div>
+                <div class="pw-offer-note" id="pw-note">本次升级有效期 1 个月</div>
                 <ul class="pw-feats">
-                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>全部报表与数据导出</li>
-                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>机群监控看板</li>
-                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>生产力报告</li>
-                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>电子围栏 · 远程诊断</li>
-                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>全量历史数据</li>
-                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>不限设备数量</li>
-                </ul>
-                <button class="pw-cta" id="pw-cta" onclick="pwUpgrade()">0 元开通，立即查看</button>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>全部付费报表</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>考勤等增值模块</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>历史区间与导出</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>基础功能不受影响</li>
+        </ul>
+                <button class="pw-cta" id="pw-cta" onclick="pwUpgrade()">升级</button>
             </div>
             <button class="pw-later" onclick="closePaywall()">暂时不看</button>
         </div>
@@ -2228,7 +2175,7 @@
 
         // 状态样式：live = 已上线（红），planned = 已计划未实现（蓝）
         function iconStyle(rep) {
-            if (rep.state === 'live') return 'style="background:#E60012;color:#fff;"';
+            if (rep.state === 'live') return 'style="background:#2F80ED;color:#fff;"';
             if (rep.state === 'planned') return 'style="background:#1890ff;color:#fff;"';
             return '';
         }
@@ -2242,41 +2189,46 @@
             if (rep.scope !== '单机' && rep.scope !== '机群') return '';
             const st = {
                 '单机': 'color:#5a6472;background:#f1f3f6;',
-                '机群': 'color:#E60012;background:#fdecee;',
+                '机群': 'color:#2F80ED;background:#EAF2FE;',
                 '项目': 'color:#7C3AED;background:#f3ecff;'
             }[rep.scope] || 'color:#8b90a0;background:#f2f3f5;';
             return '<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:400;border-radius:3px;padding:1px 6px;vertical-align:middle;' + st + '">' + (rep.scope || '') + '</span>';
         }
 
-        /* 0 元开通标识：免费 / 需开通（已开通则隐藏） */
+        /* $0 开通标识：免费 / 需开通（已开通则隐藏） */
 
 /* ===== 报表所需版本（读取后台「报表权限」配置；缺省按内置默认） ===== */
 function reportRank(key, scope) {
     var field = (scope === '机群') ? 'fleet' : (scope === '项目' ? 'project' : 'single');
     try {
-        var cfg = JSON.parse(localStorage.getItem('mysany_report_permissions') || '{}');
+        var cfg = JSON.parse(localStorage.getItem('SanVIST_report_permissions') || '{}');
         var it = cfg[key];
         if (it && it[field] !== undefined && it[field] !== null) return Number(it[field]);
     } catch (e) {}
     if (key === 'rpt_workmode' || key === 'rpt_move') return 0;
     return field === 'project' ? 2 : 1;
 }
-function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '需专业版'); }
+function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
+
+        /* 约 1/4 的报表标记为专业版（按报表 key 稳定散列，刷新不变） */
+        function isPaidReport(key) {
+            var h = 0;
+            for (var i = 0; i < key.length; i++) { h = (h * 31 + key.charCodeAt(i)) >>> 0; }
+            return h % 4 === 0;
+        }
 
         function payTag(rep) {
             if (isUnlocked(rep.key + '|' + rep.scope)) return '';
-            var r = reportRank(rep.key, rep.scope);
-            if (r <= 0) {
-                return '<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:600;color:#1B9E4B;background:#E8F7EE;border:1px solid #cfeeda;border-radius:3px;padding:1px 6px;vertical-align:middle;">免费</span>';
-            }
-            return '<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:600;color:#E60012;background:#fdecee;border:1px solid #f8d5d9;border-radius:3px;padding:1px 6px;vertical-align:middle;">' + rankLabel(r) + '</span>';
+            var paid = isPaidReport(rep.key);
+            if (!paid) return '';
+            return '<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:600;color:#2F80ED;background:#EAF2FE;border:1px solid #CFE0FB;border-radius:3px;padding:1px 6px;vertical-align:middle;">订阅</span>';
         }
 
 
 /* ===== 报表级开通状态（localStorage 记忆，key + 口径 唯一） ===== */
         function getUnlockedReports() {
             try {
-                var list = JSON.parse(localStorage.getItem('mysany_unlocked_reports') || '[]');
+                var list = JSON.parse(localStorage.getItem('SanVIST_unlocked_reports') || '[]');
                 return Array.isArray(list) ? list : [];
             } catch (e) { return []; }
         }
@@ -2287,13 +2239,13 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
             if (!rid) return;
             var list = getUnlockedReports();
             if (list.indexOf(rid) < 0) list.push(rid);
-            try { localStorage.setItem('mysany_unlocked_reports', JSON.stringify(list)); } catch (e) {}
+            try { localStorage.setItem('SanVIST_unlocked_reports', JSON.stringify(list)); } catch (e) {}
         }
         
         
         function stateTag(rep) {
             if (rep.state === 'live') {
-                return '<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:400;color:#E60012;background:#fdecee;border-radius:3px;padding:1px 6px;vertical-align:middle;">已上线</span>';
+                return '<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:400;color:#2F80ED;background:#EAF2FE;border-radius:3px;padding:1px 6px;vertical-align:middle;">已上线</span>';
             }
             if (rep.state === 'planned') {
                 return '<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:400;color:#1890ff;background:#e6f4ff;border-radius:3px;padding:1px 6px;vertical-align:middle;">已计划</span>';
@@ -2352,7 +2304,7 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
         /* 分组顺序 / 名称由后台「报表分类设置」驱动（未配置时回退内置顺序） */
         const NATURE_ORDER = (function () {
             try {
-                const raw = localStorage.getItem('mysany_report_cats');
+                const raw = localStorage.getItem('SanVIST_report_cats');
                 if (raw) {
                     const list = JSON.parse(raw)
                         .filter(c => c.enabled !== 0 && (c.names || {})['zh-CN'])
@@ -2464,7 +2416,7 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
                 /* 预览免费查看 */
                 openPreviewModal(rep.key);
             } else if (btn.dataset.action === 'add') {
-                /* 添加（使用）需要 0 元开通 */
+                /* 添加（使用）需要 $0 开通 */
                 if (rep.paid !== false && !isUnlocked(rep.key + '|' + rep.scope)) {
                     openPaywall(rep.name, rep.key + '|' + rep.scope);
                     return;
@@ -2526,7 +2478,7 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
                 const h = Math.max(2, (H - padT - padB) * (v / max));
                 const x = padL + band * i + (band - bw) / 2;
                 const y = H - padB - h;
-                s += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="3" fill="#E60012"/>';
+                s += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="3" fill="#2F80ED"/>';
                 s += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (y - 6).toFixed(1) + '" font-size="11" fill="#161a2e" text-anchor="middle">' + (Math.round(v * 10) / 10) + '</text>';
                 s += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - padB + 16) + '" font-size="11" fill="#8b90a0" text-anchor="middle">' + labels[i] + '</text>';
             });
@@ -2581,8 +2533,8 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
 
             return '<div class="pdf-stage"><div class="pdf-page">'
                 + '<div class="pdf-head">'
-                + '<div class="pdf-brand"><span class="pdf-logo">SANY</span>'
-                + '<span class="pdf-co">三一智联系统<br>MySANY 设备管理平台</span></div>'
+                + '<div class="pdf-brand"><span class="pdf-logo">SanVIST</span>'
+                + '<span class="pdf-co">三一智联系统<br>SanVIST 设备管理平台</span></div>'
                 + '<div class="pdf-title"><h1>' + rep.name + '<span class="pdf-scope">' + scope + '</span></h1>'
                 + '<span class="pdf-period">统计周期：' + PERIOD + '</span></div>'
                 + '</div>'
@@ -2590,7 +2542,7 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
                 + chartHTML
                 + '<div class="pdf-block-title">数据明细</div>'
                 + pdfTableHTML
-                + '<div class="pdf-foot"><span>SANY CONFIDENTIAL</span><span>第 1 页</span></div>'
+                + '<div class="pdf-foot"><span>SanVIST CONFIDENTIAL</span><span>第 1 页</span></div>'
                 + '</div></div>';
         }
 
@@ -2709,18 +2661,18 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
         ];
 
         // 2026-09-21 新增：候选报表可由后台「机群需求反馈」页配置
-        // 数据来源：localStorage['mysany_more_report_options']（与 海外版-V3/mysany后台V3/机群需求反馈.html 共用同一 key）
+        // 数据来源：localStorage['SanVIST_more_report_options']（与 海外版-V3/SanVIST后台V3/机群需求反馈.html 共用同一 key）
         // 无配置 / 配置异常时回落到上面的内置默认清单
-        const REPORT_OPTIONS_KEY = 'mysany_more_report_options';
+        const REPORT_OPTIONS_KEY = 'SanVIST_more_report_options';
 
         // 没配预览图（或图片加载失败）时用的内置静态图：保证每行都有一张真图可点开放大，不出灰色空窗
         const DEFAULT_PREVIEW_IMAGE = '预览图/默认预览.png';
         // 图片加载失败时的兜底（内联到 img 的 onerror）
         const IMG_FALLBACK = "if(this.getAttribute('src')!=='" + DEFAULT_PREVIEW_IMAGE + "'){this.src='" + DEFAULT_PREVIEW_IMAGE + "'}";
 
-        // 当前界面语言（站点写入过 mysany_lang 时按其展示，否则简体中文）
+        // 当前界面语言（站点写入过 SanVIST_lang 时按其展示，否则简体中文）
         function currentUiLang() {
-            try { return localStorage.getItem('mysany_lang') || 'zh-CN'; } catch (e) { return 'zh-CN'; }
+            try { return localStorage.getItem('SanVIST_lang') || 'zh-CN'; } catch (e) { return 'zh-CN'; }
         }
 
         // 多语言取值：当前语言 → 简体中文 → 任一有值的语言（兼容旧的纯字符串写法）
@@ -2919,10 +2871,10 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
             setTimeout(closeMoreReportsModal, 1400);
         }
 
-        // 写入诉求（后台 海外版-V3/mysany后台V3/机群需求反馈.html 读取同一个 localStorage key）
+        // 写入诉求（后台 海外版-V3/SanVIST后台V3/机群需求反馈.html 读取同一个 localStorage key）
         function saveReportRequest(source, reports, note) {
             try {
-                const KEY = 'mysany_report_requests';
+                const KEY = 'SanVIST_report_requests';
                 const now = new Date();
                 const p2 = function (n) { return String(n).padStart(2, '0'); };
                 const time = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate())
@@ -2953,14 +2905,14 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
         document.getElementById('moreReportsEntry').addEventListener('click', openMoreReportsModal);
 
         // ====================================================================
-        // 报表 0 元开通弹窗
+        // 报表 $0 开通弹窗
         // ====================================================================
 
         /* ===== 全局折扣联动（0 折 = 免费） ===== */
         function getGlobalDiscountConfig() {
-            var cfg = { enabled: true, low: 8.0, high: 8.9 };
+            var cfg = { enabled: true, low: 0, high: 0 };
             try {
-                var raw = localStorage.getItem('mysany_global_discount');
+                var raw = null; // 固定 0 折：折扣后 $0 免费开通
                 if (raw) {
                     var c = JSON.parse(raw);
                     if (c) {
@@ -2983,10 +2935,10 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
             if (high <= 0) return { free: true, rate: 0, price: 0 };
             if (low < 0) low = 0;
             if (high > 10) high = 10;
-            var rate = parseFloat(sessionStorage.getItem('mysany_session_discount'));
+            var rate = parseFloat(sessionStorage.getItem('SanVIST_session_discount'));
             if (!(rate >= low && rate <= high)) {
                 rate = Math.round((low + Math.random() * (high - low)) * 10) / 10;
-                try { sessionStorage.setItem('mysany_session_discount', String(rate)); } catch (e) {}
+                try { sessionStorage.setItem('SanVIST_session_discount', String(rate)); } catch (e) {}
             }
             return { free: false, rate: rate, price: Math.round(basePrice * rate / 10) };
         }
@@ -2994,19 +2946,18 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
         function renderPaywallPricing() {
     var p = getPaywallPricing(756);
     var free = p.free;
-    document.getElementById('pw-badge-text').textContent = free ? '限时特惠 · 0 元开通' : '需开通订阅后查看';
-    document.getElementById('pw-title-suffix').textContent = free ? '限时特惠，0 元开通' : '为订阅报表';
-    document.getElementById('pw-offer-name').textContent = free ? '限时特惠 · 全部免费' : '专业版 · 年度订阅';
-    document.getElementById('pw-save-pill').textContent = free ? '全部免费' : ('立省 ' + Math.round((10 - p.rate) * 10) + '%');
-    document.getElementById('pw-cur').style.display = 'none';
+    document.getElementById('pw-badge-text').textContent = '部分功能需开通';
+    document.getElementById('pw-offer-name').textContent = '订阅权益';
+    document.getElementById('pw-save-pill').textContent = '当前免费';
+    document.getElementById('pw-cur').style.display = free ? 'inline' : 'none';
     document.getElementById('pw-num').textContent = free ? '0' : p.price;
-    document.getElementById('pw-per').textContent = free ? '元' : '/年';
-    document.getElementById('pw-strike').style.display = '';
+    document.getElementById('pw-per').textContent = free ? '' : '/年';
+    document.getElementById('pw-strike').style.display = 'none';
     document.getElementById('pw-strike').textContent = '$756';
     document.getElementById('pw-note').textContent = free
-        ? '原价 $756/年 · 限时特惠全部免费 · 0 元即可开通'
+        ? '本次升级有效期 1 个月'
         : '折后价 · 12 个月全功能 · 到期提醒续费';
-    document.getElementById('pw-cta').textContent = free ? '0 元开通，立即查看' : ('立即开通 · $' + p.price);
+    document.getElementById('pw-cta').textContent = free ? '升级' : ('升级 · $' + p.price);
 }
 
         let pendingReportName = '';
@@ -3017,11 +2968,7 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
             pendingReportId = rid || '';
             var _p = String(rid || '').split('|');
             var _rank = _p.length === 2 ? reportRank(_p[0], _p[1]) : 1;
-            if (_rank > 0) {
-                document.getElementById('pw-badge-text').textContent = '需' + (_rank === 1 ? '进阶版' : '专业版') + ' · 可 0 元开通';
-            }
-            const el = document.getElementById('report-paywall');
-            document.getElementById('pw-report-name').textContent = name || '该报表';
+                    const el = document.getElementById('report-paywall');
             el.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
@@ -3033,7 +2980,7 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
             unlockReport(pendingReportId);
             closePaywall();
             renderAll();
-            showToast('已开通《' + (pendingReportName || '报表') + '》（演示）');
+            showToast('订阅成功');
         }
 
         function showToast(msg) {
@@ -3063,7 +3010,43 @@ function rankLabel(r) { return r <= 0 ? '免费' : (r === 1 ? '需进阶版' : '
         renderAll();
 
         
-    </script>
+    
+    /* ===== 角标多语言（最小 i18n） ===== */
+    var I18N = {
+      'zh-CN': '新上', 'zh-TW': '新上', en: 'New', th: 'ใหม่', vi: 'Mới',
+      id: 'Baru', ms: 'Baharu', ja: '新着', ko: '신규', ar: 'جديد',
+      es: 'Nuevo', pt: 'Novo', fr: 'Nouveau', de: 'Neu', ru: 'Новое', tr: 'Yeni'
+    };
+    var LANG_NAME = {
+      'zh-CN': '简体中文', 'zh-TW': '繁體中文', en: 'English', th: 'ไทย', vi: 'Tiếng Việt',
+      id: 'Bahasa Indonesia', ms: 'Bahasa Melayu', ja: '日本語', ko: '한국어', ar: 'العربية',
+      es: 'Español', pt: 'Português', fr: 'Français', de: 'Deutsch', ru: 'Русский', tr: 'Türkçe'
+    };
+    var LANG_ORDER = Object.keys(I18N);
+    var curLang = (function () {
+      try { return localStorage.getItem('sanvist_lang') || (navigator.language === 'zh' ? 'zh-CN' : (I18N[navigator.language] ? navigator.language : 'zh-CN')); }
+      catch (e) { return 'zh-CN'; }
+    })();
+
+    function applyI18n() {
+      document.querySelectorAll('[data-i18n="badge.new"]').forEach(function (el) {
+        el.textContent = I18N[curLang] || 'New';
+      });
+      var langBtn = document.querySelector('.lang-switch span');
+      if (langBtn) langBtn.textContent = LANG_NAME[curLang] || curLang;
+    }
+
+    function switchLang() {
+      var i = LANG_ORDER.indexOf(curLang);
+      curLang = LANG_ORDER[(i + 1) % LANG_ORDER.length];
+      try { localStorage.setItem('sanvist_lang', curLang); } catch (e) {}
+      applyI18n();
+      showToast('语言：' + curLang);
+    }
+
+    applyI18n();
+
+</script>
 
 </body>
 
