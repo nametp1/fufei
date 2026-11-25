@@ -240,12 +240,12 @@
         <button class="topbar-back" onclick="goBack()" aria-label="返回"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <div class="top-tabs">
             <button class="top-tab active">机群报表</button>
-            <button class="top-tab" onclick="location.href='我的报表.html'">报表订阅</button>
+            <button class="top-tab" onclick="showToast('报表订阅页规划中，敬请期待')">报表订阅</button>
         </div>
-        <button class="quick-more" title="提交报表需求" onclick="location.href='我需要更多报表.html'">＋ 提需求</button>
+        <button class="quick-more" title="提交报表需求" onclick="showToast('提需求入口规划中，敬请期待')">＋ 提需求</button>
     </div>
     <!-- 引导（可点）：没找到合适的报表时怎么申请，居中显示 -->
-    <div class="view-hint" onclick="location.href='我需要更多报表.html'">没找到需要的报表？<b>点这里申请</b>，我们会第一时间处理<span class="hint-close" title="关闭" onclick="event.stopPropagation();this.parentElement.classList.add('hidden')">×</span></div>
+    <div class="view-hint" onclick="showToast('提需求入口规划中，敬请期待')">没找到需要的报表？<b>点这里申请</b>，我们会第一时间处理<span class="hint-close" title="关闭" onclick="event.stopPropagation();this.parentElement.classList.add('hidden')">×</span></div>
 
     <div class="app-header">
       <div class="header-row">
@@ -294,7 +294,7 @@
             <button class="pw-cta" id="pw-cta" onclick="pwUpgrade()">升级</button>
         </div>
 
-        <button class="pw-later" onclick="closePaywall()">暂时不看</button>
+        <button class="pw-later" onclick="closePaywall()">暂时关闭</button>
     </div>
 </div>
 
@@ -417,10 +417,7 @@ function reportRank(key, scope) {
     } catch (e) {}
     if (key === 'rpt_workmode' || key === 'rpt_move') return 0;
     return field === 'project' ? 2 : 1;
-}
-function rankLabel(r) { return r <= 0 ? '免费' : '需开通'; }
-
-/* 需订阅的报表（key + 口径） */
+}/* 需订阅的报表（key + 口径） */
 var PAID_REPORTS = [
     'rpt_energy|单机', 'rpt_energy_fleet|机群',
     'rpt_workmode_fleet|机群',
@@ -440,7 +437,7 @@ function payBadge(rep) {
 
 function renderCard(rep) {
     return `
-        <div class="card report-card" onclick="openReport('${rep.name}','${rep.scope}',${rep.paid === false ? 'false' : 'true'},'${rep.key}|${rep.scope}')">
+        <div class="card report-card" onclick="openReportByKey('${rep.key}','${rep.scope}','${rep.name}')">
             <div class="rc-icon">${ICONS[rep.icon] || ICONS.summary}</div>
             <div class="rc-body">
                 <div class="rc-head">
@@ -536,16 +533,17 @@ function renderAll() {
 /* 点击报表：付费报表先弹订阅提示，免费报表直接打开 */
 let pendingReport = '';
 let pendingReportId = '';
-function openReport(name, scope, isPaid, rid) {
-    if (isPaid === false || isUnlocked(rid)) {
-        showToast('正在打开《' + name + '》（演示）');
+/* 卡片点击：需订阅且未解锁 → 开通弹窗，否则直接查看 */
+function openReportByKey(key, scope, name) {
+    var rid = key + '|' + scope;
+    if (isPaidReport(key, scope) && !isUnlocked(rid)) {
+        pendingReport = name || '';
+        pendingReportId = rid;
+        openPaywall(name);
         return;
     }
-    pendingReport = name || '';
-    pendingReportId = rid || '';
-    openPaywall(name);
+    showToast('正在打开《' + (name || '报表') + '》（演示）');
 }
-
 /* ===== 全局折扣联动（0 折 = 免费） ===== */
 function getGlobalDiscountConfig() {
     var cfg = { enabled: true, low: 0, high: 0 };

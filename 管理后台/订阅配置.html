@@ -1137,12 +1137,7 @@ const COMP_TREE = [
   ]}
 ];
 
-/* 映射解析：订阅只存组件 key，能力项/权限点由字典展开 */
-function compCaps(key) {
-  const node = findCompNode(key);
-  return node ? (node.children || []) : [];
-}
-let compChecked = new Set();
+/* 映射解析：订阅只存组件 key，能力项/权限点由字典展开 */let compChecked = new Set();
 /* 分类（一级）仅作汇总展示，不可勾选；记录各分组展开状态（默认展开） */
 let compOpenGroups = {};
 
@@ -1213,22 +1208,6 @@ function updateCompCount() {
   const el = document.getElementById('ct-count');
   if (el) el.textContent = '已选 ' + n + ' 项';
 }
-
-function selectAllComps() {
-  compChecked = new Set();
-  COMP_TREE.forEach(function(g) {
-    (g.children || []).forEach(function(c) { compDescendants(c).forEach(function(k) { compChecked.add(k); }); });
-  });
-  const e = document.getElementById('err-comps'); if (e) e.style.display = 'none';
-  renderCompTree();
-}
-
-function clearAllComps() {
-  compChecked = new Set();
-  const e = document.getElementById('err-comps'); if (e) e.style.display = 'none';
-  renderCompTree();
-}
-
 const PACKAGES = [
   { time: '2026-09-01 10:00:00', name: { zh: '免费版' }, extra: {}, status: 'on', monthly: 0, annual: 0, comps: ['fleet_monitor'], groups: ['fleet_monitor'], trial: 3,
     reports: ['RPT-S-rpt_workmode','RPT-F-rpt_workmode','RPT-S-rpt_move','RPT-F-rpt_move'] },
@@ -1286,18 +1265,7 @@ function renderPkgs() {
 function setCompChecks(comps) {
   compChecked = new Set(comps || []);
   renderCompTree();
-}
-function getCompChecks() {
-  /* 订阅只存组件级 Key，能力项/权限点由字典映射展开 */
-  var out = [];
-  COMP_TREE.forEach(function(g) {
-    (g.children || []).forEach(function(c) { if (compChecked.has(c.key)) out.push(c.key); });
-  });
-  return out;
-}
-
-
-/* ===== 订阅分配权限（模块条目） ===== */
+}/* ===== 订阅分配权限（模块条目） ===== */
 var PLAN_ITEMS = new Set();
 
 function planPermGroups() {
@@ -1349,19 +1317,6 @@ function updatePermCount() {
   var el = document.getElementById('perm-count');
   if (el) el.textContent = '已选 ' + PLAN_ITEMS.size + ' 项';
 }
-
-function openAddPkg() {
-  resetErrors();
-  pkgEditIdx = -1;
-  document.getElementById('modal-title-text').textContent = '编辑订阅';
-  document.getElementById('component-form').reset();
-  document.getElementById('pkg-name-text').textContent = '—';
-  setCompChecks([]);
-  PLAN_ITEMS = new Set();
-  try { renderPlanPermPicker(); } catch (e) {}
-  openModal('component-modal');
-}
-
 function openEditPkg(i) {
   const p = PACKAGES[i];
   resetErrors();
@@ -1525,22 +1480,6 @@ function saveGlobalDiscount() {
     showToast(cfg.high === 0 ? '已保存：0 折，用户可免费使用' : '全局折扣配置已保存');
   }
 }
-
-function resetGlobalDiscount() {
-  document.getElementById('global-dc-low').value = '8.0';
-  document.getElementById('global-dc-high').value = '8.9';
-  document.getElementById('dc-range-error').style.display = 'none';
-  ['dc-low-err','dc-high-err'].forEach(function(id){
-    var el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  ['global-dc-low','global-dc-high'].forEach(function(id){
-    var el = document.getElementById(id);
-    el.classList.remove('error');
-  });
-  showToast('已恢复默认值');
-}
-
 function toggleMultiSelect(btn) {
   var dd = btn.parentElement;
   var wasOpen = dd.classList.contains('open');
@@ -1783,20 +1722,6 @@ function fillDictCatSelect(selectedKey) {
   sel.innerHTML = COMP_TREE.map(function(g) { return '<option value="' + g.key + '">' + g.name + '</option>'; }).join('');
   sel.value = selectedKey && sel.querySelector('option[value="' + selectedKey + '"]') ? selectedKey : (COMP_TREE.length ? COMP_TREE[0].key : '');
 }
-
-function openCategoryMgr() {
-  sortCompTree();
-  var list = document.getElementById('cat-mgr-list');
-  list.innerHTML = '';
-  COMP_TREE.forEach(function(g) { addCatMgrRow(g.key, g.order, g.name); });
-  if (!COMP_TREE.length) {
-    var max = 0;
-    COMP_TREE.forEach(function(g) { if ((g.order || 0) > max) max = g.order; });
-    addCatMgrRow('', max + 1, '');
-  }
-  openModal('category-modal');
-}
-
 function addCatMgrRow(key, order, name) {
   var list = document.getElementById('cat-mgr-list');
   var row = document.createElement('div');
@@ -1866,20 +1791,6 @@ function addDictCapRow(cap) {
     + '<select class="form-select dc-type">' + capTypeOptions(cap.type) + '</select>';
   list.appendChild(row);
 }
-
-function openAddDictComp() {
-  dictEditKey = null;
-  document.getElementById('dict-modal-title').textContent = '新增组件';
-  fillDictCatSelect(COMP_TREE.length ? COMP_TREE[0].key : '');
-  document.getElementById('dict-name').value = '';
-  var keyInput = document.getElementById('dict-key');
-  keyInput.value = '';
-  keyInput.readOnly = false;
-  document.getElementById('dict-caps-list').innerHTML = '';
-  addDictCapRow();
-  openModal('comp-dict-modal');
-}
-
 function editDictComp(key) {
   var node = findCompNode(key);
   if (!node) return;
@@ -2031,56 +1942,9 @@ function rpRanksText(m) {
   }).join('');
 }
 
-/* 多选下拉：按钮显示已选版本，点开勾选 */
-function rpMultiHtml(m) {
-  var picked = (m.ranks || []).slice().sort();
-  var label = picked.length ? picked.map(rpRankLabel).join('、') : '未选择';
-  var items = PLAN_NAMES.map(function (name, i) {
-    var on = picked.indexOf(i) > -1;
-    return '<label class="ms-item"><input type="checkbox" ' + (on ? 'checked' : '') +
-      ' onchange="rpToggleRank(\'' + m.key + '\',' + i + ',this.checked)"><span>' + name + '</span></label>';
-  }).join('');
-  return '<div class="ms-wrap">' +
-    '<button type="button" class="ms-btn" onclick="rpToggleMs(event,\'' + m.key + '\')">' +
-      '<span class="ms-text" style="' + (picked.length ? '' : 'color:var(--text-muted)') + '">' + label + '</span>' +
-      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>' +
-    '</button>' +
-    '<div class="ms-menu" id="ms-' + m.key + '">' + items + '</div>' +
-  '</div>';
-}
-
-function rpToggleMs(e, key) {
-  e.stopPropagation();
-  var menu = document.getElementById('ms-' + key);
-  var open = menu.classList.contains('open');
-  document.querySelectorAll('.ms-menu.open').forEach(function (x) { x.classList.remove('open'); });
-  if (!open) menu.classList.add('open');
-}
-
-document.addEventListener('click', function () {
+/* 多选下拉：按钮显示已选版本，点开勾选 */document.addEventListener('click', function () {
   document.querySelectorAll('.ms-menu.open').forEach(function (x) { x.classList.remove('open'); });
 });
-
-function rpToggleRank(key, rank, checked) {
-  var m = MODULE_PERMS.find(function (x) { return x.key === key; });
-  if (!m) return;
-  m.ranks = m.ranks || [];
-  var i = m.ranks.indexOf(rank);
-  if (checked && i < 0) m.ranks.push(rank);
-  if (!checked && i > -1) m.ranks.splice(i, 1);
-  rpSave();
-  renderReportPerm();
-  showToast('已保存：' + m.name + ' → ' + (m.ranks.length ? m.ranks.sort().map(rpRankLabel).join('、') : '未选择'));
-}
-
-function rpToggleStatus(key) {
-  var m = MODULE_PERMS.find(function (x) { return x.key === key; });
-  if (!m) return;
-  m.status = ((m.status || 'on') === 'on') ? 'off' : 'on';
-  rpSave(); renderReportPerm();
-  showToast('已' + (m.status === 'on' ? '启用' : '停用') + '：' + m.name);
-}
-
 function renderReportPerm() {
   rpInitFilters();
   var tbody = document.getElementById('rp-tbody');
@@ -2381,9 +2245,6 @@ function openPerm(key) {
   if (totalEl) totalEl.textContent = '共 ' + curList().length + (isFleet ? ' 张报表' : ' 项');
   openModal('fleet-report-modal');
 }
-
-function openFleetReports() { openPerm('fleet_report'); }
-
 function fleetName(r) {
   return (r.names && (r.names.zh || r.names.tw)) || '未命名报表';
 }
@@ -2492,17 +2353,6 @@ function clearFleetSelection() {
   FLEET_SELECTED = {};
   renderFleetReports();
 }
-
-function toggleFleetPlan(i, p, checked) {
-  var r = curList()[i];
-  if (!r) return;
-  r.plans = r.plans || [];
-  var idx = r.plans.indexOf(p);
-  if (checked && idx < 0) r.plans.push(p);
-  if (!checked && idx > -1) r.plans.splice(idx, 1);
-  r.plans.sort();
-}
-
 function saveFleetReports() {
   var empty = curList().filter(function (r) { return !(r.plans || []).length; });
   if (empty.length) { showToast('「' + empty[0].name + '」至少保留一个可用版本'); return; }

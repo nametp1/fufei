@@ -440,15 +440,6 @@
     function fmtDate(d) {
       return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
     }
-
-    function fmtMoney(cny) {
-      const c = countryConfig[currentCountry] || countryConfig.CN;
-      const v = cny / c.rate;
-      const fixed = Math.abs(v) >= 1000 ? 0 : (c.code === 'JPY' || c.code === 'VND' ? 0 : 2);
-      const text = Number(v.toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: fixed, maximumFractionDigits: fixed });
-      return c.symbol + text;
-    }
-
     // 从 URL 读取：?v=版本&c=国家&cycle=year|month&price=实付(可选)
     const params = new URLSearchParams(window.location.search);
     let currentVersion = versionConfig[params.get('v')] ? params.get('v') : 'pro';

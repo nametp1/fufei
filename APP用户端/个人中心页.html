@@ -905,26 +905,19 @@
     <script>
         // ===== 日历条渲染 =====
         (function buildCalendar() {
-            const strip = document.getElementById('cal-strip');
-            const days = ['8.15', '8.16', '8.17', '8.18', '8.19', '8.20', '今天'];
-            const icons = ['star', 'star', 'star', 'star', 'checked', 'active', 'star'];
-            const vals = ['+0', '+0', '+0', '+0', '', '+10', '+0'];
-            let html = '';
-            for (let i = 0; i < days.length; i++) {
-                const iconType = icons[i];
-                let iconSvg = '';
-                if (iconType === 'star' || iconType === 'active') {
-                    iconSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="' + (iconType === 'active' ? '#D97706' : 'none') + '" stroke="' + (iconType === 'active' ? '#D97706' : '#94A3B8') + '" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
-                } else if (iconType === 'checked') {
-                    iconSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-                }
-                html += '<div class="cal-day">' +
-                    '<div class="cal-date">' + days[i] + '</div>' +
-                    '<div class="cal-icon ' + iconType + '">' + iconSvg + '</div>' +
-                    '<div class="cal-val ' + (vals[i].includes('+') ? 'positive' : '') + '">' + vals[i] + '</div>' +
-                    '</div>';
+            var box = document.getElementById('cal-strip');
+            if (!box) return;
+            var today = new Date();
+            var dot = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="7"/></svg>';
+            var html = '';
+            for (var i = 0; i < 7; i++) {
+                var d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+                html += '<div class="cal-day">'
+                    + '<div class="cal-icon' + (i === 0 ? ' active' : '') + '">' + dot + '</div>'
+                    + '<div class="cal-val' + (i === 0 ? ' positive' : '') + '">' + d.getDate() + '</div>'
+                    + '</div>';
             }
-            strip.innerHTML = html;
+            box.innerHTML = html;
         })();
 
         // ===== 跳转 =====

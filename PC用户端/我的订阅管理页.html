@@ -285,6 +285,64 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
     .main { flex: 1; min-width: 0; padding: 20px 24px }
 
 </style>
+<style>
+.sub-empty-btn{display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 26px;margin-top:16px;
+  background:var(--primary,#2F80ED);color:#fff;border:none;border-radius:22px;font-family:inherit;font-size:14px;
+  font-weight:600;cursor:pointer;transition:background .15s}
+.sub-empty-btn:hover{background:var(--primary-hover,#1B62C4)}
+
+/* 开通弹窗 */
+#ms-paywall{position:fixed;inset:0;z-index:900;display:none;align-items:center;justify-content:center;
+  background:rgba(15,23,42,.42);backdrop-filter:blur(2px);padding:32px 24px}
+#ms-paywall.open{display:flex}
+#ms-paywall .ms-card{width:100%;max-width:430px;background:#fff;border-radius:20px;padding:26px 26px 22px;
+  box-shadow:0 24px 60px rgba(16,24,40,.2);position:relative;text-align:left}
+#ms-paywall .ms-badge{display:inline-block;padding:3px 10px;border-radius:999px;background:#EAF2FE;color:#2F80ED;
+  font-size:11.5px;font-weight:600;margin-bottom:14px}
+#ms-paywall .ms-title{font-size:20px;font-weight:700;color:#101828;letter-spacing:-.2px}
+#ms-paywall .ms-desc{margin-top:8px;font-size:13px;color:#667085;line-height:1.7}
+#ms-paywall .ms-price{display:flex;align-items:flex-end;gap:8px;margin-top:18px}
+#ms-paywall .ms-amount{font-size:34px;font-weight:700;color:var(--primary);line-height:1}
+#ms-paywall .ms-pill{font-size:11.5px;color:#067647;background:#ECFDF3;border-radius:6px;padding:2px 8px;margin-bottom:4px}
+#ms-paywall .ms-note{margin-top:8px;font-size:12px;color:#98A2B3}
+#ms-paywall .ms-feats{list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+#ms-paywall .ms-feats li{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#475467}
+#ms-paywall .ms-feats svg{width:14px;height:14px;color:#12B76A;flex-shrink:0}
+#ms-paywall .ms-cta{width:100%;margin-top:22px;height:44px;border:none;border-radius:12px;
+  background:linear-gradient(90deg,#2F80ED,#6FA8F5);color:#fff;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+#ms-paywall .ms-cta:hover{filter:brightness(.96)}
+#ms-paywall .ms-later{display:block;width:100%;margin-top:10px;border:none;background:none;color:#98A2B3;
+  font-family:inherit;font-size:13px;cursor:pointer}
+#ms-paywall .ms-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border:none;border-radius:50%;
+  background:none;color:#98A2B3;font-size:18px;line-height:1;cursor:pointer}
+#ms-paywall .ms-close:hover{background:#F2F4F7;color:#475467}
+
+/* 支付成功弹窗 */
+#ms-success{position:fixed;inset:0;z-index:950;display:none;align-items:center;justify-content:center;
+  background:rgba(15,23,42,.45);backdrop-filter:blur(2px);padding:32px 24px;overflow-y:auto}
+#ms-success.open{display:flex}
+#ms-success .ms-card{width:100%;max-width:520px;background:#fff;border-radius:20px;padding:28px 26px 24px;
+  box-shadow:0 24px 60px rgba(16,24,40,.24);text-align:center}
+#ms-success .ms-check{width:64px;height:64px;margin:0 auto 16px;border-radius:50%;
+  background:linear-gradient(135deg,#34D399,#059669);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 24px rgba(16,185,129,.32)}
+#ms-success .ms-check svg{width:34px;height:34px}
+#ms-success .ms-title{font-size:21px;font-weight:700;color:#101828}
+#ms-success .ms-sub{margin-top:8px;font-size:13.5px;color:#667085}
+#ms-success .ms-receipt{margin-top:20px;border:1px solid #EAECF0;border-radius:14px;overflow:hidden;text-align:left}
+#ms-success .ms-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 16px}
+#ms-success .ms-row + .ms-row{border-top:1px solid #F7F8FA}
+#ms-success .ms-row.total{background:#F9FAFB;border-top:1px solid #EAECF0;padding:14px 16px}
+#ms-success .ms-label{font-size:13px;color:#667085}
+#ms-success .ms-value{font-size:14px;font-weight:500;color:#101828;font-variant-numeric:tabular-nums}
+#ms-success .ms-value.amount{font-size:21px;font-weight:700;color:var(--primary)}
+#ms-success .ms-value.saving{color:#12B76A;font-weight:600}
+#ms-success .ms-btn{width:100%;margin-top:20px;height:44px;border:none;border-radius:12px;background:var(--primary);
+  color:#fff;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+#ms-success .ms-btn:hover{background:var(--primary-hover)}
+#ms-success .ms-link{display:block;width:100%;margin-top:10px;border:none;background:none;color:#98A2B3;
+  font-family:inherit;font-size:13px;cursor:pointer}
+</style>
 </head>
 <body>
 
@@ -375,6 +433,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
       </div>
       <div class="sub-empty-title">暂无生效中的订阅</div>
       <div class="sub-empty-desc">当前没有生效中的订阅。部分报表、考勤等模块需开通后使用，基础功能不受影响。</div>
+      <button class="sub-empty-btn" onclick="openMsPaywall()">立即开通</button>
     </div>
 
     <!-- Subscription Status -->
@@ -400,7 +459,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
       <div class="card-body" style="padding-top:12px">
         <table class="consume-table">
           <thead>
-            <tr><th>时间</th><th>项目</th><th>订单状态</th><th>支付方式</th><th>订单 ID</th><th>操作</th></tr>
+            <tr><th>时间</th><th>订阅内容</th><th>订单状态</th><th>支付方式</th><th>订单 ID</th><th>操作</th></tr>
           </thead>
           <tbody id="consume-tbody"></tbody>
         </table>
@@ -628,7 +687,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
       <div class="rf-order">
         <span class="rf-oid" id="refund-oid">—</span>
         <div class="rf-grid">
-          <div><span class="rf-cell-label">订阅项目</span><b class="rf-cell-value" id="refund-item">—</b></div>
+          <div><span class="rf-cell-label">订阅内容</span><b class="rf-cell-value" id="refund-item">—</b></div>
           <div><span class="rf-cell-label">支付金额</span><b class="rf-cell-value" id="refund-amount">—</b></div>
           <div><span class="rf-cell-label">支付方式</span><span class="rf-cell-value" id="refund-pay">—</span></div>
           <div><span class="rf-cell-label">服务使用</span><span class="rf-cell-value" id="refund-used">—</span></div>
@@ -705,15 +764,6 @@ function closeModal(id) { document.getElementById(id).classList.remove('open') }
 document.querySelectorAll('.modal-overlay').forEach(o => {
   o.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id) })
 });
-
-function toggleAutoRenewUI() {
-  if (autoRenew) {
-    openModal('cancel-renew-modal');
-  } else {
-    toggleAutoRenew(true);
-  }
-}
-
 function toggleAutoRenew(on) {
   autoRenew = on;
   const toggle = document.getElementById('auto-renew-toggle');
@@ -741,15 +791,6 @@ function doRenew() {
 /* ===== 续费逻辑（对齐 APP 端） ===== */
 let renewPeriod = 'annual';
 let renewMonths = 12;
-
-function openRenew() {
-  renewPeriod = 'annual';
-  renewMonths = 12;
-  document.querySelectorAll('#renew-period button').forEach((b, i) => b.classList.toggle('active', i === 0));
-  renderRenew();
-  openModal('renew-modal');
-}
-
 function switchRenewPeriod(p, btn) {
   renewPeriod = p;
   renewMonths = (p === 'annual') ? 12 : 1;
@@ -803,12 +844,6 @@ const upgradeTargets = [
   { key: 'pro', name: '专业版', price: 599, desc: '机群监控 · 远程诊断 · 生产力分析', selectable: true },
   { key: 'enterprise', name: '企业定制版', price: 0, desc: '私有部署 · 专属客户经理 · SLA保障', selectable: false }
 ];
-
-function openUpgrade() {
-  renderUpgrade();
-  openModal('upgrade-modal');
-}
-
 function renderUpgrade() {
   document.getElementById('up-current-text').textContent =
     upgradeCtx.fromName + ' · 剩余 ' + upgradeCtx.remain + ' 天';
@@ -868,11 +903,11 @@ function showToast(msg) {
 
 /* ===== 消费记录（已订阅态，status: paid 已支付 / refunding 退款审核中 / refunded 已退款 / done 已完成） ===== */
 const CONSUME_RECORDS = [
-      { oid: 'SUB-20261122-014', date: '2026-11-22 10:00', item: 'SanVIST订阅·1个月', amount: 0, pay: '免费开通', status: 'done', totalDays: 30, usedDays: 1 },
-      { oid: 'SUB-20261020-2213', date: '2026-10-20 14:32', item: 'SanVIST订阅·1个月', amount: 299, pay: '在线支付', status: 'paid', totalDays: 30, usedDays: 30 },
-      { oid: 'SUB-20260920-1908', date: '2026-09-20 09:18', item: 'SanVIST订阅·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 },
-      { oid: 'SUB-20260818-1587', date: '2026-08-18 16:05', item: 'SanVIST订阅·1个月', amount: 299, pay: '在线支付', status: 'refunded', totalDays: 30, usedDays: 12 },
-      { oid: 'SUB-20260715-1024', date: '2026-07-15 11:24', item: 'SanVIST订阅·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 }
+      { oid: 'SUB-20261122-014', date: '2026-11-22 10:00', item: '专业版 · 1个月', amount: 0, pay: '免费开通', status: 'done', totalDays: 30, usedDays: 1 },
+      { oid: 'SUB-20261020-2213', date: '2026-10-20 14:32', item: '专业版 · 1个月', amount: 299, pay: '在线支付', status: 'paid', totalDays: 30, usedDays: 30 },
+      { oid: 'SUB-20260920-1908', date: '2026-09-20 09:18', item: '专业版 · 3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 },
+      { oid: 'SUB-20260818-1587', date: '2026-08-18 16:05', item: '专业版 · 1个月', amount: 299, pay: '在线支付', status: 'refunded', totalDays: 30, usedDays: 12 },
+      { oid: 'SUB-20260715-1024', date: '2026-07-15 11:24', item: '专业版 · 3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 }
     ];
 
 function consumeStatusTag(status) {
@@ -1015,20 +1050,49 @@ function setSubState(mode) {
   renderConsume();
 })();
 
+
+    /* ===== 开通 / 支付成功弹窗 ===== */
+    function openMsPaywall() {
+      document.getElementById('ms-paywall').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMsPaywall() {
+      document.getElementById('ms-paywall').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function msUpgrade() {
+      closeMsPaywall();
+      var today = new Date();
+      var renew = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+      var fmt = function (d) {
+        return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+      };
+      document.getElementById('ms-start').textContent = fmt(today);
+      document.getElementById('ms-renew').textContent = fmt(renew);
+      document.getElementById('ms-success').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMsSuccess() {
+      document.getElementById('ms-success').classList.remove('open');
+      document.body.style.overflow = '';
+      try { setSubState('active'); } catch (e) {}
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      var pw = document.getElementById('ms-paywall');
+      var ok = document.getElementById('ms-success');
+      if (pw) pw.addEventListener('click', function (e) { if (e.target === pw) closeMsPaywall(); });
+      if (ok) ok.addEventListener('click', function (e) { if (e.target === ok) closeMsSuccess(); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { closeMsPaywall(); closeMsSuccess(); }
+      });
+    });
 </script>
 
     </main>
   </div>
 
   <script>
-    function sbGo(href) { location.href = href; }
-    function sbToggleGroup(headEl, groupId) {
-      var g = document.getElementById(groupId);
-      if (!g) return;
-      headEl.classList.toggle('collapsed');
-      g.classList.toggle('collapsed');
-    }
-    function sbToggleSidebar() {
+    function sbGo(href) { location.href = href; }    function sbToggleSidebar() {
       var sb = document.querySelector('.sidebar');
       if (!sb) return;
       var collapsed = sb.style.width === '56px';
@@ -1040,6 +1104,55 @@ function setSubState(mode) {
       if (ic) ic.style.transform = collapsed ? '' : 'rotate(180deg)';
     }
   </script>
+
+
+<!-- 开通弹窗 -->
+<div id="ms-paywall">
+  <div class="ms-card">
+    <button class="ms-close" onclick="closeMsPaywall()" aria-label="关闭">×</button>
+    <span class="ms-badge">部分功能需开通</span>
+    <div class="ms-title">开通订阅，解锁更多模块</div>
+    <div class="ms-desc">订阅包含部分报表、考勤等模块，开通后即可使用；基础功能不受影响。</div>
+    <div class="ms-price">
+      <span class="ms-amount">$0</span>
+      <span class="ms-pill">限时免费</span>
+    </div>
+    <div class="ms-note">本次升级有效期 1 个月</div>
+    <ul class="ms-feats">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>全部付费报表</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>考勤等增值模块</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>历史区间与导出</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>基础功能不受影响</li>
+    </ul>
+    <button class="ms-cta" onclick="msUpgrade()">升级</button>
+    <button class="ms-later" onclick="closeMsPaywall()">暂时关闭</button>
+  </div>
+</div>
+
+<!-- 支付成功弹窗 -->
+<div id="ms-success">
+  <div class="ms-card">
+    <div class="ms-check">
+      <svg viewBox="0 0 52 52"><path fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M14 27l8 8 16-16"/></svg>
+    </div>
+    <div class="ms-title">订阅成功！</div>
+    <div class="ms-sub">您的专业版订阅已开通</div>
+
+    <div class="ms-receipt">
+      <div class="ms-row"><span class="ms-label">订阅周期</span><span class="ms-value">1 个月</span></div>
+      <div class="ms-row"><span class="ms-label">生效日期</span><span class="ms-value" id="ms-start">—</span></div>
+      <div class="ms-row"><span class="ms-label">订阅状态</span><span class="ms-value" style="color:#067647;font-weight:600">生效中</span></div>
+      <div class="ms-row"><span class="ms-label">下次续费</span><span class="ms-value" id="ms-renew">—</span></div>
+      <div class="ms-row"><span class="ms-label">订阅套餐价格</span><span class="ms-value">$19.90</span></div>
+      <div class="ms-row"><span class="ms-label">折扣比例</span><span class="ms-value">100%</span></div>
+      <div class="ms-row"><span class="ms-label">优惠金额</span><span class="ms-value saving">-$19.90</span></div>
+      <div class="ms-row total"><span class="ms-label">实付金额（含税）</span><span class="ms-value amount">$0.00</span></div>
+    </div>
+
+    <button class="ms-btn" onclick="closeMsSuccess()">开始使用</button>
+    <button class="ms-link" onclick="closeMsSuccess()">订阅管理</button>
+  </div>
+</div>
 
 </body>
 </html>

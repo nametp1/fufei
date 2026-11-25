@@ -1652,7 +1652,7 @@
         <div class="rf-order">
           <span class="rf-oid" id="refund-oid">—</span>
           <div class="rf-grid">
-            <div><span class="rf-cell-label">订阅项目</span><b class="rf-cell-value" id="refund-item">—</b></div>
+            <div><span class="rf-cell-label">订阅内容</span><b class="rf-cell-value" id="refund-item">—</b></div>
             <div><span class="rf-cell-label">支付金额</span><b class="rf-cell-value" id="refund-amount">—</b></div>
             <div><span class="rf-cell-label">支付方式</span><span class="rf-cell-value" id="refund-pay">—</span></div>
             <div><span class="rf-cell-label">服务使用</span><span class="rf-cell-value" id="refund-used">—</span></div>
@@ -1744,7 +1744,7 @@
             <button class="pw-cta" id="pw-cta" onclick="pwUpgrade()">升级</button>
         </div>
 
-        <button class="pw-later" onclick="closePaywall()">暂时不看</button>
+        <button class="pw-later" onclick="closePaywall()">暂时关闭</button>
     </div>
 
   </div>
@@ -1811,11 +1811,11 @@
 
     /* ===== 消费记录（status: paid/refunding/refunded/done） ===== */
     const CONSUME_RECORDS = [
-      { oid: 'SUB-20261122-014', date: '2026-11-22 10:00', item: 'SanVIST订阅·1个月', amount: 0, pay: '免费开通', status: 'done', totalDays: 30, usedDays: 1 },
-      { oid: 'SUB-20261020-2213', date: '2026-10-20 14:32', item: 'SanVIST订阅·1个月', amount: 299, pay: '在线支付', status: 'paid', totalDays: 30, usedDays: 30 },
-      { oid: 'SUB-20260920-1908', date: '2026-09-20 09:18', item: 'SanVIST订阅·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 },
-      { oid: 'SUB-20260818-1587', date: '2026-08-18 16:05', item: 'SanVIST订阅·1个月', amount: 299, pay: '在线支付', status: 'refunded', totalDays: 30, usedDays: 12 },
-      { oid: 'SUB-20260715-1024', date: '2026-07-15 11:24', item: 'SanVIST订阅·3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 }
+      { oid: 'SUB-20261122-014', date: '2026-11-22 10:00', item: '专业版 · 1个月', amount: 0, pay: '免费开通', status: 'done', totalDays: 30, usedDays: 1 },
+      { oid: 'SUB-20261020-2213', date: '2026-10-20 14:32', item: '专业版 · 1个月', amount: 299, pay: '在线支付', status: 'paid', totalDays: 30, usedDays: 30 },
+      { oid: 'SUB-20260920-1908', date: '2026-09-20 09:18', item: '专业版 · 3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 },
+      { oid: 'SUB-20260818-1587', date: '2026-08-18 16:05', item: '专业版 · 1个月', amount: 299, pay: '在线支付', status: 'refunded', totalDays: 30, usedDays: 12 },
+      { oid: 'SUB-20260715-1024', date: '2026-07-15 11:24', item: '专业版 · 3个月', amount: 756, pay: '在线支付', status: 'done', totalDays: 90, usedDays: 90 }
     ];
 
     function consumeStatusTag(status) {
@@ -1881,15 +1881,6 @@
     /* ===== 续费逻辑 ===== */
     let renewPeriod = 'annual';
     let renewMonths = 12;
-
-    function openRenewSheet() {
-      renewPeriod = 'annual';
-      renewMonths = 12;
-      document.querySelectorAll('#renew-seg .seg-item').forEach((b, i) => b.classList.toggle('active', i === 0));
-      renderRenew();
-      openSheet('renew-sheet');
-    }
-
     function switchRenewPeriod(p, btn) {
       renewPeriod = p;
       renewMonths = (p === 'annual') ? 12 : 1;
@@ -1935,16 +1926,7 @@
       showToast('续费成功，到期日已延长');
     }
 
-    /* ===== 自动续费开关 ===== */
-    function toggleRenewUI() {
-      if (autoRenew) {
-        openSheet('cancel-sheet');
-        return;
-      }
-      toggleRenew(true);
-    }
-
-    function toggleRenew(on) {
+    /* ===== 自动续费开关 ===== */    function toggleRenew(on) {
       autoRenew = on;
       const toggle = document.getElementById('renew-toggle');
       const alert = document.getElementById('alert-renew');
@@ -2054,8 +2036,7 @@ function closePaywall() {
 /* 演示：开通后关闭弹窗，订阅状态同步为已订阅 */
 function pwUpgrade() {
     closePaywall();
-    try { setSubState('active'); } catch (e) {}
-    showToast('订阅成功');
+    window.location.href = '支付成功.html';
 }
 
 /* 点击遮罩关闭 */

@@ -105,7 +105,7 @@
     }
 
     .sb-side {
-      width: 180px;
+      width: 180px; transition: width .2s ease;
       background: #FFF;
       border-right: 1px solid var(--border);
       padding: 16px 0 0;
@@ -116,6 +116,11 @@
       display: flex;
       flex-direction: column
     }
+
+    .sb-side.collapsed { width: 56px; min-width: 56px; max-width: 56px; flex: 0 0 56px; overflow: hidden }
+    .sb-side.collapsed .menu-parent { justify-content: center; padding-left: 0; padding-right: 0 }
+    .sb-side.collapsed .menu-parent span { display: none }
+    .sb-side.collapsed .side-deco { display: none }
 
     .sidebar-nav {
       flex: 1;
@@ -1930,7 +1935,7 @@
         </ul>
                 <button class="pw-cta" id="pw-cta" onclick="pwUpgrade()">升级</button>
             </div>
-            <button class="pw-later" onclick="closePaywall()">暂时不看</button>
+            <button class="pw-later" onclick="closePaywall()">暂时关闭</button>
         </div>
     </div>
 
@@ -2285,10 +2290,7 @@ function reportRank(key, scope) {
     } catch (e) {}
     if (key === 'rpt_workmode' || key === 'rpt_move') return 0;
     return field === 'project' ? 2 : 1;
-}
-function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
-
-        /* 约 1/4 的报表标记为专业版（按报表 key 稳定散列，刷新不变） */
+}        /* 约 1/4 的报表标记为专业版（按报表 key 稳定散列，刷新不变） */
         /* 需订阅的报表（key + 口径）；单机、机群、项目均含示例 */
         var PAID_REPORTS = [
             // 单机
@@ -2332,23 +2334,12 @@ function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
             try { localStorage.setItem('SanVIST_unlocked_reports', JSON.stringify(list)); } catch (e) {}
         }
         
-        
-        function stateTag(rep) {
-            if (rep.state === 'live') {
-                return '<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:400;color:#2F80ED;background:#EAF2FE;border-radius:3px;padding:1px 6px;vertical-align:middle;">已上线</span>';
-            }
-            if (rep.state === 'planned') {
-                return '<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:400;color:#1890ff;background:#e6f4ff;border-radius:3px;padding:1px 6px;vertical-align:middle;">已计划</span>';
-            }
-            return '';
-        }
-
-        // ====================================================================
+                // ====================================================================
         // 渲染：卡片（网格） / 行（列表）—— 页面只有报表卡片，不区分单机 / 机群
         // ====================================================================
         function renderCard(rep) {
             return `
-                <div class="dim-card-unified${rep.metrics.length ? '' : ' is-disabled'}" data-key="${rep.key}">
+                <div class="dim-card-unified${rep.metrics.length ? '' : ' is-disabled'}" data-key="${rep.key}|${rep.scope}">
                     <div class="card-body">
                         <div class="card-head-row">
                             <div class="card-icon dim-icon-summary" ${iconStyle(rep)}>${ICONS[rep.icon] || ICONS.summary}</div>
@@ -2370,7 +2361,7 @@ function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
 
         function renderListItem(rep) {
             return `
-                <div class="dim-list-item${rep.metrics.length ? '' : ' is-disabled'}" data-key="${rep.key}">
+                <div class="dim-list-item${rep.metrics.length ? '' : ' is-disabled'}" data-key="${rep.key}|${rep.scope}">
                     <div class="list-icon dim-icon-summary" ${iconStyle(rep)}>${ICONS[rep.icon] || ICONS.summary}</div>
                     <div class="list-info">
                         <div class="list-name">${rep.name}${scopeTag(rep)}${payTag(rep)}</div>
@@ -2499,7 +2490,23 @@ function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
         // ====================================================================
         templateContent.addEventListener('click', function (e) {
             const btn = e.target.closest('button[data-action]');
-            if (!btn) return;
+
+            /* 点击卡片空白处：需订阅的报表直接唤起开通弹窗 */
+            if (!btn) {
+                const card = e.target.closest('.dim-card-unified, .dim-list-item');
+                if (!card || !card.dataset.key) return;
+                const parts0 = String(card.dataset.key).split('|');
+                const rep0 = reports.filter(function (r) {
+                    return r.key === parts0[0] && (!parts0[1] || r.scope === parts0[1]);
+                })[0];
+                if (!rep0) return;
+                if (isPaidReport(rep0.key, rep0.scope) && !isUnlocked(rep0.key + '|' + rep0.scope)) {
+                    openPaywall(rep0.name, rep0.key + '|' + rep0.scope);
+                } else if (rep0.metrics.length) {
+                    openPreviewModal(rep0.key);
+                }
+                return;
+            }
             const parts = String(btn.dataset.key || '').split('|');
             const rep = reports.filter(function (r) {
                 return r.key === parts[0] && (!parts[1] || r.scope === parts[1]);
@@ -2813,19 +2820,14 @@ function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
         const moreReportsModal = document.getElementById('moreReportsModal');
         /* 搜索框 + 口径 Tab 事件（绑定一次即可） */
         (function bindMoreToolbar() {
-            const inp = document.getElementById('moreSearch');
-            if (inp) {
-                inp.addEventListener('input', function () {
-                    moreKeyword = this.value;
-                    renderMoreReportOptions();
-                });
-            }
-            const seg = document.getElementById('moreScopeSeg');
-            if (seg) {
-                Array.prototype.forEach.call(seg.querySelectorAll('button'), function (b) {
-                    b.addEventListener('click', function () { setMoreScope(b.getAttribute('data-scope')); });
-                });
-            }
+            const si = document.getElementById('moreSearch');
+            if (si) si.addEventListener('input', function () {
+                moreKeyword = this.value;
+                renderMoreReportOptions();
+            });
+            Array.prototype.forEach.call(document.querySelectorAll('#moreScopeSeg button'), function (b) {
+                b.addEventListener('click', function () { setMoreScope(b.getAttribute('data-scope')); });
+            });
         })();
 
         const moreReportsOptionsBox = document.getElementById('moreReportOptions');
@@ -3183,6 +3185,16 @@ function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
 
     applyI18n();
 
+
+        /* 侧栏导航 */
+        function sbGo(href) { if (href) window.location.href = href; }
+        function sbToggleSidebar() {
+            var sb = document.querySelector('.sb-side') || document.querySelector('.sidebar');
+            if (!sb) return;
+            var collapsed = sb.classList.toggle('collapsed');
+            var ic = document.getElementById('sb-collapse-icon');
+            if (ic) ic.style.transform = collapsed ? 'rotate(180deg)' : '';
+        }
 </script>
 
 
