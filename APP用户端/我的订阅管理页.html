@@ -124,6 +124,10 @@
       background: rgba(255, 255, 255, .12)
     }
 
+    .status-card.expired {
+      background: linear-gradient(135deg, #8C97A8, #5F6B7C)
+    }
+
     .status-card-header {
       display: flex;
       align-items: center;
@@ -1082,6 +1086,25 @@
       cursor: pointer
     }
 
+    .status-renew-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      padding: 0 20px;
+      margin-top: 12px;
+      background: #fff;
+      color: var(--primary);
+      border: none;
+      border-radius: 18px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    .status-renew-btn:active { opacity: .85 }
+
     .empty-sub-btn:active {
       background: var(--primary-hover)
     }
@@ -1492,6 +1515,7 @@
           <span class="status-date" id="status-date">到期 —</span>
           <span class="status-countdown" id="countdown">剩余 30 天</span>
         </div>
+        <button class="status-renew-btn" id="status-renew-btn" style="display:none" onclick="openPaywall('机群报表')">立即开通</button>
       </div>
 
       <!-- 消费记录 -->
@@ -1783,12 +1807,15 @@
       document.getElementById('status-card').style.display = isNone ? 'none' : '';
       document.getElementById('consume-card').style.display = isNone ? 'none' : '';
       document.getElementById('benefit-card').style.display = isNone ? 'block' : 'none';
+      var renewBtn = document.getElementById('status-renew-btn');
+      if (renewBtn) renewBtn.style.display = isExpired ? 'inline-flex' : 'none';
       var renewRow = document.getElementById('renew-row');
       if (renewRow) renewRow.style.display = (mode === 'active') ? '' : 'none';
       var alertRenew = document.getElementById('alert-renew');
       if (alertRenew) alertRenew.style.display = (mode === 'active' && !autoRenew) ? 'flex' : 'none';
       const badge = document.getElementById('status-badge');
       badge.classList.toggle('expired-badge', isExpired);
+      document.getElementById('status-card').classList.toggle('expired', isExpired);
       const endStr = fmtDate(END_DATE);
       if (isExpired) {
         badge.childNodes[badge.childNodes.length - 1].textContent = '已过期';
