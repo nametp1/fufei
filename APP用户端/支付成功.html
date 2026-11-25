@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>订阅成功 - SanVIST APP</title>
+  <style>
+    :root {
+      --primary: #2F80ED;
+      --primary-hover: #1B62C4;
+      --success: #10B981;
+      --success-dark: #059669;
+      --success-light: #ECFDF5;
+      --text-primary: #1E293B;
+      --text-secondary: #64748B;
+      --text-muted: #94A3B8;
+      --border: #E2E8F0;
+      --border-light: #F1F5F9;
+      --bg-page: #F5F5F7;
+      --bg-card: #FFFFFF;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--bg-page);
+    }
+
+    .app-page {
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      margin: 0 auto;
+      overflow-x: hidden;
+      background: var(--bg-page);
+      display: flex;
+      flex-direction: column;
+      position: relative
+    }
+
+    /* Nav Bar */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      height: 45px;
+      min-height: 45px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50
+    }
+
+    .nav-back {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: transparent;
+      color: #000;
+      cursor: pointer;
+      flex-shrink: 0
+    }
+
+    .nav-back:active {
+      opacity: .6
+    }
+
+    .nav-title {
+      font-size: 17px;
+      font-weight: 600;
+      flex: 1;
+      text-align: center;
+      letter-spacing: .2px
+    }
+
+    .content {
+      flex: 1;
+      padding: 24px 20px 40px
+    }
+
+    /* ===== 成功头部 ===== */
+    .success-hero {
+      text-align: center;
+      padding: 18px 0 26px;
+      animation: fadeUp .5s ease both
+    }
+
+    .check-wrap {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 20px
+    }
+
+    .check-circle {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #34D399, var(--success-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 28px rgba(16, 185, 129, .35);
+      animation: popIn .55s cubic-bezier(.34, 1.56, .64, 1) both
+    }
+
+    .check-circle svg {
+      width: 54px;
+      height: 54px
+    }
+
+    .check-mark {
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: drawCheck .55s .35s cubic-bezier(.65, 0, .45, 1) forwards
+    }
+
+    .check-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid rgba(16, 185, 129, .45);
+      animation: ringPulse 1.8s ease-out infinite
+    }
+
+    .success-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: -.3px
+    }
+
+    .success-sub {
+      margin-top: 10px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6
+    }
+
+    .success-sub b {
+      color: var(--text-primary)
+    }
+
+    /* ===== 开通信息：收据式排版 ===== */
+    .receipt {
+      border: 1px solid #EAECF0;
+      border-radius: 14px;
+      background: #FFFFFF;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+      animation: fadeUp .5s .15s ease both
+    }
+
+    .receipt-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 11px 16px
+    }
+
+    .receipt-row + .receipt-row {
+      border-top: 1px solid #F7F8FA
+    }
+
+    .receipt-extra { border-top: 1px solid #F2F4F7 }
+    .receipt-extra.hidden { display: none }
+    .receipt-extra .receipt-row:first-child { border-top: none }
+
+    .receipt-row.total {
+      padding: 14px 16px;
+      background: #F9FAFB;
+      border-top: 1px solid #EAECF0
+    }
+
+    .receipt-label {
+      font-size: 13px;
+      color: #667085
+    }
+
+    .receipt-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: #101828;
+      font-variant-numeric: tabular-nums
+    }
+
+    .receipt-value.saving {
+      color: #12B76A;
+      font-weight: 600
+    }
+
+    .receipt-value.amount {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--primary)
+    }
+
+    .receipt-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      width: 100%;
+      padding: 11px 16px;
+      border: none;
+      border-top: 1px dashed #E4E7EC;
+      background: #FFF;
+      color: #667085;
+      font-family: inherit;
+      font-size: 12.5px;
+      cursor: pointer
+    }
+
+    .receipt-toggle svg { transition: transform .2s }
+    .receipt-toggle.open svg { transform: rotate(180deg) }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--success-light);
+      color: var(--success-dark);
+      font-size: 12px;
+      font-weight: 600
+    }
+
+    .status-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: blink 1.6s ease-in-out infinite
+    }
+
+    /* ===== 按钮 ===== */
+    .actions {
+      margin-top: 28px;
+      animation: fadeUp .5s .45s ease both
+    }
+
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 15px 20px;
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--primary);
+      border: none;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background .18s
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover)
+    }
+
+    .btn-primary:active {
+      opacity: .92
+    }
+
+    .btn-text {
+      display: block;
+      width: 100%;
+      margin-top: 18px;
+      padding: 6px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-secondary);
+      background: none;
+      border: none;
+      cursor: pointer
+    }
+
+    .btn-text:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+      text-underline-offset: 3px
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: scale(.4);
+        opacity: 0
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    @keyframes drawCheck {
+      to {
+        stroke-dashoffset: 0
+      }
+    }
+
+    @keyframes ringPulse {
+      0% {
+        transform: scale(1);
+        opacity: .8
+      }
+      100% {
+        transform: scale(1.55);
+        opacity: 0
+      }
+    }
+
+    @keyframes blink {
+      0%,
+      100% {
+        opacity: 1
+      }
+      50% {
+        opacity: .4
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px)
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-page">
+    <!-- Nav Bar -->
+    <div class="nav-bar">
+      <button class="nav-back" onclick="history.back()" aria-label="返回">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <div class="nav-title">订阅成功</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <div class="content">
+
+      <!-- 成功头部 -->
+      <div class="success-hero">
+        <div class="check-wrap">
+          <div class="check-ring"></div>
+          <div class="check-circle">
+            <svg viewBox="0 0 52 52">
+              <path class="check-mark" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"
+                stroke-linejoin="round" d="M14 27l8 8 16-16" />
+            </svg>
+          </div>
+        </div>
+        <h1 class="success-title">订阅成功！</h1>
+        <p class="success-sub">您的<b>专业版</b>订阅已开通</p>
+      </div>
+
+      <!-- 开通信息 -->
+      <div class="receipt">
+        <div class="receipt-row"><span class="receipt-label">订阅周期</span><span class="receipt-value" id="d-cycle">1 个月</span></div>
+        <div class="receipt-row"><span class="receipt-label">生效日期</span><span class="receipt-value" id="d-start">—</span></div>
+        <div class="receipt-row"><span class="receipt-label">订阅状态</span><span class="receipt-value"><span class="status-badge">生效中</span></span></div>
+
+        <div class="receipt-extra hidden" id="d-extra">
+          <div class="receipt-row"><span class="receipt-label">下次续费</span><span class="receipt-value" id="d-renew">—</span></div>
+          <div class="receipt-row"><span class="receipt-label">计价币种</span><span class="receipt-value" id="d-currency">美元 (USD)</span></div>
+          <div class="receipt-row"><span class="receipt-label">订阅套餐价格</span><span class="receipt-value" id="d-plan-price">$19.90</span></div>
+          <div class="receipt-row"><span class="receipt-label">折扣比例</span><span class="receipt-value" id="d-discount">100%</span></div>
+          <div class="receipt-row"><span class="receipt-label">优惠金额</span><span class="receipt-value saving" id="d-saving">-$19.90</span></div>
+          <div class="receipt-row"><span class="receipt-label" id="d-tax-label">税费 (0%)</span><span class="receipt-value" id="d-tax">$0.00</span></div>
+        </div>
+
+        <button type="button" class="receipt-toggle" onclick="toggleReceipt(this)">
+          <span class="toggle-text">展开费用明细</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div class="receipt-row total"><span class="receipt-label">实付金额（含税）</span><span class="receipt-value amount" id="d-amount">$0.00</span></div>
+      </div>
+
+      <!-- 操作 -->
+      <div class="actions">
+        <button class="btn-primary" onclick="goHome()">开始使用</button>
+        <button class="btn-text" onclick="goManage()">订阅管理</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const countryConfig = {
+      US: { name: '美国', code: 'USD', symbol: '$', rate: 7.2, tax: 8.25 },
+      CN: { name: '中国', code: 'CNY', symbol: '¥', rate: 1, tax: 6 },
+      DE: { name: '德国', code: 'EUR', symbol: '€', rate: 7.8, tax: 19 },
+      JP: { name: '日本', code: 'JPY', symbol: '¥', rate: 0.048, tax: 10 },
+      ID: { name: '印度尼西亚', code: 'IDR', symbol: 'Rp', rate: 0.00045, tax: 11 },
+      VN: { name: '越南', code: 'VND', symbol: '₫', rate: 0.00028, tax: 10 },
+      AE: { name: '阿联酋', code: 'AED', symbol: 'AED ', rate: 1.96, tax: 5 },
+      BR: { name: '巴西', code: 'BRL', symbol: 'R$', rate: 1.45, tax: 17 }
+    };
+
+    const versionConfig = {
+      free: { name: '免费版', monthly: 0 },
+      basic: { name: '进阶版', monthly: 200 },
+      pro: { name: '专业版', monthly: 600 },
+      enterprise: { name: '企业定制版', monthly: 0 }
+    };
+
+    function pad(n) {
+      return String(n).padStart(2, '0');
+    }
+
+    function fmtDate(d) {
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    }
+
+    function fmtMoney(cny) {
+      const c = countryConfig[currentCountry] || countryConfig.CN;
+      const v = cny / c.rate;
+      const fixed = Math.abs(v) >= 1000 ? 0 : (c.code === 'JPY' || c.code === 'VND' ? 0 : 2);
+      const text = Number(v.toFixed(2)).toLocaleString('en-US', { minimumFractionDigits: fixed, maximumFractionDigits: fixed });
+      return c.symbol + text;
+    }
+
+    // 从 URL 读取：?v=版本&c=国家&cycle=year|month&price=实付(可选)
+    const params = new URLSearchParams(window.location.search);
+    let currentVersion = versionConfig[params.get('v')] ? params.get('v') : 'pro';
+    let currentCountry = countryConfig[params.get('c')] ? params.get('c') : 'US';
+    let currentCycle = params.get('cycle') === 'year' ? 'year' : 'month';
+    const paidPrice = params.get('price') ? Number(params.get('price')) : null;
+
+    const cfg = versionConfig[currentVersion];
+
+    function calcPrice() {
+      /* 一期全免费：固定 0 元开通 */
+      if (paidPrice !== null) return paidPrice;
+      return 0;
+    }
+
+    (function render() {
+      const now = new Date();
+      const renew = new Date(now);
+      if (currentCycle === 'year') renew.setFullYear(now.getFullYear() + 1);
+      else renew.setMonth(now.getMonth() + 1);
+
+      document.getElementById('d-cycle').textContent = currentCycle === 'year' ? '12 个月' : '1 个月';
+
+      const c = countryConfig[currentCountry] || countryConfig.CN;
+      const taxRate = 0; /* 一期 0 元开通，不计税费 */
+
+      const isUp = params.get('upgrade') === '1';
+      const planFullNet = calcPrice();           // 新方案折后净额（税前）
+      let creditCNY = 0;
+      let netCNY = planFullNet;
+      if (isUp) {
+        const fromPaid = Number(params.get('fromPaid') || 0);
+        const remain = Number(params.get('remain') || 0);
+        const total = Number(params.get('total') || 365);
+        creditCNY = Math.round(fromPaid * Math.max(0, remain) / Math.max(1, total));
+        netCNY = Math.max(0, planFullNet - creditCNY);
+      }
+      const taxCNY = Math.round(netCNY * taxRate / 100);
+      const totalCNY = netCNY + taxCNY;
+
+      document.getElementById('d-currency').textContent = '美元 (USD)';
+      document.getElementById('d-plan-price').textContent = '$19.90';
+      document.getElementById('d-discount').textContent = '100%';
+      document.getElementById('d-saving').textContent = '-$19.90';
+      document.getElementById('d-tax-label').textContent = '税费 (0%)';
+      document.getElementById('d-tax').textContent = '$0.00';
+      document.getElementById('d-amount').textContent = '$0.00';
+
+      document.getElementById('d-start').textContent = fmtDate(now);
+      document.getElementById('d-renew').textContent = fmtDate(renew);
+    })();
+
+    function toggleReceipt(btn) {
+      var box = document.getElementById('d-extra');
+      var hidden = box.classList.toggle('hidden');
+      btn.classList.toggle('open', !hidden);
+      btn.querySelector('.toggle-text').textContent = hidden ? '展开费用明细' : '收起费用明细';
+    }
+
+    function goHome() {
+      window.location.href = '机群报表页.html';
+    }
+
+    function goManage() {
+      window.location.href = '我的订阅管理页.html';
+    }
+  </script>
+</body>
+
+</html>

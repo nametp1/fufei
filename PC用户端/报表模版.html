@@ -1629,7 +1629,85 @@
             background: #fafafa;
         }
 
-    </style>
+        /* ===== 订阅成功弹窗 ===== */
+    #success-modal .modal {
+      width: 720px; max-width: 94vw; max-height: 90vh; overflow-y: auto;
+      display: block; padding: 0; border-radius: 16px; background: #fff
+    }
+    #success-modal .success-inner { padding: 30px 28px 26px; text-align: center }
+    #success-modal .success-hero { animation: suFadeUp .45s ease both }
+    #success-modal .check-wrap { position: relative; width: 78px; height: 78px; margin: 0 auto 16px }
+    #success-modal .check-circle {
+      width: 78px; height: 78px; border-radius: 50%;
+      background: linear-gradient(135deg, #34D399, #059669);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 10px 26px rgba(16,185,129,.32);
+      animation: suPopIn .5s cubic-bezier(.34,1.56,.64,1) both
+    }
+    #success-modal .check-circle svg { width: 44px; height: 44px }
+    #success-modal .check-mark { stroke-dasharray: 48; stroke-dashoffset: 48; animation: suDrawCheck .5s .3s cubic-bezier(.65,0,.45,1) forwards }
+    #success-modal .check-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(16,185,129,.4); animation: suRingPulse 1.8s ease-out infinite }
+    #success-modal .success-title { font-size: 22px; font-weight: 700; color: var(--text-1); letter-spacing: -.3px }
+    #success-modal .success-sub { margin-top: 10px; font-size: 14px; color: var(--text-2); line-height: 1.7 }
+    #success-modal .success-sub b { color: var(--text-1) }
+    #success-modal .success-time { margin-top: 6px; font-size: 12.5px; color: var(--text-3) }
+    #success-modal .receipt {
+      margin-top: 22px; text-align: left;
+      border: 1px solid #EAECF0; border-radius: 14px;
+      background: #FFFFFF; overflow: hidden;
+      box-shadow: 0 1px 2px rgba(16, 24, 40, .04)
+    }
+    #success-modal .receipt-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 11px 18px
+    }
+    #success-modal .receipt-row + .receipt-row { border-top: 1px solid #F7F8FA }
+    #success-modal .receipt-extra { border-top: 1px solid #F2F4F7 }
+    #success-modal .receipt-extra.hidden { display: none }
+    #success-modal .receipt-extra .receipt-row:first-child { border-top: none }
+    #success-modal .receipt-row.total {
+      padding: 14px 18px; background: #F9FAFB; border-top: 1px solid #EAECF0
+    }
+    #success-modal .receipt-label { font-size: 13px; color: #667085 }
+    #success-modal .receipt-value {
+      font-size: 14px; font-weight: 500; color: #101828;
+      font-variant-numeric: tabular-nums
+    }
+    #success-modal .receipt-value.saving { color: #12B76A; font-weight: 600 }
+    #success-modal .receipt-value.amount { font-size: 22px; font-weight: 700; color: var(--primary) }
+    #success-modal .receipt-toggle {
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+      width: 100%; padding: 11px 18px; border: none; border-top: 1px dashed #E4E7EC;
+      background: #FFF; color: #667085; font-family: inherit; font-size: 12.5px;
+      cursor: pointer; transition: color .15s, background .15s
+    }
+    #success-modal .receipt-toggle:hover { color: var(--primary); background: #F9FAFB }
+    #success-modal .receipt-toggle svg { transition: transform .2s }
+    #success-modal .receipt-toggle.open svg { transform: rotate(180deg) }
+    #success-modal .status-badge {
+      display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
+      border-radius: 999px; background: #ECFDF5; color: #059669; font-size: 12px; font-weight: 600
+    }
+    #success-modal .status-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #10B981 }
+    #success-modal .actions { margin-top: 24px; animation: suFadeUp .45s .35s ease both }
+    #success-modal .ok-btn {
+      display: block; width: 100%; padding: 13px 20px; font-size: 15px; font-weight: 600;
+      color: #fff; background: var(--primary); border: none; border-radius: 24px;
+      cursor: pointer; transition: background .18s; font-family: inherit
+    }
+    #success-modal .ok-btn:hover { background: var(--primary-hover) }
+    #success-modal .ok-text-btn {
+      display: block; width: 100%; margin-top: 12px; padding: 6px; text-align: center;
+      font-size: 13.5px; color: var(--text-3); background: none; border: none;
+      cursor: pointer; font-family: inherit
+    }
+    #success-modal .ok-text-btn:hover { color: var(--text-1); text-decoration: underline; text-underline-offset: 3px }
+    @keyframes suPopIn { 0% { transform: scale(.4); opacity: 0 } 100% { transform: scale(1); opacity: 1 } }
+    @keyframes suDrawCheck { to { stroke-dashoffset: 0 } }
+    @keyframes suRingPulse { 0% { transform: scale(1); opacity: .8 } 100% { transform: scale(1.55); opacity: 0 } }
+    @keyframes suFadeUp { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: translateY(0) } }
+    @media (max-width: 620px) { #success-modal .detail-grid { grid-template-columns: repeat(2, 1fr); gap: 8px } }
+</style>
 </head>
 
 <body>
@@ -1703,7 +1781,7 @@
             <!-- 顶部标签页 -->
             <div class="tabs">
                 <a href="报表模版.html" class="tab active">报表模版</a>
-                <a href="管理报表.html" class="tab">报表订阅</a>
+                <a href="javascript:void(0)" class="tab" onclick="showToast('报表订阅页规划中，敬请期待')">报表订阅</a>
                 <div class="tabs-right">
                     <button class="more-reports-entry" id="moreReportsEntry" type="button">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -1773,7 +1851,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn" onclick="closePreviewModal()">关闭</button>
-                <button class="btn btn-primary" id="useReportBtn" onclick="closePreviewModal();window.location.href='管理报表.html'">使用该报表</button>
+                <button class="btn btn-primary" id="useReportBtn" onclick="closePreviewModal();showToast('已使用该报表，可在报表订阅中查看')">使用该报表</button>
             </div>
         </div>
     </div>
@@ -2211,15 +2289,27 @@ function reportRank(key, scope) {
 function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
 
         /* 约 1/4 的报表标记为专业版（按报表 key 稳定散列，刷新不变） */
-        function isPaidReport(key) {
-            var h = 0;
-            for (var i = 0; i < key.length; i++) { h = (h * 31 + key.charCodeAt(i)) >>> 0; }
-            return h % 4 === 0;
+        /* 需订阅的报表（key + 口径）；单机、机群、项目均含示例 */
+        var PAID_REPORTS = [
+            // 单机
+            'rpt_energy|单机', 'rpt_workmode|单机', 'rpt_overtime|单机',
+            'rpt_battery|单机', 'asset360|单机', 'idle|单机',
+            'snapshot|单机', 'cost_single|单机', 'fault_code|单机',
+            // 机群
+            'rpt_energy|机群', 'rpt_workmode|机群', 'rpt_battery|机群',
+            'cost_fleet|机群', 'fleet_utilization|机群', 'gen_fleet|机群',
+            'site_runtime|机群', 'location|机群',
+            // 项目
+            'proj_safety|项目'
+        ];
+
+        function isPaidReport(key, scope) {
+            return PAID_REPORTS.indexOf(key + '|' + scope) > -1;
         }
 
         function payTag(rep) {
             if (isUnlocked(rep.key + '|' + rep.scope)) return '';
-            var paid = isPaidReport(rep.key);
+            var paid = isPaidReport(rep.key, rep.scope);
             if (!paid) return '';
             return '<span style="display:inline-block;margin-left:6px;font-size:10px;font-weight:600;color:#2F80ED;background:#EAF2FE;border:1px solid #CFE0FB;border-radius:3px;padding:1px 6px;vertical-align:middle;">订阅</span>';
         }
@@ -2270,8 +2360,8 @@ function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
                     </div>
                     <div class="card-footer">
                         <div style="display:flex;gap:8px;margin-left:auto;">
-                            <button class="btn-link" data-action="preview" data-key="${rep.key}">预览</button>
-                            ${rep.metrics.length ? '<button class="btn-primary" data-action="add" data-key="' + rep.key + '">添加</button>' : ''}
+                            <button class="btn-link" data-action="preview" data-key="${rep.key}|${rep.scope}">预览</button>
+                            ${rep.metrics.length ? '<button class="btn-primary" data-action="add" data-key="' + rep.key + '|' + rep.scope + '">添加</button>' : ''}
                         </div>
                     </div>
                 </div>
@@ -2289,8 +2379,8 @@ function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
                     <div class="list-fields">
                     </div>
                     <div class="list-actions">
-                        <button class="btn-link" data-action="preview" data-key="${rep.key}">预览</button>
-                        ${rep.metrics.length ? '<button class="btn-primary" data-action="add" data-key="' + rep.key + '">添加</button>' : ''}
+                        <button class="btn-link" data-action="preview" data-key="${rep.key}|${rep.scope}">预览</button>
+                        ${rep.metrics.length ? '<button class="btn-primary" data-action="add" data-key="' + rep.key + '|' + rep.scope + '">添加</button>' : ''}
                     </div>
                 </div>
             `;
@@ -2410,20 +2500,22 @@ function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
         templateContent.addEventListener('click', function (e) {
             const btn = e.target.closest('button[data-action]');
             if (!btn) return;
-            const rep = reports.filter(function (r) { return r.key === btn.dataset.key; })[0];
+            const parts = String(btn.dataset.key || '').split('|');
+            const rep = reports.filter(function (r) {
+                return r.key === parts[0] && (!parts[1] || r.scope === parts[1]);
+            })[0];
             if (!rep) return;
             if (btn.dataset.action === 'preview') {
                 /* 预览免费查看 */
                 openPreviewModal(rep.key);
             } else if (btn.dataset.action === 'add') {
-                /* 添加（使用）需要 $0 开通 */
-                if (rep.paid !== false && !isUnlocked(rep.key + '|' + rep.scope)) {
+                /* 添加（使用）：需订阅且未解锁时弹窗，否则直接前往 */
+                if (isPaidReport(rep.key, rep.scope) && !isUnlocked(rep.key + '|' + rep.scope)) {
                     openPaywall(rep.name, rep.key + '|' + rep.scope);
                     return;
                 }
-                if (confirm('已选择报表：' + rep.name + '（' + rep.scope + '口径）\n\n将在「报表订阅」页面中配置报表信息。\n是否立即前往？')) {
-                    window.location.href = '管理报表.html';
-                }
+                /* 已解锁：提示已添加（报表订阅页规划中） */
+                showToast('已添加「' + rep.name + '」，可在报表订阅中查看');
             }
         });
 
@@ -2980,8 +3072,53 @@ function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
             unlockReport(pendingReportId);
             closePaywall();
             renderAll();
-            showToast('订阅成功');
+            showSubscribeSuccess();
         }
+
+        function toggleReceipt(btn) {
+            var box = document.getElementById('su-extra');
+            var open = box.classList.toggle('hidden');
+            btn.classList.toggle('open', !open);
+            btn.querySelector('.toggle-text').textContent = open ? '展开费用明细' : '收起费用明细';
+        }
+
+        /* 订阅成功弹窗 */
+        function showSubscribeSuccess() {
+            var today = new Date();
+            var renew = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+            var fmt = function (d) {
+                var m = ('0' + (d.getMonth() + 1)).slice(-2);
+                var day = ('0' + d.getDate()).slice(-2);
+                return d.getFullYear() + '-' + m + '-' + day;
+            };
+            document.getElementById('su-plan-price').textContent = '$19.90';
+            document.getElementById('su-discount').textContent = '100%';
+            document.getElementById('su-saving').textContent = '-$19.90';
+            document.getElementById('su-tax').textContent = '$0.00';
+            document.getElementById('su-amount').textContent = '$0.00';
+            document.getElementById('su-start').textContent = fmt(today);
+            document.getElementById('su-renew').textContent = fmt(renew);
+            document.getElementById('success-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSubscribeSuccess() {
+            document.getElementById('success-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        (function () {
+            var el = document.getElementById('success-modal');
+            if (el) el.addEventListener('click', function (e) {
+                if (e.target === el) closeSubscribeSuccess();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    var m = document.getElementById('success-modal');
+                    if (m && m.classList.contains('active')) closeSubscribeSuccess();
+                }
+            });
+        })();
 
         function showToast(msg) {
             let t = document.getElementById('toast');
@@ -3047,6 +3184,54 @@ function rankLabel(r) { return r <= 0 ? '免费' : '专业版'; }
     applyI18n();
 
 </script>
+
+
+<!-- ========== 订阅成功弹窗 ========== -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal">
+    <div class="success-inner">
+      <div class="success-hero">
+        <div class="check-wrap">
+          <div class="check-ring"></div>
+          <div class="check-circle">
+            <svg viewBox="0 0 52 52">
+              <path class="check-mark" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M14 27l8 8 16-16" />
+            </svg>
+          </div>
+        </div>
+        <h1 class="success-title">订阅成功！</h1>
+        <p class="success-sub">您的<b>专业版</b>订阅已开通</p>
+      </div>
+
+      <div class="receipt">
+        <div class="receipt-row"><span class="receipt-label">订阅周期</span><span class="receipt-value" id="su-cycle">1 个月</span></div>
+        <div class="receipt-row"><span class="receipt-label">生效日期</span><span class="receipt-value" id="su-start">—</span></div>
+        <div class="receipt-row"><span class="receipt-label">订阅状态</span><span class="receipt-value"><span class="status-badge">生效中</span></span></div>
+
+        <div class="receipt-extra hidden" id="su-extra">
+          <div class="receipt-row"><span class="receipt-label">下次续费</span><span class="receipt-value" id="su-renew">—</span></div>
+          <div class="receipt-row"><span class="receipt-label">计价币种</span><span class="receipt-value" id="su-currency">美元 (USD)</span></div>
+          <div class="receipt-row"><span class="receipt-label">订阅套餐价格</span><span class="receipt-value" id="su-plan-price">$19.90</span></div>
+          <div class="receipt-row"><span class="receipt-label">折扣比例</span><span class="receipt-value" id="su-discount">100%</span></div>
+          <div class="receipt-row"><span class="receipt-label">优惠金额</span><span class="receipt-value saving" id="su-saving">-$19.90</span></div>
+          <div class="receipt-row"><span class="receipt-label">税费 (0%)</span><span class="receipt-value" id="su-tax">$0.00</span></div>
+        </div>
+
+        <button type="button" class="receipt-toggle" onclick="toggleReceipt(this)">
+          <span class="toggle-text">展开费用明细</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div class="receipt-row total"><span class="receipt-label">实付金额（含税）</span><span class="receipt-value amount" id="su-amount">$0.00</span></div>
+      </div>
+
+      <div class="actions">
+        <button class="ok-btn" onclick="closeSubscribeSuccess()">开始使用</button>
+        <button class="ok-text-btn" onclick="location.href='我的订阅管理页.html'">订阅管理</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 

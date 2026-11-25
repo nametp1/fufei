@@ -420,16 +420,21 @@ function reportRank(key, scope) {
 }
 function rankLabel(r) { return r <= 0 ? '免费' : '需开通'; }
 
-/* 约 1/4 的报表标记为专业版（按报表 key 稳定散列，刷新不变） */
-function isPaidReport(key) {
-    var h = 0;
-    for (var i = 0; i < key.length; i++) { h = (h * 31 + key.charCodeAt(i)) >>> 0; }
-    return h % 4 === 0;
+/* 需订阅的报表（key + 口径） */
+var PAID_REPORTS = [
+    'rpt_energy|单机', 'rpt_energy_fleet|机群',
+    'rpt_workmode_fleet|机群',
+    'rpt_overtime|单机', 'rpt_overtime_fleet|机群',
+    'rpt_battery|单机'
+];
+
+function isPaidReport(key, scope) {
+    return PAID_REPORTS.indexOf(key + '|' + scope) > -1;
 }
 
 function payBadge(rep) {
     if (isUnlocked(rep.key + '|' + rep.scope)) return '';
-    if (!isPaidReport(rep.key)) return '';
+    if (!isPaidReport(rep.key, rep.scope)) return '';
     return '<span class="rc-pay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>订阅</span>';
 }
 
@@ -615,7 +620,8 @@ function pwUpgrade() {
     unlockReport(pendingReportId);
     closePaywall();
     renderAll();
-    showToast('订阅成功');
+    /* 开通成功后跳转支付成功页 */
+    window.location.href = '支付成功.html';
 }
 
 /* 点击遮罩关闭 */
