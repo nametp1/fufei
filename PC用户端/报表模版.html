@@ -120,6 +120,7 @@
     .sb-side.collapsed { width: 56px; min-width: 56px; max-width: 56px; flex: 0 0 56px; overflow: hidden }
     .sb-side.collapsed .menu-parent { justify-content: center; padding-left: 0; padding-right: 0 }
     .sb-side.collapsed .menu-parent span { display: none }
+    .sb-side.collapsed .menu-sub { display: none }
     .sb-side.collapsed .side-deco { display: none }
 
     .sidebar-nav {
@@ -158,6 +159,9 @@
     }
 
     /* 一级菜单 */
+    .menu-sub { padding: 2px 0 4px; overflow: hidden }
+    .menu-sub.collapsed { display: none }
+
     .menu-parent {
       padding: 9px 16px;
       font-size: 13px;
@@ -429,6 +433,12 @@
       padding: 3.5px 0;
     }
     .pw-feats li svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; color: #1B9E4B }
+
+    .pw-legal {
+      margin: 10px 0 0; font-size: 11px; line-height: 1.7;
+      color: #98A2B3; text-align: center
+    }
+    .pw-legal a { color: var(--primary); text-decoration: none }
 
     .pw-later {
       margin-top: 10px; padding: 6px 10px; border: none; background: none;
@@ -1752,7 +1762,7 @@
 
   <div class="layout">
 <aside class="sb-side">
-      <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
 
         <div class="menu-parent" onclick="sbGo('工作台-有数据.html')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -1762,6 +1772,16 @@
         <div class="menu-parent active" onclick="sbGo('报表模版.html')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           <span style="flex:1">机群报表</span>
+        </div>
+
+        <div class="menu-parent" onclick="sbToggleService(this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/><path d="M9 11h.01M15 11h.01"/></svg>
+          <span style="flex:1">企业服务</span>
+          <svg class="arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="menu-sub" id="menu-service-sub">
+          <div class="menu-item" onclick="sbGo('个人中心.html')">个人中心</div>
+          <div class="menu-item" onclick="sbGo('我的订阅管理页.html')">订阅管理</div>
         </div>
 
       </nav>
@@ -1935,6 +1955,7 @@
         </ul>
                 <button class="pw-cta" id="pw-cta" onclick="pwUpgrade()">升级</button>
             </div>
+            <p class="pw-legal">订阅即表示你同意<a href="商业条款.html" target="_blank">《商业条款》</a>和<a href="用户协议.html" target="_blank">《用户协议》</a>，并授权我们保存你的付款方式并通过该方式扣款。</p>
             <button class="pw-later" onclick="closePaywall()">暂时关闭</button>
         </div>
     </div>
@@ -3187,6 +3208,13 @@ function reportRank(key, scope) {
 
 
         /* 侧栏导航 */
+        function sbToggleService(head) {
+            var sub = document.getElementById('menu-service-sub');
+            if (!sub) return;
+            var collapsed = sub.classList.toggle('collapsed');
+            head.classList.toggle('collapsed', collapsed);
+        }
+
         function sbGo(href) { if (href) window.location.href = href; }
         function sbToggleSidebar() {
             var sb = document.querySelector('.sb-side') || document.querySelector('.sidebar');

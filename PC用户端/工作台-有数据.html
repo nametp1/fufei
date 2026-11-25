@@ -153,6 +153,9 @@
     }
 
     /* 一级菜单 */
+    .menu-sub { padding: 2px 0 4px; overflow: hidden }
+    .menu-sub.collapsed { display: none }
+
     .menu-parent {
       padding: 9px 16px;
       font-size: 13px;
@@ -378,7 +381,7 @@
 
     <!-- ========== 侧边导航 ========== -->
     <aside class="sidebar">
-      <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
 
         <div class="menu-parent active" onclick="sbGo('工作台-有数据.html')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -388,6 +391,16 @@
         <div class="menu-parent" onclick="sbGo('报表模版.html')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           <span style="flex:1">机群报表</span>
+        </div>
+
+        <div class="menu-parent" onclick="sbToggleService(this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/><path d="M9 11h.01M15 11h.01"/></svg>
+          <span style="flex:1">企业服务</span>
+          <svg class="arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="menu-sub" id="menu-service-sub">
+          <div class="menu-item" onclick="sbGo('个人中心.html')">个人中心</div>
+          <div class="menu-item" onclick="sbGo('我的订阅管理页.html')">订阅管理</div>
         </div>
 
       </nav>
@@ -570,6 +583,13 @@
       var cards = el.parentElement.querySelectorAll('.stat-card');
       cards.forEach(function (c) { c.classList.remove('selected'); });
       el.classList.add('selected');
+    }
+
+    function sbToggleService(head) {
+      var sub = document.getElementById('menu-service-sub');
+      if (!sub) return;
+      var collapsed = sub.classList.toggle('collapsed');
+      head.classList.toggle('collapsed', collapsed);
     }
 
     function sbGo(href) { location.href = href; }

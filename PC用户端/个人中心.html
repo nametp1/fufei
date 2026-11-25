@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人中心 - SanVIST</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0 }
+  :root {
+    --primary: #2F80ED; --primary-hover: #1B62C4; --primary-bg: #EAF2FE;
+    --text-1: #111827; --text-2: #475467; --text-3: #98A2B3;
+    --border: #EAECF0; --border-light: #F2F4F7; --bg: #F7F8FA;
+    --success: #12B76A; --radius-lg: 12px
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text-1); font-size: 13px }
+
+  /* 顶栏 */
+  .topbar { height: 52px; background: #FFF; border-bottom: 1px solid var(--border); display: flex;
+    align-items: center; padding: 0 20px; gap: 16px; position: sticky; top: 0; z-index: 20 }
+  .logo { font-size: 18px; font-weight: 700; letter-spacing: -.3px }
+  .logo span:first-child { font-style: italic; font-weight: 600 }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 16px; color: var(--text-2) }
+  .hd-entry { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px;
+    border-radius: 16px; background: var(--primary-bg); color: var(--primary); font-size: 12.5px;
+    font-weight: 600; cursor: pointer }
+  .hd-entry:hover { background: #DDEBFC }
+  .hd-entry-badge { background: var(--primary); color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 4px }
+  .hd-lang, .hd-tenant { font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px }
+  .hd-lang:hover, .hd-tenant:hover { color: var(--primary) }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600 }
+
+  /* 布局 */
+  .layout { display: flex; min-height: calc(100vh - 52px) }
+  .sidebar { width: 180px; flex-shrink: 0; background: #FFF; border-right: 1px solid var(--border);
+    padding: 12px 0; display: flex; flex-direction: column }
+  .menu-parent { padding: 10px 16px; font-size: 13px; font-weight: 600; color: var(--text-1);
+    cursor: pointer; display: flex; align-items: center; gap: 9px; transition: .15s }
+  .menu-parent svg { flex-shrink: 0; color: var(--text-2) }
+  .menu-parent:hover { color: var(--primary); background: #FAFAFA }
+  .menu-parent:hover svg { color: var(--primary) }
+  .menu-parent .arrow { margin-left: auto; transition: transform .15s }
+  .menu-parent.collapsed .arrow { transform: rotate(180deg) }
+  .menu-sub { padding: 2px 0 4px; overflow: hidden }
+  .menu-sub.collapsed { display: none }
+  .menu-item { padding: 9px 16px 9px 41px; font-size: 13px; color: var(--text-2); cursor: pointer; transition: .15s }
+  .menu-item:hover { color: var(--primary); background: #FAFAFA }
+  .menu-item.active { color: var(--primary); background: var(--primary-bg); font-weight: 500 }
+  .side-deco { margin-top: auto; padding: 0 10px 6px; pointer-events: none }
+  .side-deco svg { width: 100%; height: auto; display: block }
+
+  /* 主区 */
+  .main { flex: 1; min-width: 0; padding: 20px 24px 40px; display: flex; gap: 16px; align-items: flex-start }
+  .sub-nav { width: 200px; flex-shrink: 0; background: #FFF; border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 8px; box-shadow: 0 1px 2px rgba(16,24,40,.04) }
+  .sub-nav-item { display: flex; align-items: center; gap: 9px; padding: 11px 12px; border-radius: 8px;
+    font-size: 13px; color: var(--text-2); cursor: pointer; transition: .15s }
+  .sub-nav-item svg { color: var(--text-3); flex-shrink: 0 }
+  .sub-nav-item:hover { background: #F7F9FC; color: var(--text-1) }
+  .sub-nav-item.active { background: #FFF; color: var(--primary); font-weight: 600; box-shadow: 0 1px 4px rgba(16,24,40,.08) }
+  .sub-nav-item.active svg { color: var(--primary) }
+
+  .panel { flex: 1; min-width: 0 }
+  .panel-title { font-size: 16px; font-weight: 700; margin-bottom: 12px }
+
+  .card { background: #FFF; border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(16,24,40,.04) }
+  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 12px }
+
+  /* 个人信息网格 */
+  .info-grid { background: #FAFBFC; border: 1px solid var(--border-light); border-radius: 10px;
+    padding: 6px 18px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 24px }
+  @media (max-width: 1180px) { .info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+  @media (max-width: 860px) { .info-grid { grid-template-columns: 1fr } }
+  .info-cell { padding: 14px 0; min-width: 0 }
+  .info-label { font-size: 12.5px; color: var(--text-3); margin-bottom: 6px }
+  .info-value { font-size: 13.5px; color: var(--text-1); display: flex; align-items: center;
+    flex-wrap: wrap; gap: 6px 8px; min-height: 20px; word-break: break-word }
+  .icon-edit { color: var(--primary); cursor: pointer; display: inline-flex; flex-shrink: 0 }
+  .icon-edit:hover { opacity: .75 }
+  .link { color: var(--primary); cursor: pointer; font-size: 12.5px; white-space: nowrap; flex-shrink: 0 }
+  .link:hover { text-decoration: underline }
+
+  /* 租户 */
+  .tenant-label { font-size: 12.5px; color: var(--text-3); margin: 4px 0 10px }
+  .tenant-current { background: #FFF; border: 1px solid var(--border-light); border-radius: 10px;
+    padding: 14px 16px; display: flex; align-items: center; gap: 12px; max-width: 420px; min-width: 0 }
+  .tenant-list { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px }
+  .tenant-card { flex: 1 1 300px; min-width: 0; background: #FFF; border: 1px solid var(--border-light);
+    border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px }
+  .tenant-avatar { width: 34px; height: 34px; border-radius: 8px; background: #EAF2FE; color: var(--primary);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0 }
+  .tenant-diamond { background: #E8F1FE; color: #4B93F5 }
+  .tenant-name { font-size: 13.5px; font-weight: 600; word-break: break-word }
+  .tenant-sub { font-size: 12px; color: var(--text-3); margin-top: 3px }
+  .tag-current { margin-left: auto; padding: 2px 10px; border: 1px solid #BDD8FB; color: var(--primary);
+    background: #F4F9FF; border-radius: 12px; font-size: 11.5px; white-space: nowrap; flex-shrink: 0 }
+  .tag-plan { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 4px;
+    background: #EAF2FE; color: var(--primary); font-size: 11px; font-weight: 600; white-space: nowrap; flex-shrink: 0 }
+  .btn-switch { margin-left: auto; padding: 4px 14px; border: 1px solid var(--border); background: #FFF;
+    border-radius: 14px; color: var(--text-2); font-family: inherit; font-size: 12px; cursor: pointer;
+    white-space: nowrap; flex-shrink: 0 }
+  .btn-switch:hover { border-color: var(--primary); color: var(--primary) }
+
+  /* 修改密码 / 通知 */
+  .form-row { margin-bottom: 14px; max-width: 380px }
+  .form-label { display: block; font-size: 12.5px; color: var(--text-2); margin-bottom: 6px }
+  .form-input { width: 100%; height: 34px; padding: 0 10px; border: 1px solid var(--border);
+    border-radius: 6px; font-family: inherit; font-size: 13px; color: var(--text-1); background: #FFF }
+  .form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(47,128,237,.1) }
+  .btn-primary { height: 34px; padding: 0 20px; background: var(--primary); color: #fff; border: none;
+    border-radius: 6px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer }
+  .btn-primary:hover { background: var(--primary-hover) }
+  .switch-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0;
+    border-bottom: 1px solid var(--border-light); max-width: 560px }
+  .switch-row:last-child { border-bottom: none }
+  .switch-desc { font-size: 12px; color: var(--text-3); margin-top: 3px }
+  .switch { position: relative; width: 38px; height: 21px; flex-shrink: 0 }
+  .switch input { opacity: 0; width: 0; height: 0 }
+  .slider { position: absolute; inset: 0; background: #D0D5DD; border-radius: 12px; transition: .2s; cursor: pointer }
+  .slider::before { content: ''; position: absolute; width: 17px; height: 17px; left: 2px; top: 2px;
+    background: #fff; border-radius: 50%; transition: .2s }
+  .switch input:checked + .slider { background: var(--primary) }
+  .switch input:checked + .slider::before { transform: translateX(17px) }
+
+  .hidden { display: none !important }
+
+  #toast { position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%); background: rgba(17,24,39,.9);
+    color: #fff; font-size: 12.5px; padding: 9px 18px; border-radius: 18px; opacity: 0; transition: opacity .2s;
+    pointer-events: none; z-index: 99 }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo"><span>San</span><span>VIST</span></div>
+  <div class="topbar-right">
+    <div class="hd-entry" onclick="location.href='我的订阅管理页.html'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      订阅<span class="hd-entry-badge">新上</span>
+    </div>
+    <div class="hd-lang" onclick="showToast('语言切换')">简体中文</div>
+    <div class="hd-tenant" onclick="showToast('切换租户')">TIRAN INDONESIA</div>
+    <div class="avatar">G</div>
+  </div>
+</div>
+
+<div class="layout">
+    <aside class="sidebar">
+    <div class="menu-parent" onclick="location.href='工作台-有数据.html'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span style="flex:1">工作台</span>
+    </div>
+
+    <div class="menu-parent" onclick="location.href='报表模版.html'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span style="flex:1">机群报表</span>
+    </div>
+
+    <div class="menu-parent" onclick="sbToggleService(this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/><path d="M9 11h.01M15 11h.01"/></svg>
+      <span style="flex:1">企业服务</span>
+      <svg class="arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="menu-sub" id="menu-service-sub">
+      <div class="menu-item active" onclick="location.href='个人中心.html'">个人中心</div>
+      <div class="menu-item" onclick="location.href='我的订阅管理页.html'">订阅管理</div>
+    </div>
+
+    <div class="side-deco">
+      <svg viewBox="0 0 160 54" fill="none">
+        <path d="M-10 54 L34 12 L58 54 Z" fill="#DCEAFB"/>
+        <path d="M18 54 L58 20 L96 54 Z" fill="#BFD9F7"/>
+        <path d="M52 54 L92 26 L134 54 Z" fill="#E8F1FD"/>
+        <circle cx="120" cy="18" r="7" fill="#F0F6FF"/>
+      </svg>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- 左侧子导航 -->
+    <div class="sub-nav">
+      <div class="sub-nav-item active" data-panel="info" onclick="switchPanel('info', this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        个人信息
+      </div>
+      <div class="sub-nav-item" data-panel="pwd" onclick="switchPanel('pwd', this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        修改密码
+      </div>
+      <div class="sub-nav-item" data-panel="notify" onclick="switchPanel('notify', this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+        通知邀请
+      </div>
+    </div>
+
+    <div class="panel">
+      <!-- 个人信息 -->
+      <div id="panel-info">
+        <div class="panel-title">个人信息</div>
+        <div class="card">
+          <div class="info-grid">
+            <div class="info-cell">
+              <div class="info-label">用户姓名</div>
+              <div class="info-value">Geniusman Sidabutar
+                <span class="icon-edit" onclick="showToast('修改姓名')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+              </div>
+            </div>
+            <div class="info-cell">
+              <div class="info-label">手机号</div>
+              <div class="info-value">081****4685 <span class="link" onclick="showToast('换绑手机号')">换绑</span></div>
+            </div>
+            <div class="info-cell">
+              <div class="info-label">邮箱</div>
+              <div class="info-value">geniusman****@gmail.com <span class="link" onclick="showToast('换绑邮箱')">换绑</span></div>
+            </div>
+            <div class="info-cell">
+              <div class="info-label">业务职责</div>
+              <div class="info-value">设备所有者
+                <span class="icon-edit" onclick="showToast('修改业务职责')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+              </div>
+            </div>
+            <div class="info-cell">
+              <div class="info-label">账号创建时间</div>
+              <div class="info-value">2026-08-18 10:47:41</div>
+            </div>
+            <div class="info-cell">
+              <div class="info-label">最后登录时间</div>
+              <div class="info-value">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-title" style="margin-top:20px">租户信息</div>
+        <div class="card">
+          <div class="tenant-label">当前租户</div>
+          <div class="tenant-current">
+            <div class="tenant-avatar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"/></svg>
+            </div>
+            <div>
+              <div class="tenant-name">TIRAN INDONESIA</div>
+              <div class="tenant-sub">企业客户</div>
+            </div>
+            <span class="tag-plan" style="margin-left:auto">专业版</span>
+          </div>
+
+          <div class="tenant-label" style="margin-top:20px">所属租户列表</div>
+          <div class="tenant-list">
+            <div class="tenant-card">
+              <div class="tenant-avatar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z"/></svg>
+              </div>
+              <div>
+                <div class="tenant-name">TIRAN INDONESIA <span class="tag-plan">专业版</span></div>
+                <div class="tenant-sub">企业客户</div>
+              </div>
+              <span class="tag-current">当前</span>
+            </div>
+
+            <div class="tenant-card">
+              <div class="tenant-avatar tenant-diamond">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 3 9l9 13 9-13-9-7Zm0 3.2L17.6 9 12 17.1 6.4 9 12 5.2Z"/></svg>
+              </div>
+              <div>
+                <div class="tenant-name">Geniusman Sidabutar</div>
+                <div class="tenant-sub">个人租户</div>
+              </div>
+              <button class="btn-switch" onclick="showToast('已切换到个人租户')">切换</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 修改密码 -->
+      <div id="panel-pwd" class="hidden">
+        <div class="panel-title">修改密码</div>
+        <div class="card">
+          <div class="form-row">
+            <label class="form-label">当前密码</label>
+            <input class="form-input" type="password" placeholder="请输入当前密码">
+          </div>
+          <div class="form-row">
+            <label class="form-label">新密码</label>
+            <input class="form-input" type="password" placeholder="8-20 位，需包含字母与数字">
+          </div>
+          <div class="form-row">
+            <label class="form-label">确认新密码</label>
+            <input class="form-input" type="password" placeholder="请再次输入新密码">
+          </div>
+          <button class="btn-primary" onclick="showToast('密码已更新')">保存修改</button>
+        </div>
+      </div>
+
+      <!-- 通知邀请 -->
+      <div id="panel-notify" class="hidden">
+        <div class="panel-title">通知邀请</div>
+        <div class="card">
+          <div class="switch-row">
+            <div>
+              <div>订阅到期提醒</div>
+              <div class="switch-desc">订阅到期前 7 天通过站内信与邮件提醒</div>
+            </div>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+          <div class="switch-row">
+            <div>
+              <div>订阅与优惠通知</div>
+              <div class="switch-desc">新版本上线、限时优惠等活动信息</div>
+            </div>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+          <div class="switch-row">
+            <div>
+              <div>成员邀请邮件</div>
+              <div class="switch-desc">邀请成员加入组织时同步发送邮件通知</div>
+            </div>
+            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  function sbToggleService(head) {
+    var sub = document.getElementById('menu-service-sub');
+    if (!sub) return;
+    var collapsed = sub.classList.toggle('collapsed');
+    head.classList.toggle('collapsed', collapsed);
+  }
+
+  function switchPanel(name, el) {
+    ['info', 'pwd', 'notify'].forEach(function (k) {
+      var p = document.getElementById('panel-' + k);
+      if (p) p.classList.toggle('hidden', k !== name);
+    });
+    document.querySelectorAll('.sub-nav-item').forEach(function (it) {
+      it.classList.toggle('active', it === el);
+    });
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.opacity = '1';
+    clearTimeout(t._t);
+    t._t = setTimeout(function () { t.style.opacity = '0'; }, 1800);
+  }
+</script>
+</body>
+</html>
