@@ -285,9 +285,10 @@ tr.row-total td{font-weight:700;background:#F4FBFC;border-top:2px solid var(--pr
 .not-include-toggle span{font-size:12px;color:var(--text-secondary)}
 
 /* ===== 新增/编辑订阅弹窗优化 ===== */
-#component-modal .modal{width:760px}
-#component-modal .modal-body{padding:20px 24px}
-#component-modal .modal-footer{position:sticky;bottom:0;background:var(--bg-card);box-shadow:0 -1px 0 var(--border-light);z-index:2}
+#component-modal .modal{width:760px;display:flex;flex-direction:column;overflow:hidden}
+#component-modal form{display:flex;flex-direction:column;min-height:0;flex:1}
+#component-modal .modal-body{flex:1;min-height:0;overflow-y:auto;padding:20px 24px}
+#component-modal .modal-footer{position:static;flex:0 0 auto;background:var(--bg-card);box-shadow:0 -1px 0 var(--border-light)}
 .plan-modal-section{scroll-margin-top:12px;border-radius:var(--radius-md)}
 .plan-modal-section.invalid{animation:secShake .35s ease}
 @keyframes secShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
@@ -326,19 +327,6 @@ tr.row-total td{font-weight:700;background:#F4FBFC;border-top:2px solid var(--pr
 #panel-reportperm .filter-input:focus,#panel-reportperm .filter-select:focus{border-color:var(--primary);outline:none}
 </style>
 <style>
-#sec-perms .perm-tabs{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border-light);background:var(--bg-page)}
-#sec-perms .perm-tab{padding:5px 14px;font-size:12.5px;border:1px solid var(--border);background:#fff;border-radius:100px;cursor:pointer;color:var(--text-secondary)}
-#sec-perms .perm-tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
-#sec-perms .perm-search{margin-left:auto;width:180px;height:28px;padding:0 10px;font-size:12.5px;border:1px solid var(--border);border-radius:6px;background:#fff}
-#sec-perms .perm-pane{max-height:300px;overflow-y:auto;padding:8px 12px 12px}
-#sec-perms .perm-group{font-size:11.5px;font-weight:600;color:var(--text-muted);margin:10px 0 4px}
-#sec-perms .perm-row{display:flex;align-items:center;gap:8px;padding:6px 2px;border-bottom:1px dashed var(--border-light);font-size:13px}
-#sec-perms .perm-row:last-child{border-bottom:none}
-#sec-perms .perm-id{margin-left:auto;font-size:11px;color:var(--text-muted)}
-#sec-perms .perm-scope{font-size:11px;padding:1px 6px;border-radius:3px;background:#F1F5F9;color:#475569}
-#sec-perms .perm-scope.on{background:#EAF7F9;color:#1F6D82}
-#sec-perms .perm-toolbar{display:flex;gap:12px;padding:6px 12px 0;font-size:12px}
-#sec-perms .perm-link{color:var(--primary);cursor:pointer}
 </style>
 <style>
 #panel-reportperm .ms-wrap{position:relative;display:inline-block;width:100%}
@@ -883,21 +871,6 @@ tr.row-total td{font-weight:700;background:#F4FBFC;border-top:2px solid var(--pr
 
       </div>
 
-        <div class="plan-modal-section" id="sec-perms">
-          <div class="plan-modal-section-title">
-            <span class="step" style="background:var(--primary)">3</span>分配权限
-            <span class="ct-count" id="perm-count">已选 0 项</span>
-          </div>
-          <div class="plan-modal-card" style="padding:0;overflow:hidden">
-            <div class="perm-tabs">
-              <span class="perm-hint">按模块勾选该订阅可使用的功能与报表</span>
-              <input class="perm-search" id="perm-search" placeholder="搜索名称 / ID" oninput="renderPlanPermPicker()">
-            </div>
-            <div class="perm-pane" id="perm-pane"></div>
-          </div>
-        </div>
-      </div>
-
       <div class="modal-footer">
         <button type="button" class="btn btn-outline" onclick="closeModal('component-modal')">取消</button>
         <button type="submit" class="btn btn-primary">确定</button>
@@ -1265,66 +1238,12 @@ function renderPkgs() {
 function setCompChecks(comps) {
   compChecked = new Set(comps || []);
   renderCompTree();
-}/* ===== 订阅分配权限（模块条目） ===== */
-var PLAN_ITEMS = new Set();
-
-function planPermGroups() {
-  return [
-    { name: '机群报表', key: 'fleet_report', items: (typeof FLEET_REPORTS !== 'undefined' ? FLEET_REPORTS : []).map(function (r) { return { id: r.id || r.key, name: (r.names && (r.names.zh || r.names.tw)) || r.key }; }) },
-    { name: '考勤管理', key: 'attendance', items: (typeof ATTENDANCE_REPORTS !== 'undefined' ? ATTENDANCE_REPORTS : []).map(function (r) { return { id: r.id || r.key, name: (r.names && (r.names.zh || r.names.tw)) || r.key }; }) }
-  ];
-}
-
-function renderPlanPermPicker() {
-  var pane = document.getElementById('perm-pane');
-  if (!pane) return;
-  var kw = (document.getElementById('perm-search').value || '').trim().toLowerCase();
-  var html = '';
-  planPermGroups().forEach(function (g) {
-    var items = g.items.filter(function (it) {
-      return !kw || it.name.toLowerCase().indexOf(kw) > -1 || it.id.toLowerCase().indexOf(kw) > -1;
-    });
-    if (!items.length) return;
-    html += '<div class="perm-group"><span>' + g.name + '</span>'
-      + '<span class="perm-all" onclick="togglePlanGroup(\'' + g.key + '\')">全选 / 取消</span></div>';
-    items.forEach(function (it) {
-      var on = PLAN_ITEMS.has(it.id);
-      html += '<label class="perm-item"><input type="checkbox" ' + (on ? 'checked' : '')
-        + ' onchange="togglePlanItem(\'' + it.id + '\',this.checked)"><span>' + it.name + '</span>'
-        + '<span class="perm-id">' + it.id + '</span></label>';
-    });
-  });
-  pane.innerHTML = html || '<div style="padding:20px 0;text-align:center;color:var(--text-muted);font-size:12.5px">无匹配项</div>';
-  updatePermCount();
-}
-
-function togglePlanItem(id, checked) {
-  if (checked) PLAN_ITEMS.add(id); else PLAN_ITEMS.delete(id);
-  updatePermCount();
-}
-
-function togglePlanGroup(key) {
-  var g = planPermGroups().filter(function (x) { return x.key === key; })[0];
-  if (!g) return;
-  var allOn = g.items.every(function (it) { return PLAN_ITEMS.has(it.id); });
-  g.items.forEach(function (it) {
-    if (allOn) PLAN_ITEMS.delete(it.id); else PLAN_ITEMS.add(it.id);
-  });
-  renderPlanPermPicker();
-}
-
-function updatePermCount() {
-  var el = document.getElementById('perm-count');
-  if (el) el.textContent = '已选 ' + PLAN_ITEMS.size + ' 项';
-}
-function openEditPkg(i) {
+}function openEditPkg(i) {
   const p = PACKAGES[i];
   resetErrors();
   pkgEditIdx = i;
   document.getElementById('modal-title-text').textContent = '编辑订阅';
   document.getElementById('pkg-name-text').textContent = p.name.zh || p.name.en || '—';
-  PLAN_ITEMS = new Set(p.items || []);
-  try { renderPlanPermPicker(); } catch (e) {}
   document.getElementById('inp-status').checked = p.status === 'on';
   document.getElementById('inp-monthly').value = p.monthly;
   document.getElementById('inp-annual').value = p.annual;
@@ -1356,7 +1275,7 @@ function handleFormSubmit(e) {
       trial: pkgEditIdx > -1 ? PACKAGES[pkgEditIdx].trial : 0,
       groups: pkgEditIdx > -1 ? PACKAGES[pkgEditIdx].groups : [],
       reports: pkgEditIdx > -1 ? PACKAGES[pkgEditIdx].reports : [],
-      items: Array.from(PLAN_ITEMS)
+      items: pkgEditIdx > -1 ? PACKAGES[pkgEditIdx].items : []
     };
     if (pkgEditIdx > -1) PACKAGES[pkgEditIdx] = rec; else PACKAGES.push(rec);
     closeModal('component-modal');

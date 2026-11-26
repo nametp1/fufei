@@ -1874,8 +1874,7 @@
       const rows = CONSUME_RECORDS.slice(0, consumeShown);
       document.getElementById('consume-list').innerHTML = rows.map(function (r) {
         let op = '<span style="font-size:12px;color:var(--text-muted)">—</span>';
-        if (r.status === 'paid') op = '<span class="refund-link" onclick="openRefundSheet(\'' + r.oid + '\')">申请退款</span>';
-        else if (r.status === 'refunding') op = '<span style="font-size:12px;color:var(--text-muted)">审核中</span>';
+        if (r.status === 'refunding') op = '<span style="font-size:12px;color:var(--text-muted)">审核中</span>';
         return '<div class="consume-item">'
           + '<div class="cs-top"><span class="cs-item">' + r.item + '</span></div>'
           + '<div class="cs-mid"><span>' + r.date + '</span><span>' + consumeStatusTag(r.status) + '</span></div>'

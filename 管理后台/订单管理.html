@@ -254,23 +254,23 @@ tr:hover .last-col{background:#FAFBFC}
     <div class="dashboard-grid">
       <div class="stat-card">
         <div class="stat-label">总订单数</div>
-        <div class="stat-value">2,847</div>
+        <div class="stat-value">4</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">待支付</div>
-        <div class="stat-value" style="color:var(--warning)">86</div>
+        <div class="stat-value" style="color:var(--warning)">0</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">已开通</div>
-        <div class="stat-value" style="color:var(--success)">2,589</div>
+        <div class="stat-value" style="color:var(--success)">3</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">已退款</div>
-        <div class="stat-value" style="color:var(--error)">136</div>
+        <div class="stat-value" style="color:var(--error)">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">已取消/暂停</div>
-        <div class="stat-value" style="color:var(--text-muted)">36</div>
+        <div class="stat-label">已关闭</div>
+        <div class="stat-value" style="color:var(--text-muted)">1</div>
       </div>
     </div>
 
@@ -338,85 +338,73 @@ tr:hover .last-col{background:#FAFBFC}
 
     <!-- Order Tabs -->
     <div style="display:flex;gap:0;margin-bottom:12px;border-bottom:2px solid var(--border-light)">
-      <button class="order-tab active" onclick="switchOrderTab('all',this)">全部订单 <span class="tab-count">5</span></button>
-      <button class="order-tab" onclick="switchOrderTab('pending',this)">待支付 <span class="tab-count warn">1</span></button>
+      <button class="order-tab active" onclick="switchOrderTab('all',this)">全部订单 <span class="tab-count">4</span></button>
+      <button class="order-tab" onclick="switchOrderTab('pending',this)">待支付 <span class="tab-count warn">0</span></button>
       <button class="order-tab" onclick="switchOrderTab('paid',this)">已支付 <span class="tab-count success">3</span></button>
-      <button class="order-tab" onclick="switchOrderTab('refund',this)">已退款 <span class="tab-count error">1</span></button>
+      <button class="order-tab" onclick="switchOrderTab('refund',this)">已退款 <span class="tab-count error">0</span></button>
+      <button class="order-tab" onclick="switchOrderTab('closed',this)">已关闭 <span class="tab-count">1</span></button>
     </div>
 
-    <!-- Data Table — All -->
     <div class="card order-panel active" id="panel-all">
       <div class="table-wrap">
         <table>
-          <thead>
-            <tr>
-              <th class="first-col">订单编号</th>
-              <th>用户信息</th>
-              <th>国家</th>
-              <th>订阅版本</th>
-              <th>计费周期</th>
-              <th>支付方式</th>
-              <th class="num">订单金额</th>
-              <th>折扣</th>
-              <th class="num">实付金额</th>
-              <th>下单时间</th>
-              <th>支付时间</th>
-              <th>订单状态</th>
-              <th class="last-col">操作</th>
-            </tr>
-          </thead>
+          <thead><tr><th class="first-col">订单编号</th><th>用户信息</th><th>国家</th><th>订阅版本</th><th>计费周期</th><th>支付方式</th><th class="num">订单金额</th><th>折扣</th><th class="num">实付金额</th><th>下单时间</th><th>支付时间</th><th>订单状态</th><th class="last-col">操作</th></tr></thead>
           <tbody>
             <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20261122-014</td><td><span style="font-weight:500">10011</span><span style="display:block;font-size:12px;color:var(--text-muted)">林嘉豪</span></td><td>中国</td><td>专业版</td><td><span class="tag tag-default">1 个月</span></td><td><span style="color:var(--text-muted)">免费开通</span></td><td class="num">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-11-22 10:00</td><td>2026-11-22 10:00</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20261122-014')">详情</button></div></td></tr>
-            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260804-002</td><td><span style="font-weight:500">10002</span><span style="display:block;font-size:12px;color:var(--text-muted)">夸梅·阿萨莫阿</span></td><td>加纳</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-08-04 09:15</td><td>—</td><td><span class="tag tag-warning">待支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260804-002')">详情</button></div></td></tr>
-            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260804-001</td><td><span style="font-weight:500">10001</span><span style="display:block;font-size:12px;color:var(--text-muted)">陈伟明</span></td><td>印度尼西亚</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td><span class="tag tag-info" style="font-size:11px">90%</span></td><td class="num" style="color:var(--success);font-weight:600">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-08-04 10:23</td><td>2026-08-04 10:24</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260804-001')">详情</button></div></td></tr>
-            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260730-009</td><td><span style="font-weight:500">10009</span><span style="display:block;font-size:12px;color:var(--text-muted)">亚辛·贝纳利</span></td><td>阿尔及利亚</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td><span class="tag tag-info" style="font-size:11px">90%</span></td><td class="num" style="color:var(--success);font-weight:600">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-07-30 08:12</td><td>2026-07-30 08:13</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260730-009')">详情</button><button class="btn btn-danger btn-xs" onclick="openModal('modal-refund')">退款</button></div>
-</td></tr>
-            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20261118-013</td><td><span style="font-weight:500">10003</span><span style="display:block;font-size:12px;color:var(--text-muted)">艾哈迈德·拉希德</span></td><td>沙特阿拉伯</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td><span class="tag tag-info" style="font-size:11px">90%</span></td><td class="num" style="font-weight:600">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-11-18 14:18</td><td>2026-11-18 14:19</td><td><span class="tag tag-error">已退款</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20261118-013')">详情</button></div></td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20261020-2213</td><td><span style="font-weight:500">10008</span><span style="display:block;font-size:12px;color:var(--text-muted)">张伟</span></td><td>中国</td><td>专业版</td><td><span class="tag tag-default">1 个月</span></td><td><span style="color:var(--text-muted)">免费开通</span></td><td class="num">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-10-20 14:32</td><td>2026-10-20 14:32</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20261020-2213')">详情</button></div></td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260920-1908</td><td><span style="font-weight:500">10005</span><span style="display:block;font-size:12px;color:var(--text-muted)">陈晓明</span></td><td>泰国</td><td>专业版</td><td><span class="tag tag-default">1 个月</span></td><td><span style="color:var(--text-muted)">免费开通</span></td><td class="num">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-09-20 09:18</td><td>2026-09-20 09:18</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260920-1908')">详情</button></div></td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260610-0091</td><td><span style="font-weight:500">10012</span><span style="display:block;font-size:12px;color:var(--text-muted)">王强</span></td><td>越南</td><td>专业版</td><td><span class="tag tag-default">1 个月</span></td><td><span style="color:var(--text-muted)">免费开通</span></td><td class="num">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-06-10 11:05</td><td>—</td><td><span class="tag tag-default">已关闭</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260610-0091')">详情</button></div></td></tr>
           </tbody>
         </table>
       </div>
-      
-      <div class="pagination"><span class="pagination-info">共 5 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
+      <div class="pagination"><span class="pagination-info">共 4 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
     </div>
 
-    <!-- 待支付 Tab -->
-    <div class="card order-panel" id="panel-pending" style="display:none">
+    <div class="card order-panel" id="panel-pending">
       <div class="table-wrap">
         <table>
           <thead><tr><th class="first-col">订单编号</th><th>用户信息</th><th>国家</th><th>订阅版本</th><th>计费周期</th><th>支付方式</th><th class="num">订单金额</th><th>折扣</th><th class="num">实付金额</th><th>下单时间</th><th>支付时间</th><th>订单状态</th><th class="last-col">操作</th></tr></thead>
           <tbody>
-          
-            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260804-002</td><td><span style="font-weight:500">10002</span><span style="display:block;font-size:12px;color:var(--text-muted)">夸梅·阿萨莫阿</span></td><td>加纳</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-08-04 09:15</td><td>—</td><td><span class="tag tag-warning">待支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260804-002')">详情</button></div></td></tr></tbody>
+            <tr><td colspan="13" style="text-align:center;color:var(--text-muted);padding:40px 0">暂无数据</td></tr>
+          </tbody>
         </table>
       </div>
-      
-      <div class="pagination"><span class="pagination-info">共 1 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
+      <div class="pagination"><span class="pagination-info">共 0 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
     </div>
 
-    <!-- 已支付 Tab -->
-    <div class="card order-panel" id="panel-paid" style="display:none">
+    <div class="card order-panel" id="panel-paid">
       <div class="table-wrap">
         <table>
           <thead><tr><th class="first-col">订单编号</th><th>用户信息</th><th>国家</th><th>订阅版本</th><th>计费周期</th><th>支付方式</th><th class="num">订单金额</th><th>折扣</th><th class="num">实付金额</th><th>下单时间</th><th>支付时间</th><th>订单状态</th><th class="last-col">操作</th></tr></thead>
           <tbody>
             <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20261122-014</td><td><span style="font-weight:500">10011</span><span style="display:block;font-size:12px;color:var(--text-muted)">林嘉豪</span></td><td>中国</td><td>专业版</td><td><span class="tag tag-default">1 个月</span></td><td><span style="color:var(--text-muted)">免费开通</span></td><td class="num">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-11-22 10:00</td><td>2026-11-22 10:00</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20261122-014')">详情</button></div></td></tr>
-            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260804-001</td><td><span style="font-weight:500">10001</span><span style="display:block;font-size:12px;color:var(--text-muted)">陈伟明</span></td><td>印度尼西亚</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td><span class="tag tag-info" style="font-size:11px">90%</span></td><td class="num" style="color:var(--success);font-weight:600">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-08-04 10:23</td><td>2026-08-04 10:24</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260804-001')">详情</button></div></td></tr>
-            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260730-009</td><td><span style="font-weight:500">10009</span><span style="display:block;font-size:12px;color:var(--text-muted)">亚辛·贝纳利</span></td><td>阿尔及利亚</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,640.00 <span style="color:var(--text-secondary)">THB</span></td><td><span class="tag tag-info" style="font-size:11px">90%</span></td><td class="num" style="color:var(--success);font-weight:600">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-07-30 08:12</td><td>2026-07-30 08:13</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260730-009')">详情</button><button class="btn btn-danger btn-xs" onclick="openModal('modal-refund')">退款</button></div></td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20261020-2213</td><td><span style="font-weight:500">10008</span><span style="display:block;font-size:12px;color:var(--text-muted)">张伟</span></td><td>中国</td><td>专业版</td><td><span class="tag tag-default">1 个月</span></td><td><span style="color:var(--text-muted)">免费开通</span></td><td class="num">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-10-20 14:32</td><td>2026-10-20 14:32</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20261020-2213')">详情</button></div></td></tr>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260920-1908</td><td><span style="font-weight:500">10005</span><span style="display:block;font-size:12px;color:var(--text-muted)">陈晓明</span></td><td>泰国</td><td>专业版</td><td><span class="tag tag-default">1 个月</span></td><td><span style="color:var(--text-muted)">免费开通</span></td><td class="num">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-09-20 09:18</td><td>2026-09-20 09:18</td><td><span class="tag tag-success">已支付</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260920-1908')">详情</button></div></td></tr>
           </tbody>
         </table>
       </div>
-      
       <div class="pagination"><span class="pagination-info">共 3 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
     </div>
 
-    <!-- 已退款 Tab — 含退款手续费列 -->
-    <div class="card order-panel" id="panel-refund" style="display:none">
+    <div class="card order-panel" id="panel-refund">
       <div class="table-wrap">
         <table>
-          <thead><tr><th class="first-col">订单编号</th><th>用户信息</th><th>国家</th><th>订阅版本</th><th>计费周期</th><th>支付方式</th><th class="num">实付金额</th><th>退款金额</th><th>退款手续费</th><th>退款时间</th><th>订单状态</th><th class="last-col">操作</th></tr></thead>
+          <thead><tr><th class="first-col">订单编号</th><th>用户信息</th><th>国家</th><th>订阅版本</th><th>计费周期</th><th>支付方式</th><th class="num">订单金额</th><th>折扣</th><th class="num">实付金额</th><th>下单时间</th><th>支付时间</th><th>订单状态</th><th class="last-col">操作</th></tr></thead>
           <tbody>
-            
-          <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20261118-013</td><td><span style="font-weight:500">10003</span><span style="display:block;font-size:12px;color:var(--text-muted)">艾哈迈德·拉希德</span></td><td>沙特阿拉伯</td><td>专业版</td><td><span class="tag tag-warning">3 个月</span></td><td>PayPal</td><td class="num">2,376.00 <span style="color:var(--text-secondary)">THB</span></td><td class="num" style="color:var(--error)">2,376.00 THB</td><td class="num" style="color:var(--text-muted)">72.00 THB</td><td>2026-11-18 16:40</td><td><span class="tag tag-error">已退款</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20261118-013')">详情</button></div></td></tr></tbody>
+            <tr><td colspan="13" style="text-align:center;color:var(--text-muted);padding:40px 0">暂无数据</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination"><span class="pagination-info">共 0 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
+    </div>
+
+    <div class="card order-panel" id="panel-closed">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th class="first-col">订单编号</th><th>用户信息</th><th>国家</th><th>订阅版本</th><th>计费周期</th><th>支付方式</th><th class="num">订单金额</th><th>折扣</th><th class="num">实付金额</th><th>下单时间</th><th>支付时间</th><th>订单状态</th><th class="last-col">操作</th></tr></thead>
+          <tbody>
+            <tr><td class="first-col" style="color:var(--primary);font-weight:500">ORD-20260610-0091</td><td><span style="font-weight:500">10012</span><span style="display:block;font-size:12px;color:var(--text-muted)">王强</span></td><td>越南</td><td>专业版</td><td><span class="tag tag-default">1 个月</span></td><td><span style="color:var(--text-muted)">免费开通</span></td><td class="num">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>—</td><td class="num" style="font-weight:600">0.00 <span style="color:var(--text-secondary)">THB</span></td><td>2026-06-10 11:05</td><td>—</td><td><span class="tag tag-default">已关闭</span></td><td class="last-col"><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openDetail('ORD-20260610-0091')">详情</button></div></td></tr>
+          </tbody>
         </table>
       </div>
       <div class="pagination"><span class="pagination-info">共 1 条记录</span><div class="pagination-btns"><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="page-btn active">1</button><button class="page-btn" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
@@ -565,42 +553,26 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){document.qu
 
 /* ==================== 订单数据（多支付方式） ==================== */
 var ORDERS = {
-  'ORD-20260804-001': { user: '10001 · 陈伟明', country: '印度尼西亚', email: 'budi@ptsm.co.id',
-    plan: '专业版 | 3 个月', method: 'PayPal', amount: '฿2,640.00', discount: '随机折扣 90%（-THB 264.00）',
-    paid: '฿2,376.00', orderTime: '2026-08-04 10:23', payTime: '2026-08-04 10:24', status: '已支付', tag: 'tag-success',
-    paypalOrder: '5O190127TN364715T', paypalCapture: '3C679366HH908993F', payer: 'budi@ptsm.co.id',
-    settle: 'THB 结算（PayPal 账户币种）',
-    sub: { type: '付费开通', version: '专业版', cycle: '3 个月', range: '2026-08-04 ~ 2026-11-03', status: '生效中' },
-    tl: [{ t: '2026-08-04 10:23', s: '创建订单' }, { t: '2026-08-04 10:24', s: '支付成功' }] },
-  'ORD-20260804-002': { user: '10002 · 夸梅·阿萨莫阿', country: '加纳', email: 'kwame@goldstar.gh',
-    plan: '专业版 | 3 个月', method: 'PayPal', amount: '฿2,640.00', discount: '—',
-    paid: '฿2,640.00', orderTime: '2026-08-04 09:15', payTime: '—', status: '待支付', tag: 'tag-warning',
-    bankAccount: 'Standard Chartered · 0102 3344 5566', bankRef: '水单待上传', bankName: 'Accra Main Branch',
-    sub: { type: '付费开通', version: '专业版', cycle: '3 个月', range: '2026-12-01 ~ 2027-02-28', status: '未生效' },
-    tl: [{ t: '2026-08-04 09:15', s: '创建订单' }] },
-  'ORD-20260803-004': { user: '10004 · 阮文德', country: '越南', email: 'duc@dongduong.vn',
-    plan: '专业版 | 3 个月', method: 'PayPal', amount: '฿2,640.00', discount: '随机折扣 95%（-THB 132.00）',
-    paid: '฿2,508.00', orderTime: '2026-08-03 14:20', payTime: '2026-08-03 14:21', status: '已支付', tag: 'tag-success',
-    bankAccount: 'Vietcombank · 0071 0002 3344', bankRef: 'FT-20260803-77120', bankName: 'Hanoi Branch' },
-  'ORD-20260730-009': { user: '10009 · 亚辛·贝纳利', country: '阿尔及利亚', email: 'yacine@saharabtp.dz',
-    plan: '专业版 | 3 个月', method: 'PayPal', amount: '฿2,640.00', discount: '随机折扣 90%（-THB 264.00）',
-    paid: '฿2,376.00', orderTime: '2026-07-30 08:12', payTime: '2026-07-30 08:13', status: '已支付', tag: 'tag-success',
-    paypalOrder: '8CD33445EF7788990', paypalCapture: '4GH55667IJ223344L', payer: 'yacine@saharabtp.dz',
-    settle: 'THB 结算（PayPal 账户币种）',
-    sub: { type: '付费开通', version: '专业版', cycle: '3 个月', range: '2026-07-30 ~ 2026-10-29', status: '已过期' },
-    tl: [{ t: '2026-07-30 08:12', s: '创建订单' }, { t: '2026-07-30 08:13', s: '支付成功' }] },
-  'ORD-20261118-013': { user: '10003 · 艾哈迈德·拉希德', country: '沙特阿拉伯', email: 'ahmed@rashid.sa',
-    plan: '专业版 | 3 个月', method: 'PayPal', amount: '฿2,640.00', discount: '随机折扣 90%（-THB 264.00）',
-    paid: '฿2,376.00', orderTime: '2026-11-18 14:18', payTime: '2026-11-18 14:19', status: '已退款', tag: 'tag-error',
-    paypalOrder: '9LM55123QR7788990', paypalCapture: '6TY33445UI112233O', payer: 'ahmed@rashid.sa',
-    settle: '退款 ฿2,376.00 · 手续费 ฿72.00 不退',
-    sub: { type: '付费开通', version: '专业版', cycle: '3 个月', range: '2026-11-18 ~ 2027-02-17', status: '已失效' },
-    tl: [{ t: '2026-11-18 14:18', s: '创建订单' }, { t: '2026-11-18 14:19', s: '支付成功' }, { t: '2026-11-18 16:40', s: '退款完成' }] },
-  'ORD-20261122-014': { user: '10011 · 林嘉豪', country: '中国', email: 'lin@example.cn',
-    plan: '专业版 | 1 个月', method: '免费开通', amount: '฿0.00', discount: '—',
+  'ORD-20261122-014': { user: '10011 · 林嘉豪', country: '中国', email: 'user10011@example.com',
+    plan: '专业版 | 1 个月', method: '免费开通', amount: '฿0.00', discount: '免费开通（100% 折扣）',
     paid: '฿0.00', orderTime: '2026-11-22 10:00', payTime: '2026-11-22 10:00', status: '已支付', tag: 'tag-success',
-    sub: { type: '免费开通', version: '专业版', cycle: '1 个月', range: '2026-11-22 ~ 2026-12-22', status: '生效中' },
-    tl: [{ t: '2026-11-22 10:00', s: '创建订单' }, { t: '2026-11-22 10:00', s: '支付成功' }] }
+    sub: { type: '免费开通', version: '专业版', cycle: '1 个月', range: '2026-11-22 ~ 2026-12-21', status: '生效中' },
+    tl: [{ t: '2026-11-22 10:00', s: '创建订单' }, { t: '2026-11-22 10:00', s: '免费开通成功' }] },
+  'ORD-20261020-2213': { user: '10008 · 张伟', country: '中国', email: 'user10008@example.com',
+    plan: '专业版 | 1 个月', method: '免费开通', amount: '฿0.00', discount: '免费开通（100% 折扣）',
+    paid: '฿0.00', orderTime: '2026-10-20 14:32', payTime: '2026-10-20 14:32', status: '已支付', tag: 'tag-success',
+    sub: { type: '免费开通', version: '专业版', cycle: '1 个月', range: '2026-10-20 ~ 2026-11-19', status: '生效中' },
+    tl: [{ t: '2026-10-20 14:32', s: '创建订单' }, { t: '2026-10-20 14:32', s: '免费开通成功' }] },
+  'ORD-20260920-1908': { user: '10005 · 陈晓明', country: '泰国', email: 'user10005@example.com',
+    plan: '专业版 | 1 个月', method: '免费开通', amount: '฿0.00', discount: '免费开通（100% 折扣）',
+    paid: '฿0.00', orderTime: '2026-09-20 09:18', payTime: '2026-09-20 09:18', status: '已支付', tag: 'tag-success',
+    sub: { type: '免费开通', version: '专业版', cycle: '1 个月', range: '2026-09-20 ~ 2026-10-19', status: '生效中' },
+    tl: [{ t: '2026-09-20 09:18', s: '创建订单' }, { t: '2026-09-20 09:18', s: '免费开通成功' }] },
+  'ORD-20260610-0091': { user: '10012 · 王强', country: '越南', email: 'user10012@example.com',
+    plan: '专业版 | 1 个月', method: '免费开通', amount: '฿0.00', discount: '免费开通（100% 折扣）',
+    paid: '฿0.00', orderTime: '2026-06-10 11:05', payTime: '—', status: '已关闭', tag: 'tag-default',
+    sub: { type: '免费开通', version: '专业版', cycle: '1 个月', range: '2026-06-10 ~ 2026-07-09', status: '已关闭' },
+    tl: [{ t: '2026-06-10 11:05', s: '创建订单' }, { t: '2026-06-10 11:20', s: '订单已关闭' }] },
 };
 
 function odRow(label, value) {

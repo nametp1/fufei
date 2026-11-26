@@ -947,8 +947,7 @@ function renderConsume() {
   const rows = CONSUME_RECORDS.slice(0, consumeShown);
   document.getElementById('consume-tbody').innerHTML = rows.map(function (r) {
     let op = '<span class="muted" style="color:var(--text-muted)">—</span>';
-    if (r.status === 'paid') op = '<span class="refund-link" onclick="openRefund(\'' + r.oid + '\')">申请退款</span>';
-    else if (r.status === 'refunding') op = '<span class="muted" style="color:var(--text-muted)">审核中</span>';
+    if (r.status === 'refunding') op = '<span class="muted" style="color:var(--text-muted)">审核中</span>';
     return '<tr>'
       + '<td class="muted">' + r.date + '</td>'
       + '<td>' + r.item + '</td>'
